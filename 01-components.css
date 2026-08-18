@@ -1,0 +1,19 @@
+/*
+ * 01-components.css
+ * Component-level overrides for divi-sales-child (godindev.com)
+ * Kept separate from 00-tokens.css so tokens stay pure values, matching godin.com's pattern.
+ */
+
+/* Nav — flat, centered, professional (Section 19 of the plan).
+   Note: Divi 5's actual centering is handled via the Design tab's Text Alignment: Center
+   setting on the Menu module (adds et_pb_text_align_center, which Divi's own core CSS
+   already centers). This rule is a fallback only, kept in case that setting is ever reset. */
+.et_pb_menu .et_pb_menu__menu > nav > ul {
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .et_pb_menu .et_pb_menu__menu > nav > ul {
+    justify-content: flex-start;
+  }
+}
