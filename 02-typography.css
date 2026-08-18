@@ -1,0 +1,11 @@
+body, p, .et_pb_module {
+  font-family: var(--gdi-font-body);
+}
+
+h1, h2, h3, h4, h5, h6,
+.et_pb_blurb_content h4,
+.et_pb_module h1, .et_pb_module h2, .et_pb_module h3,
+.et_pb_module h4, .et_pb_module h5, .et_pb_module h6 {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+}

@@ -16,9 +16,14 @@ function divi_sales_child_enqueue_styles() {
         array( "godindev-tokens" ),
         wp_get_theme()->get("Version")
     );
+    wp_enqueue_style( "godindev-typography",
+        get_stylesheet_directory_uri() . "/02-typography.css",
+        array( "godindev-components" ),
+        wp_get_theme()->get("Version")
+    );
     wp_enqueue_style( "divi-sales-child-style",
         get_stylesheet_directory_uri() . "/style.css",
-        array( "divi-parent-style", "godindev-components" ),
+        array( "divi-parent-style", "godindev-typography" ),
         wp_get_theme()->get("Version")
     );
 }
