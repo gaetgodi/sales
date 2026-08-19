@@ -55,7 +55,6 @@
 .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a::after {
   width: calc(100% - var(--gdi-space-sm) * 2);
 }
-Add to 01-components.css, then commit and push:
 
 /* Blurb cards — Home page signposts */
 .et_pb_blurb {
