@@ -71,6 +71,49 @@
   transform: translateY(-2px);
 }
 
+/* Card link — replaces .et_pb_blurb styling above for cards rendered as a real <a> */
+.gdi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  background: var(--gdi-color-bg);
+  border-radius: var(--gdi-radius-md);
+  box-shadow: var(--gdi-shadow-sm);
+  padding: var(--gdi-space-md);
+  height: 100%;
+  transition: var(--gdi-transition);
+  color: inherit;
+}
+
+.gdi-card:hover {
+  box-shadow: var(--gdi-shadow-md);
+  transform: translateY(-2px);
+}
+
+.gdi-card svg {
+  width: 64px;
+  height: 64px;
+  color: var(--gdi-color-primary);
+  margin-bottom: var(--gdi-space-sm);
+}
+
+.gdi-card h3 {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  font-size: var(--gdi-text-lg);
+  color: var(--gdi-color-text);
+  margin: 0 0 var(--gdi-space-xs);
+}
+
+.gdi-card p {
+  font-family: var(--gdi-font-body);
+  color: var(--gdi-color-text-muted);
+  font-size: var(--gdi-text-sm);
+  margin: 0;
+}
+
 .et_pb_row {
   row-gap: var(--gdi-space-md);
 }
