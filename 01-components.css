@@ -55,3 +55,23 @@
 .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a::after {
   width: calc(100% - var(--gdi-space-sm) * 2);
 }
+Add to 01-components.css, then commit and push:
+
+/* Blurb cards — Home page signposts */
+.et_pb_blurb {
+  background: var(--gdi-color-bg);
+  border-radius: var(--gdi-radius-md);
+  box-shadow: var(--gdi-shadow-sm);
+  padding: var(--gdi-space-md);
+  transition: var(--gdi-transition);
+  height: 100%;
+}
+
+.et_pb_blurb:hover {
+  box-shadow: var(--gdi-shadow-md);
+  transform: translateY(-2px);
+}
+
+.et_pb_row {
+  row-gap: var(--gdi-space-md);
+}
