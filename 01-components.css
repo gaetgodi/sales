@@ -17,3 +17,41 @@
     justify-content: flex-start;
   }
 }
+
+/* Main nav styling — typography, spacing, active state, hover underline */
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
+  font-family: var(--gdi-font-body);
+  font-weight: 500;
+  font-size: var(--gdi-text-base);
+  letter-spacing: 0.02em;
+  color: var(--gdi-color-text-secondary);
+  padding: 0 var(--gdi-space-sm);
+  position: relative;
+  transition: var(--gdi-transition);
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover {
+  color: var(--gdi-color-primary);
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a {
+  color: var(--gdi-color-primary);
+  font-weight: 600;
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: var(--gdi-space-sm);
+  right: var(--gdi-space-sm);
+  width: 0;
+  height: 2px;
+  background: var(--gdi-color-primary);
+  transition: var(--gdi-transition);
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover::after,
+.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a::after {
+  width: calc(100% - var(--gdi-space-sm) * 2);
+}
