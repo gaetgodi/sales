@@ -123,9 +123,11 @@
   color: var(--gdi-color-primary);
 }
 
-.et_mobile_nav_menu {
-  display: flex;
-  align-items: center;
+@media (max-width: 980px) {
+  .et_mobile_nav_menu {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .et_mobile_menu {
@@ -163,4 +165,8 @@
   box-shadow: var(--gdi-shadow-md);
   position: relative;
   z-index: 99;
+}
+
+.et_pb_section_1_tb_header {
+  background-color: var(--gdi-color-bg-alt);
 }
