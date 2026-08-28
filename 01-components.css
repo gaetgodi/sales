@@ -223,3 +223,72 @@
 .et_pb_text_0_tb_footer .et_pb_text_inner {
   font-size: var(--gdi-text-sm) !important;
 }
+
+/* === Boxed "art on a screen" layout === */
+
+body {
+  background-color: var(--gdi-color-page-bg);
+}
+
+/* Three regions as capped, centered, rounded cards with breathing room
+   between them — collapsing to edge-to-edge below phone breakpoint */
+
+.et-l--header,
+#main-content,
+.et-l--footer {
+  max-width: var(--gdi-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: var(--gdi-radius-lg);
+  overflow: hidden;
+}
+
+.et-l--header {
+  margin-top: var(--gdi-space-lg);
+  box-shadow: var(--gdi-shadow-md);
+}
+
+#main-content {
+  margin-top: var(--gdi-space-md);
+  margin-bottom: var(--gdi-space-md);
+  box-shadow: var(--gdi-shadow-md);
+  padding: var(--gdi-space-lg);
+  border: 1px solid var(--gdi-color-card-border);
+}
+
+.et-l--footer {
+  margin-bottom: var(--gdi-space-lg);
+  box-shadow: var(--gdi-shadow-md);
+}
+
+/* Constrain prose specifically, inside the wider content card — keeps
+   grid/card layouts (like Home's Blurb rows) at full card width, while
+   paragraphs and headings sit in a comfortable ~720px reading column */
+#main-content .et_pb_text,
+#main-content .et_pb_heading {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Phone: collapse to edge-to-edge, no floating card effect */
+@media (max-width: 767px) {
+  .et-l--header,
+  #main-content,
+  .et-l--footer {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  #main-content {
+    padding: var(--gdi-space-md);
+  }
+
+  #main-content .et_pb_text,
+  #main-content .et_pb_heading {
+    max-width: 100%;
+  }
+}
