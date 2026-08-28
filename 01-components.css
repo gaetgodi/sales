@@ -168,5 +168,25 @@
 }
 
 .et_pb_section_1_tb_header {
-  background-color: var(--gdi-color-bg-alt);
+  background-color: color-mix(in srgb, var(--gdi-color-primary) 8%, white);
+}
+
+/* Menu module: Divi's per-module builder setting paints an explicit
+   #ffffff background (.et_pb_menu_0_tb_header.et_pb_menu{background-color:#ffffff}),
+   inlined in <style id="et-critical-inline-css"> which loads after this
+   stylesheet — same specificity, later in the cascade, so it wins without
+   !important. That's what was creating the separate white box against the
+   section's tinted background. */
+.et_pb_menu_0_tb_header.et_pb_menu {
+  background-color: transparent !important;
+}
+
+/* Menu module has no width rule of its own — it fills the full-width column
+   (et_flex_column_24_24) by Divi's flex defaults, which is what left the
+   nav links (right-aligned inside it) sitting far from the module's own
+   edges. Shrink the module to its content and center it in the row. */
+.et_pb_menu_0_tb_header {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
 }
