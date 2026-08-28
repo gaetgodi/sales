@@ -153,16 +153,8 @@
   font-weight: 600;
 }
 
-/* Marry the two header sections into one visual object, while keeping their
-   distinct backgrounds (logo/teal vs nav/white) intact */
-
-.et-l--header .et_pb_section {
-  padding-top: var(--gdi-space-sm);
-  padding-bottom: var(--gdi-space-sm);
-}
-
+/* Stacking context for the header above adjacent content */
 .et-l--header {
-  box-shadow: var(--gdi-shadow-md);
   position: relative;
   z-index: 99;
 }
