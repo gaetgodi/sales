@@ -159,6 +159,15 @@
   z-index: 99;
 }
 
+/* #gli-header's containing block for position:sticky is its immediate
+   parent, .et_builder_inner_content — and since that wrapper holds
+   nothing but the header section, its auto height exactly equals
+   #gli-header's own height, leaving zero room for sticky to travel
+   before hitting its container's edge. min-height gives it that room. */
+.et-l--header .et_builder_inner_content {
+  min-height: 50vh;
+}
+
 .et_pb_row_1_tb_header {
   background-color: color-mix(in srgb, var(--gdi-color-primary) 8%, white);
 }
