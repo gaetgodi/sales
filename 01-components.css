@@ -237,6 +237,8 @@ body {
 
 #gli-header {
   margin-top: var(--gdi-space-lg);
+  margin-left: auto !important;
+  margin-right: auto !important;
   box-shadow: var(--gdi-shadow-md);
   position: sticky;
   top: var(--gdi-space-lg);
