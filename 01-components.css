@@ -117,3 +117,36 @@
 .et_pb_row {
   row-gap: var(--gdi-space-md);
 }
+
+/* Mobile nav hamburger — matches main nav tokens */
+.mobile_menu_bar:before {
+  color: var(--gdi-color-primary);
+}
+
+.et_mobile_nav_menu {
+  display: flex;
+  align-items: center;
+}
+
+.et_mobile_menu {
+  background: var(--gdi-color-bg);
+  border-top: 2px solid var(--gdi-color-primary);
+}
+
+.et_mobile_menu li a {
+  font-family: var(--gdi-font-body);
+  font-weight: 500;
+  color: var(--gdi-color-text-secondary);
+  padding: var(--gdi-space-sm) var(--gdi-space-md);
+  transition: var(--gdi-transition);
+}
+
+.et_mobile_menu li a:hover {
+  color: var(--gdi-color-primary);
+  background: var(--gdi-color-bg-alt);
+}
+
+.et_mobile_menu li.current-menu-item a {
+  color: var(--gdi-color-primary);
+  font-weight: 600;
+}
