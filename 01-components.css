@@ -227,7 +227,7 @@
 /* === Boxed "art on a screen" layout === */
 
 body {
-  background-color: var(--gdi-color-page-bg);
+  background-color: var(--gdi-color-page-bg) !important;
 }
 
 /* Three regions as capped, centered, rounded cards with breathing room
