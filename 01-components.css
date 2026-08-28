@@ -167,7 +167,7 @@
   z-index: 99;
 }
 
-.et_pb_section_1_tb_header {
+.et_pb_row_1_tb_header {
   background-color: color-mix(in srgb, var(--gdi-color-primary) 8%, white);
 }
 
