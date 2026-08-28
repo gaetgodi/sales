@@ -190,3 +190,36 @@
   max-width: 100%;
   margin: 0 auto;
 }
+
+/* Footer heading ("Godin London Incorporated") — Divi's per-module setting
+   already pins font-size to var(--gdi-text-lg) and font-weight to a
+   hardcoded 600, both at higher specificity than 02-typography.css's
+   generic ".et_pb_module h1" rule, so weight/size need matching
+   specificity + !important to actually change. font-family was already
+   inheriting var(--gdi-font-heading) correctly (no leftover Open Sans —
+   nothing in Divi's inline CSS sets font-family here), so it's included
+   below for explicitness but wasn't the broken part. */
+.et_pb_heading_0_tb_footer .et_pb_heading_container h1 {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading) !important;
+  font-size: var(--gdi-text-xl) !important;
+}
+
+/* Footer copyright text — the module wrapper (.et_pb_text_0_tb_footer) has
+   no width/max-width of its own, so it was simply filling its full-width
+   column; Divi pins its margin/padding with !important already, so ours
+   need to match. font-size is set separately on the nested
+   .et_pb_text_inner (13px, unguarded) rather than the wrapper, so that
+   needs its own rule to actually take effect. */
+.et_pb_text_0_tb_footer {
+  font-family: var(--gdi-font-body);
+  max-width: var(--gdi-max-width);
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: var(--gdi-space-md) !important;
+  padding-right: var(--gdi-space-md) !important;
+}
+
+.et_pb_text_0_tb_footer .et_pb_text_inner {
+  font-size: var(--gdi-text-sm) !important;
+}
