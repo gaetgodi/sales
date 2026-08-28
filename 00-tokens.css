@@ -35,7 +35,7 @@
   --gdi-color-bg:           var(--gdi-white);
   --gdi-color-bg-alt:       var(--gdi-gray-100);
   --gdi-color-page-bg:      color-mix(in srgb, var(--gdi-teal-light) 15%, white);
-  --gdi-color-card-border:  color-mix(in srgb, var(--gdi-teal-light) 25%, white);
+  --gdi-color-card-border:  color-mix(in srgb, var(--gdi-teal-light) 55%, white);
   --gdi-color-footer-bg:    var(--gdi-teal-dark);
   --gdi-color-footer-text:  var(--gdi-white);
 
