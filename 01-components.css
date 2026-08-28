@@ -241,7 +241,7 @@ body {
   margin-right: auto !important;
   box-shadow: var(--gdi-shadow-md);
   position: sticky;
-  top: var(--gdi-space-lg);
+  top: 64px;
 }
 
 #main-content {
