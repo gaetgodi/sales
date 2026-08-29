@@ -242,14 +242,6 @@ body {
   box-shadow: var(--gdi-shadow-md);
 }
 
-/* Distinct, stronger tinted zone specifically behind the Content card —
-   #et-main-area wraps only #main-content (confirmed: excludes header and
-   footer), so this doesn't touch the lighter body page-bg tint sitting
-   behind Header/Footer's margins */
-#et-main-area {
-  background-color: var(--gdi-color-content-bg);
-}
-
 #main-content {
   margin-top: var(--gdi-space-md);
   margin-bottom: var(--gdi-space-md);
