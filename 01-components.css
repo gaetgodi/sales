@@ -245,9 +245,6 @@ body {
 #main-content {
   margin-top: var(--gdi-space-md);
   margin-bottom: var(--gdi-space-md);
-  box-shadow: var(--gdi-shadow-md);
-  padding: var(--gdi-space-lg);
-  border: 1px solid var(--gdi-color-card-border);
 }
 
 .et-l--footer {
@@ -275,10 +272,6 @@ body {
     margin-right: 0;
     border-radius: 0;
     box-shadow: none;
-  }
-
-  #main-content {
-    padding: var(--gdi-space-md);
   }
 
   #main-content .et_pb_text,
