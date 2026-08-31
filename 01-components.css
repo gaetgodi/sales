@@ -246,19 +246,26 @@ body {
   overflow: hidden;
 }
 
-/* box-shadow/max-width/border-radius live on .et-l--header (the theme
-   builder wrapper), not #gli-header (the actual Section element), because
+/* All header card spacing/shape rules live on .et-l--header (the theme
+   builder wrapper), not #gli-header (the actual Section element) — matching
+   how .et-l--footer already works, with no ID dependency at all now.
    #gli-header's ID selector would otherwise outrank — and silently override
    — Divi's own class-based Section presets (box-shadow, border-radius,
-   max-width) applied to that same element. */
+   max-width, margin) applied to that same element.
+   margin-top lives here rather than on the nested #gli-header for another
+   reason too: .et-l--header has overflow:hidden, which stops a child's
+   margin from collapsing out of it — so margin-top on #gli-header used to
+   stay trapped inside the header's own box as a textured strip (see the
+   header/footer gap investigation). With margin-top on .et-l--header
+   itself instead, it collapses straight through #page-container's
+   overflow:visible ancestors exactly like .et-l--footer's margin-bottom
+   already does — a genuine flat gap outside the frame, not textured space
+   inside it. */
 .et-l--header {
-  box-shadow: var(--gdi-shadow-md);
-}
-
-#gli-header {
   margin-top: var(--gdi-space-lg);
   margin-left: auto !important;
   margin-right: auto !important;
+  box-shadow: var(--gdi-shadow-md);
 }
 
 #main-content {
