@@ -225,7 +225,7 @@ body {
 /* Three regions as capped, centered, rounded cards with breathing room
    between them — collapsing to edge-to-edge below phone breakpoint */
 
-#gli-header,
+.et-l--header,
 #main-content,
 .et-l--footer {
   max-width: var(--gdi-max-width);
@@ -235,11 +235,19 @@ body {
   overflow: hidden;
 }
 
+/* box-shadow/max-width/border-radius live on .et-l--header (the theme
+   builder wrapper), not #gli-header (the actual Section element), because
+   #gli-header's ID selector would otherwise outrank — and silently override
+   — Divi's own class-based Section presets (box-shadow, border-radius,
+   max-width) applied to that same element. */
+.et-l--header {
+  box-shadow: var(--gdi-shadow-md);
+}
+
 #gli-header {
   margin-top: var(--gdi-space-lg);
   margin-left: auto !important;
   margin-right: auto !important;
-  box-shadow: var(--gdi-shadow-md);
 }
 
 #main-content {
@@ -264,7 +272,7 @@ body {
 
 /* Phone: collapse to edge-to-edge, no floating card effect */
 @media (max-width: 767px) {
-  #gli-header,
+  .et-l--header,
   #main-content,
   .et-l--footer {
     max-width: 100%;
