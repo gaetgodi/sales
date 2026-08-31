@@ -344,26 +344,33 @@ body {
 }
 
 /* Tagline (.gdi-header-tagline, added as a real Text module by hand in
-   the builder). Its confirmed rendered position spans roughly 29%-57%
-   across the header Section's width — well past the gradient's light
-   end where the logo sits, but also well short of the nav's solid dark
-   backing. At that span the gradient itself is a medium teal (~rgb(94,
-   174,180) at the left edge down to ~rgb(62,142,148) at the right),
-   luminance ~0.36 down to ~0.23 — closer to "light" than "dark" in
-   absolute terms. That flips the expected fix: white text actually
-   FAILS here (2.57:1 to 3.82:1 across the span, all below the 4.5:1
-   AA floor for normal text) — it's the near-light background, not the
-   header's darker fringes, that dominates this exact spot. The existing
-   --gdi-color-text token (--gdi-gray-900, #1a1a1a — already used
-   site-wide for body copy) passes cleanly instead: 6.78:1 at the left
-   edge down to 4.56:1 at the right edge, clear of AA across the whole
-   span. --gdi-teal-dark (the originally-planned ink tone) was checked
-   too and also fails here (2.02:1-3.00:1) — this position needed dark
-   near-black, not brand-teal-dark or white. */
+   the builder). Confirmed rendered span: ~29%-61% across the header
+   Section's width — past the gradient's light end where the logo sits,
+   short of the nav's solid dark backing. At that span the gradient is a
+   medium teal (~rgb(94,174,180) at the left edge down to ~rgb(57,137,143)
+   at the right), luminance ~0.36 down to ~0.21 — closer to "light" than
+   "dark" in absolute terms. White text (matching the nav) FAILS here
+   (2.57:1-3.82:1, all below AA); --gdi-teal-dark also fails (2.02:1-
+   3.00:1). --gdi-color-text (--gdi-gray-900, #1a1a1a, already used
+   site-wide for body copy) is still the right choice, but note: bumping
+   to --gdi-text-base (16px, up from --gdi-text-sm) widened the rendered
+   box enough to push its right edge further into the gradient's darker
+   zone — contrast there is now ~4.25:1, a narrow miss of the 4.5:1 AA
+   floor (down from ~4.56:1 at the old, narrower width). Visually
+   confirmed: the tail end ("...the software.") reads slightly softer
+   than the rest, consistent with that number — font-weight 300 doesn't
+   change the color-contrast math itself (WCAG's ratio only depends on
+   flat color luminance, not stroke weight), but thinner strokes make
+   that narrow miss more perceptible to the eye. Also note: only Inter
+   Regular (400) and Bold (700) are self-hosted (00-fonts.css) — there is
+   no 300 weight or italic face registered, so the browser substitutes
+   the nearest registered weight (400) and synthesizes a faux/oblique
+   italic rather than rendering a true light-italic design. */
 .gdi-header-tagline {
   font-family: var(--gdi-font-body);
-  font-size: var(--gdi-text-sm);
-  font-weight: 500;
+  font-size: var(--gdi-text-base);
+  font-weight: 300;
+  font-style: italic;
   letter-spacing: 0.01em;
   color: var(--gdi-color-text);
 }
