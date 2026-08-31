@@ -222,6 +222,17 @@ body {
   background-color: var(--gdi-color-page-bg) !important;
 }
 
+/* Divi's own boxed-layout wrapper (see investigation: no background-color
+   rule exists on this element anywhere in Divi core or here previously —
+   it was transparent, letting body's tint show through). Give it its own
+   subtle off-white tint plus a tileable paper texture, sitting one layer
+   above the body background but still behind the header/main/footer cards. */
+.et_boxed_layout #page-container {
+  background-color: var(--gdi-color-boxed-bg);
+  background-image: url('images/texture-paper.png');
+  background-repeat: repeat;
+}
+
 /* Three regions as capped, centered, rounded cards with breathing room
    between them — collapsing to edge-to-edge below phone breakpoint */
 
