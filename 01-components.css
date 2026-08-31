@@ -18,42 +18,52 @@
   }
 }
 
-/* Main nav styling — typography, spacing, active state, hover underline */
+/* Main nav styling — typography, spacing, active state, hover underline.
+   Redesigned to read as one unit with the header rather than a flat,
+   disconnected white bar: the row's own background (below) now matches
+   the gradient's dark end, so link color needs to work against a solid
+   dark teal, not the previous near-white strip — see the header redesign
+   investigation for the contrast numbers (white on --gdi-teal-dark is
+   ~7.7:1, comfortably clear of AA even at this 14px size). Uppercase +
+   wider tracking + smaller size reads as considered/designed rather than
+   a default browser-ish nav link. */
 .et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
   font-family: var(--gdi-font-body);
-  font-weight: 500;
-  font-size: var(--gdi-text-base);
-  letter-spacing: 0.02em;
-  color: var(--gdi-color-text-secondary);
-  padding: 0 var(--gdi-space-sm);
+  font-weight: 600;
+  font-size: var(--gdi-text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gdi-white);
+  opacity: 0.82;
+  padding: 0 var(--gdi-space-md);
   position: relative;
   transition: var(--gdi-transition);
 }
 
 .et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover {
-  color: var(--gdi-color-primary);
+  opacity: 1;
 }
 
 .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a {
-  color: var(--gdi-color-primary);
-  font-weight: 600;
+  opacity: 1;
+  font-weight: 700;
 }
 
 .et_pb_menu .et_pb_menu__menu > nav > ul > li > a::after {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: var(--gdi-space-sm);
-  right: var(--gdi-space-sm);
+  bottom: -6px;
+  left: var(--gdi-space-md);
+  right: var(--gdi-space-md);
   width: 0;
   height: 2px;
-  background: var(--gdi-color-primary);
+  background: var(--gdi-white);
   transition: var(--gdi-transition);
 }
 
 .et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover::after,
 .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a::after {
-  width: calc(100% - var(--gdi-space-sm) * 2);
+  width: calc(100% - var(--gdi-space-md) * 2);
 }
 
 /* Blurb cards — Home page signposts */
@@ -159,8 +169,18 @@
   z-index: 99;
 }
 
+/* Nav row background — was a near-white tint, which is what read as a
+   "stark, disconnected" flat bar sitting on top of the gradient. The
+   header gradient is horizontal (light-left for the logo, dark-right),
+   so a single link text color can't have good contrast at both ends of
+   it directly — solving that by giving the nav row its own solid,
+   opaque background instead (reusing the gradient's own dark end) so nav
+   contrast is guaranteed regardless of gradient position, while still
+   reading as "part of the same teal," not a foreign white strip. */
 .et_pb_row_1_tb_header {
-  background-color: color-mix(in srgb, var(--gdi-color-primary) 8%, white);
+  background-color: var(--gdi-teal-dark);
+  padding-top: var(--gdi-space-xs);
+  padding-bottom: var(--gdi-space-xs);
 }
 
 /* Menu module: Divi's per-module builder setting paints an explicit
@@ -294,10 +314,33 @@ body {
    !important isn't needed there. */
 .et-l--header .et_pb_section {
   background-image: var(--gdi-gradient-header) !important;
+  /* Divi's default section padding here was a flat 60px top/bottom (not
+     one of our tokens) — tightened now that the header holds more visual
+     weight (larger logo, bolder nav): proportionate rather than tall and
+     loose. */
+  padding-top: var(--gdi-space-md);
+  padding-bottom: var(--gdi-space-md);
 }
 
 .et-l--footer .et_pb_section {
   background-image: var(--gdi-gradient-footer);
+}
+
+/* Logo — Divi's builder-set image height (125px, baked into per-page
+   critical CSS via the module's own Sizing field, not inline style) reads
+   as small because the source PNG has heavy internal transparent padding:
+   pixel-sampling shows the actual visible mark (leaf + "GLi") fills only
+   ~30% of the canvas width and ~44% of its height. At 125px container
+   height the real glyph is only ~56px tall. This is a stylesheet override
+   (matching the header gradient's approach), not a builder change, since
+   we're staying in git-tracked CSS rather than editing the Theme Builder
+   template directly — 190px container height puts the visible glyph at
+   roughly ~85px, a proper header-scale mark. !important is needed:
+   Divi's own rule has equal selector specificity and loads later in the
+   cascade, so it would otherwise win by source order alone. */
+.et-l--header .et_pb_image_wrap img {
+  height: 190px !important;
+  width: auto;
 }
 
 /* Constrain prose specifically, inside the wider content card — keeps
