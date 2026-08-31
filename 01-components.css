@@ -364,8 +364,21 @@ body {
    winning the font-family tie-break by source order alone (confirmed
    live: computed font-family was still Inter, not Newsreader). Pairing
    with the module's own existing ".et_pb_module" class bumps this to
-   two classes (0,0,2,0), safely ahead regardless of load order. */
-.et_pb_module.gdi-header-tagline {
+   two classes (0,0,2,0), safely ahead regardless of load order.
+   Second bug found after that fix shipped: the wrapper div's own
+   computed font-family was correctly Newsreader, but the *visible text*
+   sits two levels deeper — Divi wraps Text-module content in
+   ".et_pb_text_inner > p" — and 02-typography.css's "p" selector
+   (bare tag, 0,0,0,1) matches that <p> directly. A direct match on an
+   element always wins over whatever its ancestor computed to, no
+   matter the ancestor's specificity; that's not part of the
+   specificity fight above at all, so the wrapper fix never reached it
+   (confirmed live: the <p> itself still computed to the Inter stack,
+   which is what was actually rendering — sans-serif, not the
+   Newsreader on the wrapper). Explicit child selector below beats the
+   bare "p" outright (0,0,1,1 > 0,0,0,1). */
+.et_pb_module.gdi-header-tagline,
+.gdi-header-tagline .et_pb_text_inner p {
   font-family: var(--gdi-font-accent);
   font-size: var(--gdi-text-base);
   font-weight: 400;
