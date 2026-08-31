@@ -343,33 +343,32 @@ body {
   width: auto;
 }
 
-/* Tagline (.gdi-header-tagline, added as a real Text module by hand in
-   the builder). Confirmed rendered span: ~29%-61% across the header
-   Section's width — past the gradient's light end where the logo sits,
-   short of the nav's solid dark backing. At that span the gradient is a
-   medium teal (~rgb(94,174,180) at the left edge down to ~rgb(57,137,143)
-   at the right), luminance ~0.36 down to ~0.21 — closer to "light" than
-   "dark" in absolute terms. White text (matching the nav) FAILS here
-   (2.57:1-3.82:1, all below AA); --gdi-teal-dark also fails (2.02:1-
-   3.00:1). --gdi-color-text (--gdi-gray-900, #1a1a1a, already used
-   site-wide for body copy) is still the right choice, but note: bumping
-   to --gdi-text-base (16px, up from --gdi-text-sm) widened the rendered
-   box enough to push its right edge further into the gradient's darker
-   zone — contrast there is now ~4.25:1, a narrow miss of the 4.5:1 AA
-   floor (down from ~4.56:1 at the old, narrower width). Visually
-   confirmed: the tail end ("...the software.") reads slightly softer
-   than the rest, consistent with that number — font-weight 300 doesn't
-   change the color-contrast math itself (WCAG's ratio only depends on
-   flat color luminance, not stroke weight), but thinner strokes make
-   that narrow miss more perceptible to the eye. Also note: only Inter
-   Regular (400) and Bold (700) are self-hosted (00-fonts.css) — there is
-   no 300 weight or italic face registered, so the browser substitutes
-   the nearest registered weight (400) and synthesizes a faux/oblique
-   italic rather than rendering a true light-italic design. */
-.gdi-header-tagline {
-  font-family: var(--gdi-font-body);
+/* Tagline (.gdi-header-tagline, a real Text module added by hand in the
+   builder). Now set in --gdi-font-accent (Newsreader italic, self-hosted
+   — see 00-fonts.css/00-tokens.css) instead of Inter, reserved
+   specifically for this kind of expressive one-off moment.
+   Contrast history: this module's rendered position (~29%-61%+ across
+   the header Section's horizontal gradient) sits in a medium-teal zone
+   — closer to "light" than "dark" in absolute luminance — where white
+   text (matching the nav) fails (as low as 2.57:1) and --gdi-teal-dark
+   also fails (as low as 2.02:1). --gdi-color-text (--gdi-gray-900,
+   #1a1a1a, already used site-wide for body copy) is the color that
+   actually holds up here; re-verified again after this font swap since
+   changing the rendered box width shifts how far right it reaches into
+   the gradient's darker end — see the font-swap investigation for the
+   current exact numbers.
+   Selector note: ".gdi-header-tagline" alone (0,0,1,0) tied on
+   specificity with 02-typography.css's "p, .et_pb_module" rule
+   (also 0,0,1,0, font-family: var(--gdi-font-body)) — and since
+   02-typography.css loads after this file, that rule was silently
+   winning the font-family tie-break by source order alone (confirmed
+   live: computed font-family was still Inter, not Newsreader). Pairing
+   with the module's own existing ".et_pb_module" class bumps this to
+   two classes (0,0,2,0), safely ahead regardless of load order. */
+.et_pb_module.gdi-header-tagline {
+  font-family: var(--gdi-font-accent);
   font-size: var(--gdi-text-base);
-  font-weight: 300;
+  font-weight: 400;
   font-style: italic;
   letter-spacing: 0.01em;
   color: var(--gdi-color-text);

@@ -65,6 +65,10 @@
   --gdi-font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --gdi-font-body:    'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --gdi-font-mono:    'Courier New', monospace;
+  /* Deliberately separate from heading/body — reserved for expressive one-off
+     moments only (the header tagline, possibly a future pull-quote/testimonial).
+     Never use for body copy or headings. */
+  --gdi-font-accent:  'Newsreader', serif;
 
   --gdi-weight-heading: 700;
   --gdi-weight-body:    400;
