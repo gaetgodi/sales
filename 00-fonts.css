@@ -1,7 +1,8 @@
 /*
  * 00-fonts.css
  * Self-hosted Inter font faces for divi-sales-child (godindev.com)
- * Static woff2 files sourced from Inter v4.1 (rsms/inter), Regular (400) and Bold (700) only.
+ * Static woff2 files sourced from Inter v4.1 (rsms/inter), "web" folder: Regular (400),
+ * Bold (700), Light (300), and Light Italic (300 italic).
  * Loaded before 00-tokens.css so --gdi-font-* references resolve to a font that's already
  * registered with the browser.
  */
@@ -19,5 +20,21 @@
   src: url('fonts/Inter-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-LightItalic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
   font-display: swap;
 }
