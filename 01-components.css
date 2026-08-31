@@ -265,7 +265,6 @@ body {
   margin-top: var(--gdi-space-lg);
   margin-left: auto !important;
   margin-right: auto !important;
-  /* box-shadow: var(--gdi-shadow-md); */
 }
 
 #main-content {
@@ -275,7 +274,6 @@ body {
 
 .et-l--footer {
   margin-bottom: var(--gdi-space-lg);
-  /* box-shadow: var(--gdi-shadow-md); */
 }
 
 /* Constrain prose specifically, inside the wider content card — keeps
