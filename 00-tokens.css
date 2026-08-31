@@ -67,6 +67,9 @@
   --gdi-space-2xl: 6rem;
 
   /* Layout / shape / motion — matches godin.com's mechanical values */
+  /* Must also be manually kept in sync with Divi's Theme Customizer →
+     Layout Settings → Website Content Width field — that Customizer
+     field doesn't support CSS variable references. */
   --gdi-max-width: 1200px;
   --gdi-radius-sm: 4px;
   --gdi-radius-md: 8px;
