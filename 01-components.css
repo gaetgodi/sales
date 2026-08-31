@@ -276,6 +276,30 @@ body {
   margin-bottom: var(--gdi-space-lg);
 }
 
+/* Header/footer brand gradient (see --gdi-gradient-header/-footer in
+   00-tokens.css for the full contrast reasoning). Targets the actual
+   Section element via a stable two-class selector — .et-l--header/-footer
+   are theme-builder wrappers with no background of their own; the Section
+   inside them (.et_pb_section) is what Divi paints. Using
+   ".et-l--header .et_pb_section" rather than the positional
+   ".et_pb_section_0_tb_header" class keeps this safe if the Section is
+   ever reordered, and its two-class specificity beats Divi's single-class
+   selector even with matching !important.
+   The header needs !important: Divi bakes its own leftover gradient into
+   a dynamically-generated, !important-flagged inline <style> block per
+   page load (not a preset, not editable from the builder's normal
+   controls) — see the header/footer gradient investigation. The footer
+   currently has no competing background rule at all (its own preset
+   reference is orphaned — see the earlier preset investigation), so
+   !important isn't needed there. */
+.et-l--header .et_pb_section {
+  background-image: var(--gdi-gradient-header) !important;
+}
+
+.et-l--footer .et_pb_section {
+  background-image: var(--gdi-gradient-footer);
+}
+
 /* Constrain prose specifically, inside the wider content card — keeps
    grid/card layouts (like Home's Blurb rows) at full card width, while
    paragraphs and headings sit in a comfortable ~720px reading column */
