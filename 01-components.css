@@ -376,11 +376,22 @@ body {
    (confirmed live: the <p> itself still computed to the Inter stack,
    which is what was actually rendering — sans-serif, not the
    Newsreader on the wrapper). Explicit child selector below beats the
-   bare "p" outright (0,0,1,1 > 0,0,0,1). */
+   bare "p" outright (0,0,1,1 > 0,0,0,1).
+   Sized up from --gdi-text-base to --gdi-text-xl (16px -> 28px desktop,
+   scaling down to 24px/21.6px at the existing tablet/phone breakpoints
+   via 00-tokens.css) once the font itself was confirmed correct — checked
+   for wrapping and clearance above the nav row (none, plenty of margin)
+   and re-verified contrast since the wider box now reaches further right
+   into the header gradient: worst case (right edge, ~76% across the
+   section) samples ~3.4:1 against --gdi-color-text, which clears the
+   3:1 WCAG AA-large threshold this text size qualifies for (>=24px) —
+   tighter than the ~4.1:1 the same spot held at the old size/width, but
+   passing. --gdi-text-lg was the fallback if xl looked oversized; it
+   didn't. */
 .et_pb_module.gdi-header-tagline,
 .gdi-header-tagline .et_pb_text_inner p {
   font-family: var(--gdi-font-accent);
-  font-size: var(--gdi-text-base);
+  font-size: var(--gdi-text-xl);
   font-weight: 400;
   font-style: italic;
   letter-spacing: 0.01em;
