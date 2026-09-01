@@ -34,13 +34,41 @@
   --gdi-color-border:       var(--gdi-gray-200);
   --gdi-color-bg:           var(--gdi-white);
   --gdi-color-bg-alt:       var(--gdi-gray-100);
+  --gdi-color-page-bg:      color-mix(in srgb, var(--gdi-teal-light) 15%, white);
+  --gdi-color-boxed-bg:     color-mix(in srgb, var(--gdi-teal-light) 5%, white);
+  --gdi-color-content-bg:   color-mix(in srgb, var(--gdi-teal-light) 45%, white);
+  --gdi-color-content-frame: color-mix(in srgb, var(--gdi-teal-mid) 60%, white);
+  --gdi-color-card-border:  color-mix(in srgb, var(--gdi-teal-light) 70%, white);
   --gdi-color-footer-bg:    var(--gdi-teal-dark);
   --gdi-color-footer-text:  var(--gdi-white);
+
+  /* Header/footer brand gradient — one shared teal progression (light to
+     dark), applied with the direction/range each element's own content
+     needs, not literally identical CSS. Verified against actual pixel-
+     sampled content, not eyeballed:
+     - Header: the "GLi" wordmark is itself a dark navy-teal (~rgb(5,62,97),
+       essentially --gdi-teal-dark), so it needs to sit on the *light* end
+       (--gdi-teal-light gives ~6.3:1 contrast against it). The nav row has
+       its own opaque light strip already, independent of this gradient, so
+       only the logo's corner matters here — hence a horizontal sweep with
+       light on the left, where the logo sits.
+     - Footer: heading + copyright are white text, both #fff. --gdi-teal-dark
+       gives white text ~7.7:1 contrast; --gdi-teal-light would give white
+       text only ~1.8:1 (fails badly) — so the footer gradient must never
+       reach the light end at all. It stays inside the safe dark range,
+       vertically, from --gdi-color-footer-bg down to a still-dark
+       teal-mid/footer-bg blend (~5.2:1, still comfortably AA-safe). */
+  --gdi-gradient-header: linear-gradient(90deg, var(--gdi-teal-light) 0%, var(--gdi-teal-dark) 100%);
+  --gdi-gradient-footer: linear-gradient(180deg, var(--gdi-color-footer-bg) 0%, color-mix(in srgb, var(--gdi-teal-mid) 60%, var(--gdi-color-footer-bg) 40%) 100%);
 
   /* Typography — single family (Inter), weight/size carry the hierarchy, not a font pairing */
   --gdi-font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --gdi-font-body:    'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --gdi-font-mono:    'Courier New', monospace;
+  /* Deliberately separate from heading/body — reserved for expressive one-off
+     moments only (the header tagline, possibly a future pull-quote/testimonial).
+     Never use for body copy or headings. */
+  --gdi-font-accent:  'Newsreader', serif;
 
   --gdi-weight-heading: 700;
   --gdi-weight-body:    400;
@@ -63,6 +91,9 @@
   --gdi-space-2xl: 6rem;
 
   /* Layout / shape / motion — matches godin.com's mechanical values */
+  /* Must also be manually kept in sync with Divi's Theme Customizer →
+     Layout Settings → Website Content Width field — that Customizer
+     field doesn't support CSS variable references. */
   --gdi-max-width: 1200px;
   --gdi-radius-sm: 4px;
   --gdi-radius-md: 8px;
