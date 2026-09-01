@@ -40,3 +40,61 @@ function divi_sales_child_preload_fonts() {
     echo '<link rel="preload" href="' . esc_url( get_stylesheet_directory_uri() . "/fonts/Newsreader-Italic.woff2" ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 }
 add_action( "wp_head", "divi_sales_child_preload_fonts", 1 );
+
+// Rotating tagline — picks one of four strings at random on each page load
+// and swaps it into the tagline's actual text node. Targets
+// ".gdi-header-tagline .et_pb_text_inner p" rather than the module wrapper
+// alone: per the specificity/selector investigation documented on the CSS
+// rule for this class (01-components.css), Divi wraps Text-module content
+// two levels deep, and the visible text lives on that nested <p>, not the
+// wrapper div — so that's also the node whose textContent actually needs
+// to change. querySelectorAll (not querySelector) so this fires correctly
+// on every page the tagline module is placed on, not just Home, and covers
+// the (unlikely but possible) case of more than one instance on a page —
+// all instances get the same chosen variant rather than independently
+// randomized text. Runs from wp_footer, after the DOM it targets exists,
+// unlike the wp_head font-preload hook above.
+//
+// GA4 dependency: this also fires a gtag() 'tagline_shown' event with the
+// chosen variant so the copy can eventually be compared. As of this
+// writing gtag.js/GA4 is NOT installed anywhere in this theme or in the
+// active plugin list — confirmed no gtag/googletagmanager script tag,
+// no window.gtag, no window.dataLayer on a live page load. The
+// typeof-guard below means the rotation itself still works with no GA4
+// installed; only the analytics event is a no-op until GA4 is added.
+function divi_sales_child_rotate_tagline() {
+    ?>
+    <script>
+    (function () {
+        var taglines = [
+            "Understand the business. Then build the software.",
+            "The software follows the business, not the other way around.",
+            "Know how you work. Then build what helps.",
+            "Built after understanding, not before."
+        ];
+
+        function applyRotatingTagline() {
+            var nodes = document.querySelectorAll( ".gdi-header-tagline .et_pb_text_inner p" );
+            if ( ! nodes.length ) {
+                return;
+            }
+            var index = Math.floor( Math.random() * taglines.length );
+            var variant = "variant_" + ( index + 1 );
+            nodes.forEach( function ( node ) {
+                node.textContent = taglines[ index ];
+            } );
+            if ( typeof gtag === "function" ) {
+                gtag( "event", "tagline_shown", { variant: variant } );
+            }
+        }
+
+        if ( document.readyState === "loading" ) {
+            document.addEventListener( "DOMContentLoaded", applyRotatingTagline );
+        } else {
+            applyRotatingTagline();
+        }
+    })();
+    </script>
+    <?php
+}
+add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
