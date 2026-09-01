@@ -41,6 +41,29 @@ function divi_sales_child_preload_fonts() {
 }
 add_action( "wp_head", "divi_sales_child_preload_fonts", 1 );
 
+// Google Analytics 4 (gtag.js) — Measurement ID G-7QQEBFR63Q. Standard
+// gtag.js snippet, unmodified, output verbatim rather than split across
+// wp_enqueue_script calls so it stays byte-for-byte what Google's own
+// GA4 setup UI hands out (easier to diff against future re-copies from
+// Google, and avoids any escaping surprises from routing an inline
+// dataLayer.push snippet through wp_add_inline_script). This is also
+// what the tagline rotation script's "typeof gtag === 'function'" guard
+// (below) was written against — before this hook existed, that guard
+// was a confirmed no-op site-wide.
+function divi_sales_child_ga4() {
+    ?>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7QQEBFR63Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7QQEBFR63Q');
+    </script>
+    <?php
+}
+add_action( "wp_head", "divi_sales_child_ga4" );
+
 // Rotating tagline — picks one of four strings at random on each page load
 // and swaps it into the tagline's actual text node. Targets
 // ".gdi-header-tagline .et_pb_text_inner p" rather than the module wrapper
@@ -56,12 +79,12 @@ add_action( "wp_head", "divi_sales_child_preload_fonts", 1 );
 // unlike the wp_head font-preload hook above.
 //
 // GA4 dependency: this also fires a gtag() 'tagline_shown' event with the
-// chosen variant so the copy can eventually be compared. As of this
-// writing gtag.js/GA4 is NOT installed anywhere in this theme or in the
-// active plugin list — confirmed no gtag/googletagmanager script tag,
-// no window.gtag, no window.dataLayer on a live page load. The
-// typeof-guard below means the rotation itself still works with no GA4
-// installed; only the analytics event is a no-op until GA4 is added.
+// chosen variant so the copy can eventually be compared. GA4 (see
+// divi_sales_child_ga4() above, also on wp_head, registered first) now
+// provides window.gtag, so the typeof-guard below succeeds and the event
+// actually reaches GA4 — kept as a guard rather than assumed, so this
+// script still degrades gracefully (rotation only, no throw) if GA4 is
+// ever removed or fails to load.
 function divi_sales_child_rotate_tagline() {
     ?>
     <script>
