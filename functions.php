@@ -107,60 +107,48 @@ add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
 // isn't. Rather than install a new plugin unasked, this reuses the
 // FluentSMTP -> Brevo pipeline that's already live via plain wp_mail().
 //
-// The footer's Theme Builder layout (a WP database record, not a theme
-// file) embeds a literal "<!--GDI_FOOTER_CONTACT_FORM-->" marker comment
-// inside a Divi Code module. A static form baked directly into that
-// stored block content would carry one fixed nonce forever — fine at
-// first, stale within a day, and WP Super Cache (30 min TTL here) would
+// The form's actual markup (labels, fields, button — everything an
+// editor would want to see or tweak) lives directly, visibly, in a Divi
+// Code module in the footer's Theme Builder layout: a first version
+// instead put the *entire* form behind a single opaque
+// "<!--GDI_FOOTER_CONTACT_FORM-->" placeholder comment, which meant the
+// module showed as just that raw comment in the Divi Builder — not
+// editable in any meaningful sense. Only the two genuinely
+// per-request-dynamic pieces stay as small inline markers this filter
+// swaps out: the CSRF nonce ("<!--GDI_NONCE-->", inside the hidden
+// input's value attribute) and the post-submit status notice
+// ("<!--GDI_FORM_NOTICE-->", after the submit button) — the same kind of
+// exception the footer's own copyright module already makes for its
+// dynamic-content current-year variable.
+//
+// A nonce embedded in the *stored* block content directly (no filter)
+// would go stale within a day; WP Super Cache (30 min TTL here) would
 // then serve that stale nonce to every visitor until the cache expired.
-// Hooking core's render_block filter instead swaps the marker for a
-// freshly rendered form (fresh nonce) on every uncached page render, so
-// only WP Super Cache's normal 30-minute TTL — well inside the nonce's
-// ~24h validity window — sits between a page load and a working form.
-function divi_sales_child_footer_contact_form_markup() {
+// Swapping it in on every uncached render keeps only Super Cache's
+// 30-minute TTL — well inside the nonce's ~24h validity window — between
+// a page load and a working form.
+function divi_sales_child_footer_contact_form_notice() {
 	$status = isset( $_GET['gdi_contact'] ) ? sanitize_key( wp_unslash( $_GET['gdi_contact'] ) ) : '';
-	ob_start();
-	?>
-	<div id="gdi-footer-contact" class="gdi-footer-form-wrap">
-		<h2 class="gdi-footer-form-heading">Get in touch</h2>
-		<form class="gdi-footer-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="gdi_footer_contact">
-			<?php wp_nonce_field( 'gdi_footer_contact', 'gdi_footer_contact_nonce' ); ?>
-			<div class="gdi-footer-form-hp">
-				<label for="gdi_website">Website</label>
-				<input type="text" id="gdi_website" name="gdi_website" tabindex="-1" autocomplete="off">
-			</div>
-			<div class="gdi-footer-form-row">
-				<div class="gdi-footer-form-field">
-					<label for="gdi_name">Name</label>
-					<input type="text" id="gdi_name" name="gdi_name" placeholder="Name" required>
-				</div>
-				<div class="gdi-footer-form-field">
-					<label for="gdi_email">Email</label>
-					<input type="email" id="gdi_email" name="gdi_email" placeholder="Email" required>
-				</div>
-			</div>
-			<div class="gdi-footer-form-field">
-				<label for="gdi_message">Message</label>
-				<textarea id="gdi_message" name="gdi_message" placeholder="Message" rows="3" required></textarea>
-			</div>
-			<button type="submit" class="gdi-footer-form-submit">Send</button>
-			<?php if ( 'sent' === $status ) : ?>
-				<p class="gdi-footer-form-notice gdi-footer-form-notice--success" role="status">Thanks — your message has been sent.</p>
-			<?php elseif ( 'error' === $status ) : ?>
-				<p class="gdi-footer-form-notice gdi-footer-form-notice--error" role="alert">Something went wrong — please check your details and try again.</p>
-			<?php endif; ?>
-		</form>
-	</div>
-	<?php
-	return ob_get_clean();
+	if ( 'sent' === $status ) {
+		return '<p class="gdi-footer-form-notice gdi-footer-form-notice--success" role="status">Thanks — your message has been sent.</p>';
+	}
+	if ( 'error' === $status ) {
+		return '<p class="gdi-footer-form-notice gdi-footer-form-notice--error" role="alert">Something went wrong — please check your details and try again.</p>';
+	}
+	return '';
 }
 
 function divi_sales_child_inject_footer_contact_form( $block_content, $block ) {
-	if ( is_admin() || false === strpos( $block_content, '<!--GDI_FOOTER_CONTACT_FORM-->' ) ) {
+	if ( is_admin() ) {
 		return $block_content;
 	}
-	return str_replace( '<!--GDI_FOOTER_CONTACT_FORM-->', divi_sales_child_footer_contact_form_markup(), $block_content );
+	if ( false !== strpos( $block_content, '<!--GDI_NONCE-->' ) ) {
+		$block_content = str_replace( '<!--GDI_NONCE-->', esc_attr( wp_create_nonce( 'gdi_footer_contact' ) ), $block_content );
+	}
+	if ( false !== strpos( $block_content, '<!--GDI_FORM_NOTICE-->' ) ) {
+		$block_content = str_replace( '<!--GDI_FORM_NOTICE-->', divi_sales_child_footer_contact_form_notice(), $block_content );
+	}
+	return $block_content;
 }
 add_filter( 'render_block', 'divi_sales_child_inject_footer_contact_form', 10, 2 );
 
