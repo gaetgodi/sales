@@ -105,29 +105,39 @@ add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
 // in-page "#anchor" link (script-library-frontend-global-functions.js,
 // window.et_pb_smooth_scroll), and it does intercept clicks on these
 // links (preventDefault + stopPropagation, confirmed via
-// event.defaultPrevented). Two reasons not to just rely on it here:
-// 1) it only animates (rather than jumping instantly) when the body
-//    carries an "et_smooth_scroll" class, which isn't set anywhere on
-//    this site — so as configured it wouldn't deliver the smooth
-//    scroll asked for regardless. 2) automated testing in this session
-//    repeatedly saw its jQuery animate({scrollTop}) — and even a plain
-//    scrollIntoView() — stall partway on a backgrounded tab
-//    (document.hidden === true throttles requestAnimationFrame, a
-//    standard browser behavior, not specific to this site); a direct,
-//    non-animated scrollTo() always completed correctly in the same
-//    tab, isolating the stall to animation-under-automation rather
-//    than a logic bug — but it means the animated case couldn't be
-//    fully verified end-to-end here and is worth a real click-through.
+// event.defaultPrevented). Not relied on here for two reasons: (1) it
+// only animates when body carries an "et_smooth_scroll" class, which
+// nothing on this site sets, so as configured it wouldn't deliver
+// smooth scrolling regardless; (2) it doesn't account for the sticky
+// header's height at all, so even when it does move the page the
+// target heading lands underneath the header, not below it.
+//
 // This attaches its own handler in the capture phase — capture runs
 // before Divi's bubble-phase delegated handler ever sees the event —
 // and stopImmediatePropagation() so Divi's handler doesn't also run
-// afterward. Respects prefers-reduced-motion the same way the CSS
-// scroll-behavior override does (01-components.css).
+// afterward. It computes the scroll target manually (window.scrollTo,
+// not scrollIntoView) so the sticky header's *current* height —
+// measured fresh via getBoundingClientRect() on every click, not a
+// hardcoded pixel guess — can be subtracted from it: the header (see
+// its "sticky" position setting in the Theme Builder header layout)
+// keeps the same box height whether it's sitting in normal flow or
+// pinned to the top of the viewport, so this works whether or not the
+// page has already scrolled past the point where Divi's own sticky
+// JS has kicked in. A small extra buffer keeps the heading from
+// landing flush against the header's bottom edge. Respects
+// prefers-reduced-motion the same way the CSS scroll-behavior override
+// does (01-components.css).
 function divi_sales_child_nav_jump_links() {
 	?>
 	<script>
 	(function () {
 		var reduceMotion = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		var HEADER_CLEARANCE_BUFFER = 24; // breathing room below the header, beyond its own height
+
+		function getStickyHeaderHeight() {
+			var header = document.querySelector( '.et-l--header' );
+			return header ? Math.ceil( header.getBoundingClientRect().height ) : 0;
+		}
 
 		function jumpToSection( e ) {
 			var id = this.getAttribute( 'href' ).slice( 1 );
@@ -139,7 +149,9 @@ function divi_sales_child_nav_jump_links() {
 			if ( e.stopImmediatePropagation ) {
 				e.stopImmediatePropagation();
 			}
-			target.scrollIntoView( { behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' } );
+			var offset = getStickyHeaderHeight() + HEADER_CLEARANCE_BUFFER;
+			var targetTop = target.getBoundingClientRect().top + window.pageYOffset - offset;
+			window.scrollTo( { top: Math.max( 0, targetTop ), behavior: reduceMotion ? 'auto' : 'smooth' } );
 			if ( window.history && window.history.pushState ) {
 				history.pushState( null, '', '#' + id );
 			}
