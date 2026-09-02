@@ -236,6 +236,33 @@
   font-size: var(--gdi-text-sm) !important;
 }
 
+/* Footer Terms/Privacy links — sit in the column next to the footer
+   heading (see .et_pb_heading_0_tb_footer above), so same font-family
+   and a size between the heading (--gdi-text-xl) and copyright line
+   (--gdi-text-sm). Explicit white + !important: Divi's own generated
+   global link-color CSS (Customizer default, loaded after this
+   stylesheet) otherwise wins at equal class specificity — same reason
+   the header/footer gradient rules above need !important. */
+.gdi-footer-links {
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+}
+
+.gdi-footer-link {
+  color: var(--gdi-color-footer-text) !important;
+  text-decoration: none;
+}
+
+.gdi-footer-link:hover {
+  color: var(--gdi-color-accent-light) !important;
+  text-decoration: underline;
+}
+
+.gdi-footer-links-sep {
+  color: var(--gdi-color-footer-text);
+  opacity: 0.5;
+}
+
 /* === Boxed "art on a screen" layout === */
 
 body {
