@@ -163,6 +163,45 @@
   font-weight: 600;
 }
 
+/* The open mobile dropdown (.et_mobile_menu) was rendering as an empty
+   white bar — no visible item text — confirmed via the live computed
+   style chain (not a viewport-width-dependent render, so this checks
+   out regardless of not being able to screenshot at real mobile
+   width): text color/contrast is fine (Divi's own mobile override,
+   ".et_mobile_menu li a{color:rgba(0,0,0,.6)}" in its per-page
+   critical inline CSS, gives ~5.75:1 against the panel's white
+   background — comfortably readable). The actual cause is layout, not
+   color: the dropdown is position:absolute and opens *below* its
+   containing block without pushing anything else down, so it visually
+   extends past the header's own box — and two ancestors clip that
+   overflow away: ".et_pb_section_0_tb_header" (Divi's own per-page
+   critical CSS, overflow:hidden, generated to clip its
+   background/gradient to the card's rounded corners) and
+   ".et-l--header" itself (overflow:hidden, added below for the same
+   boxed-card-corners reason — see the "Boxed art on a screen layout"
+   section). Both clip any child content that falls outside the
+   header's own (short) box — including the open dropdown — down to
+   whatever sliver survives, which reads as an empty bar.
+   Solved by relaxing both to overflow:visible, but only below Divi's
+   980px hamburger-nav breakpoint (matching the existing
+   ".et_mobile_nav_menu" override above) and only for the mobile
+   dropdown's own ancestors, not the whole card year-round: at that
+   width the rounded corners these overflow:hidden rules exist to
+   protect are already gone (see the phone-width rule further down that
+   zeroes .et-l--header's border-radius/box-shadow entirely), and even
+   in the 768–980px tablet gap where the corners are still rounded, the
+   header Section itself already clips its own background
+   independently via its own matching border-radius + overflow:hidden
+   (baked into that same per-page critical CSS), so relaxing the outer
+   wrapper's overflow here doesn't let anything square-cornered show
+   through. */
+@media (max-width: 980px) {
+  .et-l--header,
+  .et-l--header .et_pb_section {
+    overflow: visible;
+  }
+}
+
 /* Stacking context for the header above adjacent content */
 .et-l--header {
   position: relative;
