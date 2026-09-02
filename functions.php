@@ -100,6 +100,60 @@ function divi_sales_child_rotate_tagline() {
 }
 add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
 
+// Secondary-nav jump links (.gdi-services-nav, on /services/ and
+// /work/) — Divi 5 has its own site-wide smooth-scroll handler for any
+// in-page "#anchor" link (script-library-frontend-global-functions.js,
+// window.et_pb_smooth_scroll), and it does intercept clicks on these
+// links (preventDefault + stopPropagation, confirmed via
+// event.defaultPrevented). Two reasons not to just rely on it here:
+// 1) it only animates (rather than jumping instantly) when the body
+//    carries an "et_smooth_scroll" class, which isn't set anywhere on
+//    this site — so as configured it wouldn't deliver the smooth
+//    scroll asked for regardless. 2) automated testing in this session
+//    repeatedly saw its jQuery animate({scrollTop}) — and even a plain
+//    scrollIntoView() — stall partway on a backgrounded tab
+//    (document.hidden === true throttles requestAnimationFrame, a
+//    standard browser behavior, not specific to this site); a direct,
+//    non-animated scrollTo() always completed correctly in the same
+//    tab, isolating the stall to animation-under-automation rather
+//    than a logic bug — but it means the animated case couldn't be
+//    fully verified end-to-end here and is worth a real click-through.
+// This attaches its own handler in the capture phase — capture runs
+// before Divi's bubble-phase delegated handler ever sees the event —
+// and stopImmediatePropagation() so Divi's handler doesn't also run
+// afterward. Respects prefers-reduced-motion the same way the CSS
+// scroll-behavior override does (01-components.css).
+function divi_sales_child_nav_jump_links() {
+	?>
+	<script>
+	(function () {
+		var reduceMotion = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		function jumpToSection( e ) {
+			var id = this.getAttribute( 'href' ).slice( 1 );
+			var target = document.getElementById( id );
+			if ( ! target ) {
+				return;
+			}
+			e.preventDefault();
+			if ( e.stopImmediatePropagation ) {
+				e.stopImmediatePropagation();
+			}
+			target.scrollIntoView( { behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' } );
+			if ( window.history && window.history.pushState ) {
+				history.pushState( null, '', '#' + id );
+			}
+		}
+
+		document.querySelectorAll( '.gdi-services-nav a' ).forEach( function ( a ) {
+			a.addEventListener( 'click', jumpToSection, true );
+		} );
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'divi_sales_child_nav_jump_links' );
+
 // Footer contact form — name/email/message, independent of the Contact
 // page's own (currently placeholder) form. No form-builder plugin: the
 // site was assumed to have Fluent Forms installed and configured, but
@@ -225,3 +279,27 @@ function divi_sales_child_hide_pending_case_studies( $block_content, $block ) {
 	return current_user_can( 'manage_options' ) ? $block_content : '';
 }
 add_filter( 'render_block', 'divi_sales_child_hide_pending_case_studies', 10, 2 );
+
+// Same pending-case-study gate, applied to one link inside /work/'s
+// secondary nav rather than a whole block: the nav's four links (in
+// order: Outfitter, Stouffville, Recipes, BIAO) live together in one
+// Code module, so the whole-block filter above — which removes an
+// entire block — can't be reused as-is here without also hiding the
+// three links that ARE public. Instead the BIAO link alone is wrapped
+// in "<!--GDI_PENDING_LINK_START-->...<!--GDI_PENDING_LINK_END-->"
+// markers in that Code module's own content, and this filter strips
+// everything between them (markers included) for anyone without
+// manage_options — same capability check, same never-in-the-HTML
+// guarantee as the case-study block itself, just scoped to a substring
+// instead of the whole block. For an admin it just drops the markers
+// and leaves the link.
+function divi_sales_child_hide_pending_nav_link( $block_content, $block ) {
+	if ( false === strpos( $block_content, '<!--GDI_PENDING_LINK_START-->' ) ) {
+		return $block_content;
+	}
+	if ( current_user_can( 'manage_options' ) ) {
+		return str_replace( array( '<!--GDI_PENDING_LINK_START-->', '<!--GDI_PENDING_LINK_END-->' ), '', $block_content );
+	}
+	return preg_replace( '/<!--GDI_PENDING_LINK_START-->.*?<!--GDI_PENDING_LINK_END-->/s', '', $block_content );
+}
+add_filter( 'render_block', 'divi_sales_child_hide_pending_nav_link', 10, 2 );

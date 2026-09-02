@@ -625,7 +625,11 @@ body {
 #custom-development,
 #legacy-migration,
 #recipes,
-#tools-for-developers {
+#tools-for-developers,
+#buck-lake-lodges,
+#stouffville-pickleball-players,
+#recipes-case-study,
+#brain-injury-association-of-ontario {
   scroll-margin-top: var(--gdi-space-md);
 }
 
