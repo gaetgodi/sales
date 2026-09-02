@@ -198,3 +198,30 @@ function divi_sales_child_handle_footer_contact_form() {
 }
 add_action( 'admin_post_gdi_footer_contact', 'divi_sales_child_handle_footer_contact_form' );
 add_action( 'admin_post_nopriv_gdi_footer_contact', 'divi_sales_child_handle_footer_contact_form' );
+
+// Pending case studies (currently: the BIAO write-up on /work/, awaiting
+// the organization's sign-off before it goes public with real specifics
+// about them). The module itself is real, stored, visually-editable
+// Divi content — wrapped in a ".gdi-case-study--pending" div — but this
+// filter strips that whole block from the rendered output for anyone
+// without manage_options, so it's completely absent from the page for
+// every public visitor: not just unlinked, not just hidden by CSS,
+// genuinely never in the HTML that goes out. Logged-in admins (which
+// includes the Divi Builder canvas, and a normal logged-in visit to the
+// live URL) still see it, dashed-border-flagged as a draft (01-
+// components.css) so it can't be mistaken for finished, live content.
+// WP Super Cache doesn't cache logged-in views (its own "disabled for
+// logged-in visitors" default), so this always evaluates fresh for an
+// admin rather than risking a stale cached admin-view.
+//
+// To publish once sign-off is in: open the block in the Divi Builder
+// and remove the "gdi-case-study--pending" class from its wrapping div
+// (Text module, Text tab) — that's the only thing gating it, no code
+// change needed.
+function divi_sales_child_hide_pending_case_studies( $block_content, $block ) {
+	if ( false === strpos( $block_content, 'gdi-case-study--pending' ) ) {
+		return $block_content;
+	}
+	return current_user_can( 'manage_options' ) ? $block_content : '';
+}
+add_filter( 'render_block', 'divi_sales_child_hide_pending_case_studies', 10, 2 );

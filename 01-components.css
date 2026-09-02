@@ -664,3 +664,23 @@ html {
 .gdi-service-cta:hover {
   background: var(--gdi-color-accent-light);
 }
+
+/* /work/ pending case study — only ever rendered for a logged-in admin
+   (see the render_block filter in functions.php; every other visitor
+   never receives this markup at all). Dashed border + flag label so it
+   reads unmistakably as a draft during an admin preview, not as
+   finished, live content. */
+.gdi-case-study--pending {
+  border: 2px dashed var(--gdi-color-accent);
+  border-radius: var(--gdi-radius-md);
+  padding: var(--gdi-space-sm) var(--gdi-space-md);
+}
+
+.gdi-case-study-flag {
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gdi-color-accent);
+}
