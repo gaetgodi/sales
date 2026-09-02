@@ -304,8 +304,16 @@ function divi_sales_child_mobile_nav() {
 		panel.appendChild( panelHeader );
 		panel.appendChild( list );
 
+		// The open button is appended into .et-l--header itself, not
+		// <body> — it needs to be a real descendant for its own
+		// position:absolute (01-components.css) to anchor against the
+		// header card's own edge rather than the viewport. Falls back
+		// to <body> (viewport-fixed positioning would be wrong, but a
+		// misplaced button beats no button at all) only if that
+		// wrapper somehow isn't there.
+		var headerEl = document.querySelector( '.et-l--header' ) || document.body;
+		headerEl.appendChild( openBtn );
 		document.body.appendChild( overlay );
-		document.body.appendChild( openBtn );
 		document.body.appendChild( panel );
 
 		function closeMenu() {
