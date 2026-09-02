@@ -118,13 +118,39 @@ add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
 // afterward. It computes the scroll target manually (window.scrollTo,
 // not scrollIntoView) so the sticky header's *current* height —
 // measured fresh via getBoundingClientRect() on every click, not a
-// hardcoded pixel guess — can be subtracted from it: the header (see
-// its "sticky" position setting in the Theme Builder header layout)
-// keeps the same box height whether it's sitting in normal flow or
-// pinned to the top of the viewport, so this works whether or not the
-// page has already scrolled past the point where Divi's own sticky
-// JS has kicked in. A small extra buffer keeps the heading from
-// landing flush against the header's bottom edge. Respects
+// hardcoded pixel guess — can be subtracted from it.
+//
+// That height has to come from ".et-l--header .et_pb_section" (the
+// actual Divi Section that gets position:fixed once its own sticky JS
+// engages — confirmed directly: it carries et_pb_sticky/
+// et_pb_sticky--top and measures 320px in both states), not from
+// ".et-l--header" itself: that outer Theme Builder wrapper keeps a
+// static 384px box even once its only child pops out to fixed
+// positioning and scrolls away underneath it (top: -804 once scrolled
+// — a placeholder height Divi leaves behind, presumably to avoid a
+// layout jump), so measuring the wrapper overshoots the real visible
+// header by 64px. That 64px is exactly what showed up as a visible gap
+// with leftover previous-section text still in it once a jump-link
+// landed — .et_pb_section is the fix.
+//
+// For a logged-in admin, #wpadminbar sits fixed above the sticky
+// header (32px, confirmed via its own getBoundingClientRect()) and has
+// to be added on top of the header's own height too, or the target
+// lands that far underneath the header — which is exactly what a
+// buffer-only fix (raising HEADER_CLEARANCE_BUFFER without accounting
+// for the admin bar) would have gotten wrong: enough headroom to clear
+// the header for a logged-in admin would be too much for a real,
+// logged-out visitor, who has no admin bar at all. Measuring
+// #wpadminbar's actual height (0 when it's absent, i.e. for every real
+// visitor) keeps the offset correct for both.
+//
+// The header's own "sticky" setting is desktop-only (see
+// getStickyHeaderHeight()'s own comment) — below that breakpoint it's
+// never pinned, so the compensation has to be skipped there entirely,
+// not just resized down, or it'd push the target under the page by the
+// header's height for no reason on a viewport where nothing is
+// covering it. A small extra buffer keeps the heading from landing
+// flush against the header's bottom edge. Respects
 // prefers-reduced-motion the same way the CSS scroll-behavior override
 // does (01-components.css).
 function divi_sales_child_nav_jump_links() {
@@ -132,11 +158,28 @@ function divi_sales_child_nav_jump_links() {
 	<script>
 	(function () {
 		var reduceMotion = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-		var HEADER_CLEARANCE_BUFFER = 24; // breathing room below the header, beyond its own height
+		var HEADER_CLEARANCE_BUFFER = 16; // breathing room below the header, beyond its own height
 
 		function getStickyHeaderHeight() {
-			var header = document.querySelector( '.et-l--header' );
-			return header ? Math.ceil( header.getBoundingClientRect().height ) : 0;
+			// The header's own Theme Builder "sticky" setting is
+			// desktop-only — its stored config is explicit:
+			// {"desktop":{"position":"top"},"tablet":{"position":"none"},
+			// "phone":{"position":"none"}}. Below that breakpoint (Divi's
+			// own tablet cutoff, matching --gdi-bp-tablet in
+			// 00-tokens.css) the header scrolls away normally with the
+			// rest of the page, so there's no pinned overlap to clear —
+			// applying this compensation there would push the target
+			// down by the header's height for no reason.
+			if ( window.innerWidth <= 980 ) {
+				return 0;
+			}
+			var section = document.querySelector( '.et-l--header .et_pb_section' );
+			var height = section ? Math.ceil( section.getBoundingClientRect().height ) : 0;
+			var adminBar = document.getElementById( 'wpadminbar' );
+			if ( adminBar ) {
+				height += Math.ceil( adminBar.getBoundingClientRect().height );
+			}
+			return height;
 		}
 
 		function jumpToSection( e ) {
