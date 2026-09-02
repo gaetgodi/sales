@@ -209,6 +209,153 @@ function divi_sales_child_nav_jump_links() {
 }
 add_action( 'wp_footer', 'divi_sales_child_nav_jump_links' );
 
+// Custom mobile nav drawer — replaces Divi's native mobile
+// hamburger/dropdown entirely (see the "Divi's native mobile
+// hamburger/dropdown ... is retired" comment in 01-components.css for
+// the full history: three separate confirmed-real bugs fixed there in
+// turn — a width collapse, then two different ancestor
+// overflow:hidden clips — and the dropdown still wasn't reliably
+// landing on a non-zero height on a real device. The remaining piece
+// was Divi's own JS-computed slideDown/slideUp height animation
+// itself getting stuck, not anything left in our CSS or markup by
+// that point.
+//
+// Rather than keep chasing Divi's mechanism, this bypasses it: a
+// right-side slide-in panel driven by one class on <body> plus a
+// plain CSS position/transition (01-components.css, "Custom mobile
+// nav drawer") — nothing here is ever "mid-calculation" the way a
+// JS-computed height can be stuck partway. Loosely follows the same
+// drawer pattern already proven on pickleballstouffville.ca
+// (github.com/gaetgodi/SPP, css/spp-drawers.css + js/spp-drawers.js),
+// simplified since this menu is flat (no accordion/submenu needed for
+// 6 top-level items) and restyled to this site's own tokens instead of
+// SPP's palette.
+//
+// The panel's items are built by cloning the real primary menu's own
+// top-level links (".et_pb_menu__menu > nav > ul > li") rather than
+// hardcoding labels/URLs here, so it can't silently drift out of sync
+// if the menu is ever edited in wp-admin. If that selector finds
+// nothing (menu markup changed, or this ran before Divi's own menu
+// script populated it), the whole drawer is skipped rather than
+// inserted empty — Divi's native hamburger is only ever hidden via
+// CSS, not removed from the DOM, so there's no dead-end state where
+// mobile visitors have no menu at all.
+function divi_sales_child_mobile_nav() {
+	?>
+	<script>
+	(function () {
+		var desktopItems = document.querySelectorAll( '.et_pb_menu_0_tb_header .et_pb_menu__menu > nav > ul > li' );
+		if ( ! desktopItems.length ) {
+			return;
+		}
+
+		var overlay = document.createElement( 'div' );
+		overlay.id = 'gdi-mm-overlay';
+
+		var openBtn = document.createElement( 'button' );
+		openBtn.id = 'gdi-mm-open';
+		openBtn.type = 'button';
+		openBtn.setAttribute( 'aria-label', 'Open menu' );
+		openBtn.setAttribute( 'aria-expanded', 'false' );
+		openBtn.setAttribute( 'aria-controls', 'gdi-mm-panel' );
+		var openIcon = document.createElement( 'span' );
+		openIcon.className = 'gdi-mm-open-icon';
+		openIcon.setAttribute( 'aria-hidden', 'true' );
+		openBtn.appendChild( openIcon );
+
+		var panel = document.createElement( 'nav' );
+		panel.id = 'gdi-mm-panel';
+		panel.setAttribute( 'aria-label', 'Mobile navigation' );
+
+		var panelHeader = document.createElement( 'div' );
+		panelHeader.className = 'gdi-mm-panel-header';
+		var panelTitle = document.createElement( 'span' );
+		panelTitle.className = 'gdi-mm-panel-title';
+		panelTitle.textContent = 'Menu';
+		var closeBtn = document.createElement( 'button' );
+		closeBtn.id = 'gdi-mm-close';
+		closeBtn.type = 'button';
+		closeBtn.setAttribute( 'aria-label', 'Close menu' );
+		var closeIcon = document.createElement( 'span' );
+		closeIcon.className = 'gdi-mm-close-icon';
+		closeIcon.setAttribute( 'aria-hidden', 'true' );
+		closeBtn.appendChild( closeIcon );
+		panelHeader.appendChild( panelTitle );
+		panelHeader.appendChild( closeBtn );
+
+		var list = document.createElement( 'ul' );
+		list.className = 'gdi-mm-list';
+		desktopItems.forEach( function ( li ) {
+			var a = li.querySelector( 'a' );
+			if ( ! a ) {
+				return;
+			}
+			var item = document.createElement( 'li' );
+			if ( li.classList.contains( 'current-menu-item' ) ) {
+				item.className = 'current-menu-item';
+			}
+			var link = document.createElement( 'a' );
+			link.href = a.getAttribute( 'href' );
+			link.textContent = a.textContent.trim();
+			item.appendChild( link );
+			list.appendChild( item );
+		} );
+
+		panel.appendChild( panelHeader );
+		panel.appendChild( list );
+
+		document.body.appendChild( overlay );
+		document.body.appendChild( openBtn );
+		document.body.appendChild( panel );
+
+		function closeMenu() {
+			document.body.classList.remove( 'gdi-mm-open' );
+			openBtn.setAttribute( 'aria-expanded', 'false' );
+		}
+
+		function toggleMenu() {
+			if ( document.body.classList.contains( 'gdi-mm-open' ) ) {
+				closeMenu();
+			} else {
+				document.body.classList.add( 'gdi-mm-open' );
+				openBtn.setAttribute( 'aria-expanded', 'true' );
+			}
+		}
+
+		openBtn.addEventListener( 'click', toggleMenu );
+		closeBtn.addEventListener( 'click', closeMenu );
+		overlay.addEventListener( 'click', closeMenu );
+		list.addEventListener( 'click', function ( e ) {
+			if ( e.target.tagName === 'A' ) {
+				closeMenu();
+			}
+		} );
+
+		// Click-outside-closes, matching the reference drawer's own
+		// pattern — guarded so it only ever acts while open, and never
+		// fights the open button's own click (which toggleMenu already
+		// handles).
+		document.addEventListener( 'click', function ( e ) {
+			if ( ! document.body.classList.contains( 'gdi-mm-open' ) ) {
+				return;
+			}
+			if ( e.target.closest( '#gdi-mm-panel' ) || e.target.closest( '#gdi-mm-open' ) ) {
+				return;
+			}
+			closeMenu();
+		} );
+
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' ) {
+				closeMenu();
+			}
+		} );
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'divi_sales_child_mobile_nav' );
+
 // Footer contact form — name/email/message, independent of the Contact
 // page's own (currently placeholder) form. No form-builder plugin: the
 // site was assumed to have Fluent Forms installed and configured, but

@@ -128,102 +128,213 @@
   row-gap: var(--gdi-space-md);
 }
 
-/* Mobile nav hamburger — matches main nav tokens */
-.mobile_menu_bar:before {
-  color: var(--gdi-color-primary);
-}
-
+/* Divi's native mobile hamburger/dropdown (.mobile_menu_bar,
+   .et_mobile_nav_menu, .et_mobile_menu) is retired in favor of the
+   custom drawer nav below ("Custom mobile nav drawer"). Three rounds
+   of fixes here (width collapse, then two different ancestor
+   overflow:hidden clips) each fixed a real, confirmed bug — but the
+   dropdown still wasn't landing on a non-zero height on a real device,
+   traced to Divi's own JS-computed slideDown/slideUp height animation
+   itself getting stuck rather than anything left in our CSS. Rather
+   than keep patching a third layer of Divi's mechanism, the custom
+   drawer bypasses it entirely — a body class plus a plain CSS
+   position/transition, no JS-computed height to ever get stuck on.
+   Divi's version is force-hidden below so the two can never show or
+   conflict. */
 @media (max-width: 980px) {
+  .mobile_menu_bar,
   .et_mobile_nav_menu {
-    display: flex;
-    align-items: center;
+    display: none !important;
   }
 }
 
-.et_mobile_menu {
-  background: var(--gdi-color-bg);
-  border-top: 2px solid var(--gdi-color-primary);
+/* =====================================================
+   Custom mobile nav drawer (gdi-mm-*)
+   Right-side slide-in panel + hamburger button, replacing Divi's
+   native mobile menu (retired above). Loosely follows the drawer
+   pattern already proven on pickleballstouffville.ca
+   (github.com/gaetgodi/SPP, css/spp-drawers.css) — simplified for a
+   flat 6-item menu (no accordion/submenu needed here) and restyled to
+   this site's own tokens (Inter, teal/amber) rather than SPP's
+   palette. The key thing carried over from that pattern, and the
+   actual reason this doesn't inherit Divi's stuck-animation problem:
+   the panel's OPEN/CLOSED state is a single CSS position offset
+   ("right", see the panel rule further down for why not "transform")
+   driven by one class on <body>, not a JS-computed height — nothing
+   here is ever "mid-calculation." Markup and the
+   toggle/outside-click/Escape JS live in functions.php
+   (divi_sales_child_mobile_nav, wp_footer) — it clones the real nav
+   menu's own links rather than hardcoding label/URL text, so it can't
+   drift out of sync with the primary menu. */
+#gdi-mm-open,
+#gdi-mm-overlay,
+#gdi-mm-panel {
+  display: none;
 }
 
-.et_mobile_menu li a {
-  font-family: var(--gdi-font-body);
-  font-weight: 500;
-  color: var(--gdi-color-text-secondary);
+@media (max-width: 980px) {
+  /* right: the header/main/footer "cards" are centered at
+     max-width:var(--gdi-max-width) with visible page background
+     showing as gutters outside them (the "boxed art on a screen"
+     layout, further down this file) whenever the viewport is wider
+     than that max-width — true below the 767px phone breakpoint,
+     where those cards already go edge-to-edge, but still true in the
+     768–980px tablet gap this button also targets (Divi's own
+     hamburger-nav cutoff is 980px, a phone breakpoint further down is
+     767px). A plain "right: 12px" pins to the raw viewport edge —
+     "pasted to the wall" outside the card — instead of sitting inside
+     it like part of the artwork. This offsets by the actual gutter
+     width (0 once the viewport is narrower than the card itself) so
+     the button lands 12px inside the card's own right edge instead. */
+  #gdi-mm-open {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    right: calc(max(0px, (100vw - var(--gdi-max-width)) / 2) + 12px);
+    z-index: 100000;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    background: var(--gdi-teal-dark);
+    border: 1px solid var(--gdi-color-accent);
+    border-radius: var(--gdi-radius-md);
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .gdi-mm-open-icon:before {
+    content: "\61"; /* Divi's own ETmodules hamburger glyph — already
+                        loaded, and matches the icon this button
+                        replaces */
+    font-family: "ETmodules";
+    font-size: 22px;
+    color: var(--gdi-white);
+  }
+
+  body.gdi-mm-open .gdi-mm-open-icon:before {
+    content: "\4d"; /* ETmodules "X" glyph */
+  }
+
+  #gdi-mm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 99998;
+  }
+
+  body.gdi-mm-open #gdi-mm-overlay {
+    display: block;
+  }
+
+  /* display:flex unconditionally (not toggled) — the panel is always
+     laid out, just pushed off-screen (via "right", see below) when
+     closed. Toggling display would both break the slide transition
+     (you can't animate to/from display:none) and reintroduce exactly
+     the "JS has to get the state right at the right moment" fragility
+     this drawer exists to avoid.
+
+     Slides via "right" (a plain layout offset), not "transform:
+     translateX()" — deliberately, not just a style preference: this
+     was originally transform-based, and while verifying it here the
+     rendered/computed transform value stopped reflecting live changes
+     entirely in this browser-automation tab specifically (confirmed
+     it's compositor/environment-specific, not a real cascade bug — a
+     plain "right" change on the same element updated correctly and
+     immediately in the same tab where "transform" appeared frozen).
+     Given this session's already seen one other animation mechanism
+     (Divi's own JS-driven slideDown, the reason this drawer exists at
+     all) fail in a way that could only be confirmed on a real device,
+     switching to a plain, non-compositor property here is the more
+     conservative choice, not just a workaround for this one test. */
+  #gdi-mm-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100vw;
+    bottom: 0;
+    width: 80vw;
+    max-width: 320px;
+    background: var(--gdi-color-bg);
+    border-left: 2px solid var(--gdi-color-primary);
+    box-shadow: var(--gdi-shadow-md);
+    transition: right 0.25s ease-out;
+    z-index: 99999;
+    overflow-y: auto;
+  }
+
+  body.gdi-mm-open #gdi-mm-panel {
+    right: 0;
+  }
+}
+
+.gdi-mm-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: var(--gdi-space-sm) var(--gdi-space-md);
+  background: var(--gdi-teal-dark);
+}
+
+.gdi-mm-panel-title {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  color: var(--gdi-white);
+}
+
+#gdi-mm-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 0;
+}
+
+.gdi-mm-close-icon:before {
+  content: "\4d";
+  font-family: "ETmodules";
+  font-size: 20px;
+  color: var(--gdi-white);
+}
+
+.gdi-mm-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--gdi-space-sm);
+}
+
+.gdi-mm-list li {
+  margin-bottom: 2px;
+}
+
+.gdi-mm-list a {
+  display: block;
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gdi-color-text-secondary);
+  text-decoration: none;
+  padding: var(--gdi-space-sm) var(--gdi-space-md);
+  border-radius: var(--gdi-radius-md);
+  border-left: 2px solid transparent;
   transition: var(--gdi-transition);
 }
 
-.et_mobile_menu li a:hover {
+.gdi-mm-list a:hover,
+.gdi-mm-list a:focus-visible {
   color: var(--gdi-color-primary);
   background: var(--gdi-color-bg-alt);
+  border-left-color: var(--gdi-color-primary);
 }
 
-.et_mobile_menu li.current-menu-item a {
+.gdi-mm-list li.current-menu-item a {
   color: var(--gdi-color-primary);
-  font-weight: 600;
-}
-
-/* The open mobile dropdown (.et_mobile_menu) was rendering as an empty
-   white bar — no visible item text — confirmed via the live computed
-   style chain (not a viewport-width-dependent render, so this checks
-   out regardless of not being able to screenshot at real mobile
-   width): text color/contrast is fine (Divi's own mobile override,
-   ".et_mobile_menu li a{color:rgba(0,0,0,.6)}" in its per-page
-   critical inline CSS, gives ~5.75:1 against the panel's white
-   background — comfortably readable). The actual cause is layout, not
-   color: the dropdown is position:absolute and opens *below* its
-   containing block without pushing anything else down, so it visually
-   extends past the header's own box — and two ancestors clip that
-   overflow away: ".et_pb_section_0_tb_header" (Divi's own per-page
-   critical CSS, overflow:hidden, generated to clip its
-   background/gradient to the card's rounded corners) and
-   ".et-l--header" itself (overflow:hidden, added below for the same
-   boxed-card-corners reason — see the "Boxed art on a screen layout"
-   section). Both clip any child content that falls outside the
-   header's own (short) box — including the open dropdown — down to
-   whatever sliver survives, which reads as an empty bar.
-   Solved by relaxing both to overflow:visible, but only below Divi's
-   980px hamburger-nav breakpoint (matching the existing
-   ".et_mobile_nav_menu" override above) and only for the mobile
-   dropdown's own ancestors, not the whole card year-round: at that
-   width the rounded corners these overflow:hidden rules exist to
-   protect are already gone (see the phone-width rule further down that
-   zeroes .et-l--header's border-radius/box-shadow entirely), and even
-   in the 768–980px tablet gap where the corners are still rounded, the
-   header Section itself already clips its own background
-   independently via its own matching border-radius + overflow:hidden
-   (baked into that same per-page critical CSS), so relaxing the outer
-   wrapper's overflow here doesn't let anything square-cornered show
-   through.
-
-   That wasn't the whole clipping chain, though — confirmed live on a
-   real device (DevTools showed style="z-index: 4; overflow: hidden;"
-   sitting directly on ".et_pb_row_1_tb_header", as an inline style,
-   not a stylesheet rule, so the fix above never touched it, and no
-   amount of selector specificity on our side would have). The source
-   traces to Divi's own frontend JS
-   (script-library-frontend-global-functions.js, the ".mobile_menu_bar"
-   click handler): it caches whether the menu's closest .et_pb_section
-   and .et_pb_row have a non-"0px" border-radius, and — only when that
-   check passes — sets overflow to visible via jQuery .css() on open
-   and back to hidden 500ms later on close (matching the slideUp
-   duration), on BOTH ancestors. It's the .et_pb_row half of that same
-   mechanism, just never actually observed here before because nothing
-   had prompted checking the row specifically once the section half
-   looked fixed. An !important stylesheet rule still beats a plain
-   (non-!important) inline style regardless of *when* that inline style
-   gets written — jQuery's .css() doesn't add !important — so
-   overriding it here doesn't depend on figuring out why Divi's own
-   detection landed on hidden. */
-@media (max-width: 980px) {
-  .et-l--header,
-  .et-l--header .et_pb_section {
-    overflow: visible;
-  }
-
-  .et-l--header .et_pb_row {
-    overflow: visible !important;
-  }
+  font-weight: 700;
+  border-left-color: var(--gdi-color-primary);
 }
 
 /* Stacking context for the header above adjacent content */
