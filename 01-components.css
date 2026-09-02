@@ -263,6 +263,125 @@
   opacity: 0.5;
 }
 
+/* Footer contact form (name/email/message) — see the render_block-based
+   injection in functions.php for why this markup isn't stored directly
+   in the footer's block content. Sits in its own full-width row below
+   the brand/links row, so it isn't cramped into the header's slim
+   columns. Inputs get a light fill against the dark teal footer
+   background — text directly on the gradient would work for labels but
+   not for something that needs to visually read as an editable field. */
+.gdi-footer-form-wrap {
+  max-width: var(--gdi-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gdi-space-md) var(--gdi-space-sm);
+}
+
+.gdi-footer-form-heading {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  font-size: var(--gdi-text-lg);
+  color: var(--gdi-color-footer-text);
+  margin: 0 0 var(--gdi-space-sm);
+}
+
+.gdi-footer-form-row {
+  display: flex;
+  gap: var(--gdi-space-sm);
+}
+
+.gdi-footer-form-row .gdi-footer-form-field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.gdi-footer-form-field {
+  margin-bottom: var(--gdi-space-sm);
+}
+
+.gdi-footer-form label {
+  display: block;
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-xs);
+  font-weight: 600;
+  color: var(--gdi-color-footer-text);
+  margin-bottom: var(--gdi-space-2xs);
+}
+
+.gdi-footer-form input[type="text"],
+.gdi-footer-form input[type="email"],
+.gdi-footer-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+  color: var(--gdi-gray-900);
+  background: var(--gdi-white);
+  border: 1px solid var(--gdi-gray-200);
+  border-radius: var(--gdi-radius-sm);
+  padding: var(--gdi-space-xs);
+  transition: var(--gdi-transition);
+}
+
+.gdi-footer-form textarea {
+  resize: vertical;
+}
+
+.gdi-footer-form input:focus,
+.gdi-footer-form textarea:focus {
+  outline: none;
+  border-color: var(--gdi-color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gdi-color-accent) 35%, transparent);
+}
+
+/* Honeypot — hidden from sighted users and screen readers, but still a
+   real field a bot's form-filler will find and fill. */
+.gdi-footer-form-hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.gdi-footer-form-submit {
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-sm);
+  /* Dark text, not white: amber (--gdi-color-accent) against white only
+     runs ~3.4:1 — under the 4.5:1 AA text threshold at this button's
+     size/weight. --gdi-color-text (gray-900) on amber measures ~5:1. */
+  color: var(--gdi-color-text);
+  background: var(--gdi-color-accent);
+  border: none;
+  border-radius: var(--gdi-radius-sm);
+  padding: var(--gdi-space-xs) var(--gdi-space-md);
+  cursor: pointer;
+  transition: var(--gdi-transition);
+}
+
+.gdi-footer-form-submit:hover {
+  background: var(--gdi-color-accent-light);
+}
+
+.gdi-footer-form-notice {
+  margin-top: var(--gdi-space-xs);
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+  color: var(--gdi-color-footer-text);
+}
+
+.gdi-footer-form-notice--error {
+  color: var(--gdi-amber-light);
+}
+
+@media (max-width: 767px) {
+  .gdi-footer-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
 /* === Boxed "art on a screen" layout === */
 
 body {
