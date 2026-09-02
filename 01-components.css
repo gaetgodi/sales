@@ -571,3 +571,96 @@ body {
     max-width: 100%;
   }
 }
+
+/* Services page secondary nav — in-page wayfinding to the four
+   sub-sections below (Custom Development & Hosting, Legacy Site
+   Migration, Recipes, Tools for Developers), separate from the global
+   header nav. Lives in a Code module, not a Text one, so it isn't
+   covered by the 720px prose-column rule above — matched here by hand
+   so it still lines up with the paragraphs around it instead of
+   stretching to the full card width.
+
+   A single horizontally-scrollable flex row, with no separate
+   mobile-only markup or JS: on desktop all four labels fit and nothing
+   scrolls; on a ~390px phone the same row becomes a compact scroll
+   strip instead of wrapping into a ragged multi-line block. One
+   implementation covers both. */
+.gdi-services-nav {
+  display: flex;
+  gap: var(--gdi-space-xs);
+  max-width: 720px;
+  margin: 0 auto var(--gdi-space-md);
+  padding: var(--gdi-space-xs) 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  border-bottom: 1px solid var(--gdi-color-border);
+}
+
+.gdi-services-nav a {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+  font-weight: 600;
+  color: var(--gdi-color-text-secondary);
+  text-decoration: none;
+  padding: var(--gdi-space-xs) var(--gdi-space-sm);
+  border-radius: var(--gdi-radius-md);
+  transition: var(--gdi-transition);
+}
+
+.gdi-services-nav a:hover,
+.gdi-services-nav a:focus-visible {
+  color: var(--gdi-color-primary);
+  background: var(--gdi-color-bg-alt);
+}
+
+/* Landing spot for each nav link's jump — without this, the top of the
+   heading sits flush against the viewport edge after a jump, which
+   reads as slightly too tight. Selecting the four sub-section ids
+   directly rather than a shared class keeps this independent of
+   whichever module (heading vs. a plain <h2> in a Text module's own
+   content) ends up carrying each one. */
+#custom-development,
+#legacy-migration,
+#recipes,
+#tools-for-developers {
+  scroll-margin-top: var(--gdi-space-md);
+}
+
+/* Smooth-scrolls the nav's jump-links; skipped for anyone who's asked
+   the OS/browser to reduce motion. */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Recipes' "try it" link — the one sub-section the guidance calls out
+   for lighter, more product-y treatment, so it gets an actual button
+   rather than reading as just another inline link. Amber with dark
+   text, not white: matches the footer form's submit button, and for
+   the same reason — white-on-amber falls under the 4.5:1 AA text
+   threshold at this size/weight, dark gray-900-on-amber clears it
+   (~5:1). */
+.gdi-service-cta {
+  display: inline-block;
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-sm);
+  color: var(--gdi-color-text) !important;
+  background: var(--gdi-color-accent);
+  text-decoration: none !important;
+  padding: var(--gdi-space-xs) var(--gdi-space-sm);
+  border-radius: var(--gdi-radius-sm);
+  transition: var(--gdi-transition);
+}
+
+.gdi-service-cta:hover {
+  background: var(--gdi-color-accent-light);
+}
