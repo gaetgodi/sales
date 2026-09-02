@@ -196,11 +196,26 @@
 /* Menu module has no width rule of its own — it fills the full-width column
    (et_flex_column_24_24) by Divi's flex defaults, which is what left the
    nav links (right-aligned inside it) sitting far from the module's own
-   edges. Shrink the module to its content and center it in the row. */
-.et_pb_menu_0_tb_header {
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
+   edges. Shrink the module to its content and center it in the row.
+
+   Desktop-only (matching Divi's own 980px tablet/mobile cutoff, same as
+   --gdi-bp-tablet in 00-tokens.css): below that width Divi swaps the
+   visible nav content from the full link list (".et_pb_menu__menu") to
+   just the hamburger icon (".et_mobile_nav_menu", its dropdown panel is
+   position:absolute so it doesn't count toward fit-content sizing). This
+   rule used to apply unconditionally, so on mobile "shrink to content"
+   meant shrinking to the ~32px hamburger icon alone — collapsing the
+   whole menu module (and, since the dropdown panel's own width is a
+   percentage of it, the open panel too) to a sliver, which is what made
+   the hamburger read as broken/unusable on phone. Scoping this to
+   desktop leaves the module at its natural full-row width on mobile, so
+   the icon and its dropdown have real room. */
+@media (min-width: 981px) {
+  .et_pb_menu_0_tb_header {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+  }
 }
 
 /* Footer heading ("Godin London Incorporated") — Divi's per-module setting
@@ -580,11 +595,16 @@ body {
    so it still lines up with the paragraphs around it instead of
    stretching to the full card width.
 
-   A single horizontally-scrollable flex row, with no separate
-   mobile-only markup or JS: on desktop all four labels fit and nothing
-   scrolls; on a ~390px phone the same row becomes a compact scroll
-   strip instead of wrapping into a ragged multi-line block. One
-   implementation covers both. */
+   No separate mobile-only markup or JS — same <nav>/<a> markup at every
+   width, CSS-only layout swap. On desktop (and tablet, down to 768px) a
+   horizontally-scrollable flex row: all four labels fit and nothing
+   scrolls in practice, but it'd become a compact scroll strip rather
+   than wrapping if they ever didn't. Below that (phone, matching
+   --gdi-bp-phone in 00-tokens.css) it switches to a plain vertical
+   stack instead — a horizontal scroll strip isn't discoverable by touch
+   the way a scrollbar hints it is with a mouse, so at phone width a
+   full-width tappable list reads better than a strip some users would
+   never think to swipe. */
 .gdi-services-nav {
   display: flex;
   gap: var(--gdi-space-xs);
@@ -595,6 +615,15 @@ body {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   border-bottom: 1px solid var(--gdi-color-border);
+}
+
+@media (max-width: 767px) {
+  .gdi-services-nav {
+    flex-direction: column;
+    gap: 0;
+    overflow-x: visible;
+    border-bottom: none;
+  }
 }
 
 .gdi-services-nav a {
@@ -608,6 +637,19 @@ body {
   padding: var(--gdi-space-xs) var(--gdi-space-sm);
   border-radius: var(--gdi-radius-md);
   transition: var(--gdi-transition);
+}
+
+@media (max-width: 767px) {
+  .gdi-services-nav a {
+    white-space: normal;
+    width: 100%;
+    padding: var(--gdi-space-sm);
+    border-bottom: 1px solid var(--gdi-color-border);
+  }
+
+  .gdi-services-nav a:last-child {
+    border-bottom: none;
+  }
 }
 
 .gdi-services-nav a:hover,
