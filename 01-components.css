@@ -194,11 +194,35 @@
    independently via its own matching border-radius + overflow:hidden
    (baked into that same per-page critical CSS), so relaxing the outer
    wrapper's overflow here doesn't let anything square-cornered show
-   through. */
+   through.
+
+   That wasn't the whole clipping chain, though — confirmed live on a
+   real device (DevTools showed style="z-index: 4; overflow: hidden;"
+   sitting directly on ".et_pb_row_1_tb_header", as an inline style,
+   not a stylesheet rule, so the fix above never touched it, and no
+   amount of selector specificity on our side would have). The source
+   traces to Divi's own frontend JS
+   (script-library-frontend-global-functions.js, the ".mobile_menu_bar"
+   click handler): it caches whether the menu's closest .et_pb_section
+   and .et_pb_row have a non-"0px" border-radius, and — only when that
+   check passes — sets overflow to visible via jQuery .css() on open
+   and back to hidden 500ms later on close (matching the slideUp
+   duration), on BOTH ancestors. It's the .et_pb_row half of that same
+   mechanism, just never actually observed here before because nothing
+   had prompted checking the row specifically once the section half
+   looked fixed. An !important stylesheet rule still beats a plain
+   (non-!important) inline style regardless of *when* that inline style
+   gets written — jQuery's .css() doesn't add !important — so
+   overriding it here doesn't depend on figuring out why Divi's own
+   detection landed on hidden. */
 @media (max-width: 980px) {
   .et-l--header,
   .et-l--header .et_pb_section {
     overflow: visible;
+  }
+
+  .et-l--header .et_pb_row {
+    overflow: visible !important;
   }
 }
 
