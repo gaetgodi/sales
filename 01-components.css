@@ -930,3 +930,87 @@ html {
   letter-spacing: 0.06em;
   color: var(--gdi-color-accent);
 }
+
+/* === Contact page — Fluent Forms lead form (form id 3) === */
+
+/* Width fix. The form lives in a Divi Code module (see
+   divi_sales_child_run_shortcodes_in_code_module() in functions.php for
+   why a Code module needs that filter to actually render it) inside a
+   column configured with display:flex + align-items:center — the same
+   config Text/Heading modules on this page sit in too. Under
+   align-items:center a flex item's cross-axis (width, since this column's
+   flex-direction is column) sizes to its own auto/content width instead of
+   stretching, and Fluent Forms' fields are percentage-widthed against
+   *their* container rather than contributing real width to that
+   auto-sizing calculation — so with nothing here declaring a width, the
+   whole form collapsed to ~194px (confirmed via computed styles) inside a
+   ~1080px column. Text/Heading modules don't show this because Divi gives
+   them a base width the Code module doesn't get.
+   width:100% makes it fill the column like Text/Heading do; max-width:720px
+   + auto margins then caps and centers it exactly like the sitewide prose
+   rule a few hundred lines up (#main-content .et_pb_text, .et_pb_heading) —
+   same reading-column width as the rest of the page's copy, not a
+   one-off number, per the request to match it. */
+.et_pb_code:has(.fluentform_wrapper_3) {
+  width: 100%;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Belt-and-suspenders: once the module itself has real width, Fluent
+   Forms' own CSS already sizes inputs/textarea to 100% of it — but the
+   "What are you looking for?" dropdown is rendered by Choices.js as its
+   own `.choices` widget (replacing the native <select>, which is left in
+   the DOM but hidden), so it gets the same explicit width rather than
+   assuming it inherits it the way plain inputs do. */
+#fluentform_3 .choices {
+  width: 100%;
+}
+
+/* Breathing room — labels sit right on top of their field, and fields
+   stack close together, by Fluent Forms' own defaults (5px / 20px). Bring
+   both up to this site's own spacing rhythm instead of a bespoke number. */
+#fluentform_3 .ff-el-group {
+  margin-bottom: var(--gdi-space-md);
+}
+
+#fluentform_3 .ff-el-input--label {
+  margin-bottom: var(--gdi-space-xs);
+}
+
+/* Message field — Fluent Forms' 3-row default reads cramped for its own
+   placeholder copy once the field is actually full-width. */
+#fluentform_3 textarea.ff-el-form-control {
+  min-height: 140px;
+}
+
+/* Focus state matching the footer contact form's own fields
+   (.gdi-footer-form input:focus, further up this file) — one consistent
+   focus treatment across both forms on the site rather than Fluent Forms'
+   own default blue ring. */
+#fluentform_3 .ff-el-form-control:focus,
+#fluentform_3 .choices.is-focused .choices__inner {
+  border-color: var(--gdi-color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gdi-color-accent) 35%, transparent);
+}
+
+/* Submit button — this site's amber accent + dark text, not Fluent Forms'
+   default blue. Dark text rather than white: the same AA-contrast reason
+   as the footer form's own submit button (.gdi-footer-form-submit,
+   earlier in this file) — amber against white text falls short of the
+   4.5:1 text threshold at this size/weight, gray-900 clears it easily. */
+#fluentform_3 .ff-btn-submit {
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  color: var(--gdi-color-text);
+  background: var(--gdi-color-accent);
+  border: none;
+  border-radius: var(--gdi-radius-sm);
+  padding: var(--gdi-space-xs) var(--gdi-space-md);
+  transition: var(--gdi-transition);
+}
+
+#fluentform_3 .ff-btn-submit:hover {
+  background: var(--gdi-color-accent-light);
+}
