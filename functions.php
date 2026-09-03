@@ -491,3 +491,40 @@ function divi_sales_child_run_shortcodes_in_code_module( $block_content, $block 
 	return do_shortcode( $block_content );
 }
 add_filter( 'render_block', 'divi_sales_child_run_shortcodes_in_code_module', 10, 2 );
+
+// SEO cleanup — two orphaned pages were leaking into wp-sitemap.xml and,
+// with it, into what Search Console/Google would discover and could index:
+// "Sample Page" (ID 2, WordPress's own unedited default boilerplate — "This
+// is an example page...") and "Page template" (ID 106, an internal/unused
+// Divi starting-point page). Neither is linked from any nav menu or real
+// page content (confirmed directly against the _menu_item_object_id
+// postmeta rows — no menu item references either ID) — genuinely orphaned,
+// not just unlinked-but-intentional.
+//
+// Left both at their current 'publish' status rather than switching to
+// draft/private: something internal (e.g. a "duplicate from" starting
+// point) may still expect to find "Page template" in that state, and
+// changing status wasn't asked for. This is the narrower fix — exclude
+// both from the sitemap and mark them noindex,follow (not nofollow: no
+// reason to stop a crawler following any links on them, just to stop
+// Google surfacing the pages themselves) — same belt-and-suspenders shape
+// as the sandbox subdomains' own noindex handling.
+function divi_sales_child_orphaned_page_ids() {
+	return array( 2, 106 );
+}
+
+add_action( 'wp_head', function () {
+	if ( is_page( divi_sales_child_orphaned_page_ids() ) ) {
+		echo "<meta name='robots' content='noindex, follow' />\n";
+	}
+}, 1 );
+
+add_filter( 'wp_sitemaps_posts_query_args', function ( $args, $post_type ) {
+	if ( 'page' === $post_type ) {
+		$args['post__not_in'] = array_merge(
+			$args['post__not_in'] ?? array(),
+			divi_sales_child_orphaned_page_ids()
+		);
+	}
+	return $args;
+}, 10, 2 );
