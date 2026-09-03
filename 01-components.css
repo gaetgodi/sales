@@ -124,6 +124,26 @@
   margin: 0;
 }
 
+/* Card CTA line — the visible "click to explore" cue inside each whole-card
+   link (see .gdi-card above). Amber accent, same color as .gdi-service-cta's
+   button elsewhere on the site, but plain text here rather than a pill/button
+   — the card itself is already the clickable target, so a second button-
+   looking element inside it would read as a nested, redundant control. */
+.gdi-card-cta {
+  display: inline-block;
+  margin-top: var(--gdi-space-sm);
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-sm);
+  color: var(--gdi-color-accent);
+  transition: var(--gdi-transition);
+}
+
+.gdi-card:hover .gdi-card-cta {
+  color: var(--gdi-color-accent-light);
+  text-decoration: underline;
+}
+
 .et_pb_row {
   row-gap: var(--gdi-space-md);
 }

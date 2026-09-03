@@ -105,17 +105,33 @@ Use Divi's **CSS Variable** color-picker option wherever possible.
 
 ## 6. Module-Specific Notes (living section)
 
-**Blurb module (signposts, Home page):**
+**Card links (signposts, Home page):** not native Blurb modules — Code modules
+rendering a real `<a class="gdi-card">` per signpost (see `.gdi-card` in
+`01-components.css` and `docs/home-card-snippets.md`). Switched from Blurb
+early on (commit `6bb9ac6`) because Divi's Blurb module wraps its link in a
+JS-only click handler rather than a real anchor — bad for accessibility,
+right-click/open-in-new-tab, and just being unambiguously "this is a link."
+Keep this as Code modules going forward rather than reverting to Blurb.
 - Icon color: `--gdi-color-primary`
 - Icon placement: Top, centered
-- Title: H3 equivalent (`--gdi-text-lg`), weight 700
+- Title: H3, weight 700 (`--gdi-text-lg`)
 - Body text color: `--gdi-color-text-muted`
+- CTA line (`.gdi-card-cta`): `--gdi-color-accent`, weight 600, shifts to
+  `--gdi-color-accent-light` + underline on `.gdi-card:hover`
+- Hover: `translateY(-2px)` + shadow step up (`--gdi-shadow-sm` → `-md`)
 - Text alignment: Centered
 - *(Once Inter is loaded, apply `--gdi-font-heading` to the title field explicitly — Divi may default to its own theme font otherwise.)*
 
-**Fullwidth Header (Home hero):** not yet built.
+**Home page intro (above the card grid):** built 2026-09-03 — native Divi
+Heading (H2, `--gdi-color-primary`) + Text (`--gdi-color-text-muted`)
+modules, short and deliberately not repeating the site header's own rotating
+tagline (`.gdi-header-tagline`) that already appears above it on every page.
 
-**Blog module:** placeholder only on Home — remove when replacing with real content, not a styling reference.
+**Fullwidth Header (Home hero):** still not built — the page's real H1 /
+full positioning-statement treatment described in `content-briefs.md`
+remains a separate, larger piece of work than the short intro above.
+
+**Blog module:** no longer on Home — removed at some point after this note was written; nothing to flag for future editors.
 
 ---
 
