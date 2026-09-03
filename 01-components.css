@@ -498,13 +498,17 @@
   opacity: 0.5;
 }
 
-/* Footer contact form (name/email/message) — see the render_block-based
-   injection in functions.php for why this markup isn't stored directly
-   in the footer's block content. Sits in its own full-width row below
-   the brand/links row, so it isn't cramped into the header's slim
-   columns. Inputs get a light fill against the dark teal footer
-   background — text directly on the gradient would work for labels but
-   not for something that needs to visually read as an editable field. */
+/* Footer contact form — now a real Fluent Forms embed (form id 4,
+   [fluentform id="4"] run through the same Code-module do_shortcode()
+   filter /contact/'s form uses — see divi_sales_child_run_shortcodes_in_
+   code_module() in functions.php), replacing the earlier plain
+   wp_mail()-based form. .gdi-footer-form-wrap/-heading are the only two
+   rules still styling real static markup (the wrapping div + "Get in
+   touch" heading stored directly in the footer's block content);
+   everything below targets Fluent Forms' own generated DOM
+   (#fluentform_4) to make it look identical to the old custom form —
+   same compact grid (Name/Email side by side, Message + Send full-width),
+   same light-fill-on-dark-footer field treatment, same amber submit. */
 .gdi-footer-form-wrap {
   max-width: var(--gdi-max-width);
   margin: 0 auto;
@@ -519,32 +523,62 @@
   margin: 0 0 var(--gdi-space-sm);
 }
 
-.gdi-footer-form-row {
-  display: flex;
-  gap: var(--gdi-space-sm);
+/* Belt-and-suspenders width fix — same collapse risk /contact/'s own
+   Fluent Forms embed had inside a flex column with align-items:center
+   (see the .et_pb_code:has(.fluentform_wrapper_3) rule below): nothing
+   here declares a width, so without this the embed could size to its
+   own auto/content width instead of filling .gdi-footer-form-wrap. */
+.gdi-footer-form-wrap .fluentform_wrapper_4 {
+  width: 100%;
 }
 
-.gdi-footer-form-row .gdi-footer-form-field {
-  flex: 1 1 0;
-  min-width: 0;
+/* Name + Email side by side, Message and Send spanning full width — a
+   plain CSS grid over Fluent Forms' own flat, sequential .ff-el-group
+   list (no Fluent Forms "row"/"container" element needed): 1st and 2nd
+   groups (Name, Email) auto-place into the two columns; the 3rd
+   (Message) and the submit-button group are pinned to span both. */
+/* The grid lives on the fieldset itself, not the form — the form's only
+   other children are the (visually hidden, but not display:none) legend
+   and a few type="hidden" inputs. Hidden inputs are display:none by
+   default so they're already excluded from grid layout, but the legend
+   isn't — display:none it explicitly so it can't claim a grid cell and
+   throw off auto-placement (first attempt at this, with display:contents
+   on the fieldset instead, put Name in column 2 next to the legend
+   occupying column 1 — caught visually, not by reading the CSS). With
+   the legend excluded, the fieldset's only real grid items are the 4
+   .ff-el-group divs in DOM order, so plain auto-placement already puts
+   Name/Email into the two columns correctly. */
+#fluentform_4 legend {
+  display: none;
 }
 
-.gdi-footer-form-field {
+#fluentform_4 fieldset {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--gdi-space-sm);
+}
+
+#fluentform_4 .ff-el-group:nth-of-type(3),
+#fluentform_4 .ff-el-group.ff_submit_btn_wrapper {
+  grid-column: 1 / -1;
+}
+
+#fluentform_4 .ff-el-group {
   margin-bottom: var(--gdi-space-sm);
 }
 
-.gdi-footer-form label {
-  display: block;
+#fluentform_4 .ff-el-input--label {
+  margin-bottom: var(--gdi-space-2xs);
+}
+
+#fluentform_4 .ff-el-input--label label {
   font-family: var(--gdi-font-body);
   font-size: var(--gdi-text-xs);
   font-weight: 600;
   color: var(--gdi-color-footer-text);
-  margin-bottom: var(--gdi-space-2xs);
 }
 
-.gdi-footer-form input[type="text"],
-.gdi-footer-form input[type="email"],
-.gdi-footer-form textarea {
+#fluentform_4 .ff-el-form-control {
   box-sizing: border-box;
   width: 100%;
   font-family: var(--gdi-font-body);
@@ -557,63 +591,38 @@
   transition: var(--gdi-transition);
 }
 
-.gdi-footer-form textarea {
+#fluentform_4 textarea.ff-el-form-control {
   resize: vertical;
+  min-height: 72px;
 }
 
-.gdi-footer-form input:focus,
-.gdi-footer-form textarea:focus {
+#fluentform_4 .ff-el-form-control:focus {
   outline: none;
   border-color: var(--gdi-color-accent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--gdi-color-accent) 35%, transparent);
 }
 
-/* Honeypot — hidden from sighted users and screen readers, but still a
-   real field a bot's form-filler will find and fill. */
-.gdi-footer-form-hp {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.gdi-footer-form-submit {
+#fluentform_4 .ff-btn-submit {
   font-family: var(--gdi-font-body);
   font-weight: 600;
   font-size: var(--gdi-text-sm);
-  /* Dark text, not white: amber (--gdi-color-accent) against white only
-     runs ~3.4:1 — under the 4.5:1 AA text threshold at this button's
-     size/weight. --gdi-color-text (gray-900) on amber measures ~5:1. */
+  /* Dark text, not white — same ~5:1-vs-~3.4:1 AA contrast reasoning as
+     /contact/'s #fluentform_3 .ff-btn-submit rule above. */
   color: var(--gdi-color-text);
   background: var(--gdi-color-accent);
   border: none;
   border-radius: var(--gdi-radius-sm);
   padding: var(--gdi-space-xs) var(--gdi-space-md);
-  cursor: pointer;
   transition: var(--gdi-transition);
 }
 
-.gdi-footer-form-submit:hover {
+#fluentform_4 .ff-btn-submit:hover {
   background: var(--gdi-color-accent-light);
 }
 
-.gdi-footer-form-notice {
-  margin-top: var(--gdi-space-xs);
-  font-family: var(--gdi-font-body);
-  font-size: var(--gdi-text-sm);
-  color: var(--gdi-color-footer-text);
-}
-
-.gdi-footer-form-notice--error {
-  color: var(--gdi-amber-light);
-}
-
 @media (max-width: 767px) {
-  .gdi-footer-form-row {
-    flex-direction: column;
-    gap: 0;
+  #fluentform_4.frm-fluent-form {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1016,10 +1025,10 @@ html {
 }
 
 /* Submit button — this site's amber accent + dark text, not Fluent Forms'
-   default blue. Dark text rather than white: the same AA-contrast reason
-   as the footer form's own submit button (.gdi-footer-form-submit,
-   earlier in this file) — amber against white text falls short of the
-   4.5:1 text threshold at this size/weight, gray-900 clears it easily. */
+   default blue. Dark text rather than white: amber against white text
+   falls short of the 4.5:1 AA text threshold at this size/weight,
+   gray-900 clears it easily. Same treatment as the footer's own
+   #fluentform_4 .ff-btn-submit, later in this file. */
 #fluentform_3 .ff-btn-submit {
   font-family: var(--gdi-font-body);
   font-weight: 600;

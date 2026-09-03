@@ -364,104 +364,15 @@ function divi_sales_child_mobile_nav() {
 }
 add_action( 'wp_footer', 'divi_sales_child_mobile_nav' );
 
-// Footer contact form — name/email/message, independent of the Contact
-// page's own (currently placeholder) form. No form-builder plugin: the
-// site was assumed to have Fluent Forms installed and configured, but
-// only FluentSMTP/CRM/Boards are actually present — Fluent Forms itself
-// isn't. Rather than install a new plugin unasked, this reuses the
-// FluentSMTP -> Brevo pipeline that's already live via plain wp_mail().
-//
-// The form's actual markup (labels, fields, button — everything an
-// editor would want to see or tweak) lives directly, visibly, in a Divi
-// Code module in the footer's Theme Builder layout: a first version
-// instead put the *entire* form behind a single opaque
-// "<!--GDI_FOOTER_CONTACT_FORM-->" placeholder comment, which meant the
-// module showed as just that raw comment in the Divi Builder — not
-// editable in any meaningful sense. Only the two genuinely
-// per-request-dynamic pieces stay as small inline markers this filter
-// swaps out: the CSRF nonce ("<!--GDI_NONCE-->", inside the hidden
-// input's value attribute) and the post-submit status notice
-// ("<!--GDI_FORM_NOTICE-->", after the submit button) — the same kind of
-// exception the footer's own copyright module already makes for its
-// dynamic-content current-year variable.
-//
-// A nonce embedded in the *stored* block content directly (no filter)
-// would go stale within a day; WP Super Cache (30 min TTL here) would
-// then serve that stale nonce to every visitor until the cache expired.
-// Swapping it in on every uncached render keeps only Super Cache's
-// 30-minute TTL — well inside the nonce's ~24h validity window — between
-// a page load and a working form.
-function divi_sales_child_footer_contact_form_notice() {
-	$status = isset( $_GET['gdi_contact'] ) ? sanitize_key( wp_unslash( $_GET['gdi_contact'] ) ) : '';
-	if ( 'sent' === $status ) {
-		return '<p class="gdi-footer-form-notice gdi-footer-form-notice--success" role="status">Thanks — your message has been sent.</p>';
-	}
-	if ( 'error' === $status ) {
-		return '<p class="gdi-footer-form-notice gdi-footer-form-notice--error" role="alert">Something went wrong — please check your details and try again.</p>';
-	}
-	return '';
-}
-
-function divi_sales_child_inject_footer_contact_form( $block_content, $block ) {
-	if ( is_admin() ) {
-		return $block_content;
-	}
-	if ( false !== strpos( $block_content, '<!--GDI_NONCE-->' ) ) {
-		$block_content = str_replace( '<!--GDI_NONCE-->', esc_attr( wp_create_nonce( 'gdi_footer_contact' ) ), $block_content );
-	}
-	if ( false !== strpos( $block_content, '<!--GDI_FORM_NOTICE-->' ) ) {
-		$block_content = str_replace( '<!--GDI_FORM_NOTICE-->', divi_sales_child_footer_contact_form_notice(), $block_content );
-	}
-	return $block_content;
-}
-add_filter( 'render_block', 'divi_sales_child_inject_footer_contact_form', 10, 2 );
-
-function divi_sales_child_handle_footer_contact_form() {
-	$redirect = wp_get_referer();
-	if ( ! $redirect ) {
-		$redirect = home_url( '/' );
-	}
-	$redirect = remove_query_arg( 'gdi_contact', $redirect ) . '#gdi-footer-contact';
-
-	if (
-		! isset( $_POST['gdi_footer_contact_nonce'] ) ||
-		! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['gdi_footer_contact_nonce'] ) ), 'gdi_footer_contact' )
-	) {
-		wp_safe_redirect( esc_url_raw( add_query_arg( 'gdi_contact', 'error', $redirect ) ) );
-		exit;
-	}
-
-	// Honeypot: real visitors never see or fill this field. Report success
-	// to the bot without actually sending mail, rather than tipping it off.
-	if ( ! empty( $_POST['gdi_website'] ) ) {
-		wp_safe_redirect( esc_url_raw( add_query_arg( 'gdi_contact', 'sent', $redirect ) ) );
-		exit;
-	}
-
-	$name    = isset( $_POST['gdi_name'] ) ? sanitize_text_field( wp_unslash( $_POST['gdi_name'] ) ) : '';
-	$email   = isset( $_POST['gdi_email'] ) ? sanitize_email( wp_unslash( $_POST['gdi_email'] ) ) : '';
-	$message = isset( $_POST['gdi_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['gdi_message'] ) ) : '';
-
-	if ( '' === $name || ! is_email( $email ) || '' === $message ) {
-		wp_safe_redirect( esc_url_raw( add_query_arg( 'gdi_contact', 'error', $redirect ) ) );
-		exit;
-	}
-
-	// Recipient: sales@godindev.com, the address FluentSMTP is already
-	// configured to send site mail through/as (see its Brevo connection),
-	// rather than the unrelated site admin_email.
-	$to      = 'sales@godindev.com';
-	$subject = sprintf( '[godindev.com footer form] Message from %s', $name );
-	$body    = "Name: $name\nEmail: $email\n\nMessage:\n$message";
-	$headers = array( 'Reply-To: ' . $name . ' <' . $email . '>' );
-
-	$sent = wp_mail( $to, $subject, $body, $headers );
-
-	wp_safe_redirect( esc_url_raw( add_query_arg( 'gdi_contact', $sent ? 'sent' : 'error', $redirect ) ) );
-	exit;
-}
-add_action( 'admin_post_gdi_footer_contact', 'divi_sales_child_handle_footer_contact_form' );
-add_action( 'admin_post_nopriv_gdi_footer_contact', 'divi_sales_child_handle_footer_contact_form' );
+// Footer contact form — now a real Fluent Forms embed (form id 4), same
+// pattern as the Contact page's own form (id 3): [fluentform id="4"] in a
+// Divi Code module, run through divi_sales_child_run_shortcodes_in_code_
+// module() below. Replaces the earlier plain wp_mail()-based form (nonce
+// generation, admin-post handler, honeypot) — that gave no trackable entry
+// anywhere, unlike a real Fluent Forms submission. Form config (fields,
+// FluentCRM tagging, Fluent Boards feed) lives in the database via Fluent
+// Forms itself, not this repo — see demo/build notes for the tag ids and
+// board/stage used (source:footer, interest:general; Sales Pipeline, New).
 
 // Pending case studies (currently: the BIAO write-up on /work/, awaiting
 // the organization's sign-off before it goes public with real specifics
@@ -525,11 +436,9 @@ add_filter( 'render_block', 'divi_sales_child_hide_pending_nav_link', 10, 2 );
 // WP Super Cache is active on this site, and a cached /contact/ page would
 // bake in whichever visitor's referrer happened to be present when that
 // cache entry was generated, then serve it to every subsequent visitor
-// until the cache expires — the same staleness problem already solved for
-// the footer form's nonce (see divi_sales_child_inject_footer_contact_form
-// above). Setting the value here, client-side, on every real page view
-// sidesteps that entirely: it runs fresh in each visitor's own browser
-// regardless of whether the HTML they received was cached.
+// until the cache expires. Setting the value here, client-side, on every
+// real page view sidesteps that entirely: it runs fresh in each visitor's
+// own browser regardless of whether the HTML they received was cached.
 //
 // Scoped to input[name="referring_page"] rather than the whole form, so it
 // degrades harmlessly (referring_page just stays blank) if the field is
