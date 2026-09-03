@@ -513,3 +513,72 @@ function divi_sales_child_hide_pending_nav_link( $block_content, $block ) {
 	return preg_replace( '/<!--GDI_PENDING_LINK_START-->.*?<!--GDI_PENDING_LINK_END-->/s', '', $block_content );
 }
 add_filter( 'render_block', 'divi_sales_child_hide_pending_nav_link', 10, 2 );
+
+// Contact page lead form (Fluent Forms, form id 3) — populates its hidden
+// "referring_page" field with the visitor's actual document.referrer, so
+// FluentCRM's second tagging feed can tell a lead who arrived via
+// /services/ apart from one via /work/ or /event-photography/, even when
+// their stated interest doesn't match where they came from.
+//
+// Deliberately NOT done with Fluent Forms' own {http_referer} smart code
+// (which resolves server-side, at PHP render time, via wp_get_referer()):
+// WP Super Cache is active on this site, and a cached /contact/ page would
+// bake in whichever visitor's referrer happened to be present when that
+// cache entry was generated, then serve it to every subsequent visitor
+// until the cache expires — the same staleness problem already solved for
+// the footer form's nonce (see divi_sales_child_inject_footer_contact_form
+// above). Setting the value here, client-side, on every real page view
+// sidesteps that entirely: it runs fresh in each visitor's own browser
+// regardless of whether the HTML they received was cached.
+//
+// Scoped to input[name="referring_page"] rather than the whole form, so it
+// degrades harmlessly (referring_page just stays blank) if the field is
+// ever renamed or the form isn't present on the page at all.
+function divi_sales_child_contact_form_referrer() {
+	?>
+	<script>
+	(function () {
+		var field = document.querySelector( 'input[name="referring_page"]' );
+		if ( ! field ) {
+			return;
+		}
+		field.value = document.referrer || '';
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'divi_sales_child_contact_form_referrer' );
+
+// Run the Fluent Forms shortcode inside the Contact page's Code module.
+//
+// Divi 5 has no first-party Fluent Forms bridge module (it ships ones for
+// its own Contact Form, Contact Form 7, and Gravity Forms — not Fluent
+// Forms), so the lead form is embedded as [fluentform id="3"] inside a
+// real, visually-editable Divi Code module — confirmed in the Builder
+// itself. Divi 5's Code module deliberately does NOT run do_shortcode() on
+// its own content (CodeModule::render_callback() only decodes HTML
+// entities), by design, so raw script/HTML embeds aren't mangled — which
+// means a shortcode placed there renders as literal bracket text unless
+// something else processes it. This is that something else: a plain
+// do_shortcode() pass over that one module's rendered output — scoped to
+// Code modules that actually contain a [fluentform] shortcode, rather than
+// running shortcode processing over every Code module on the site (most of
+// which hold raw HTML/SVG that has no business being shortcode-parsed).
+//
+// (Two alternatives were tried and rejected first: the core WordPress
+// "Shortcode" block works correctly on the front end, but Divi 5's Builder
+// canvas shows it only as an unlabeled "Unknown Module" — no live preview,
+// no proper settings panel; Fluent Forms' own Gutenberg block doesn't
+// render in the Divi 5 canvas at all, its editor script isn't loaded
+// there. A real Code module is the only one of the three that's both
+// genuinely Divi-native in the Builder and fully live on the front end.)
+function divi_sales_child_run_shortcodes_in_code_module( $block_content, $block ) {
+	if ( 'divi/code' !== ( $block['blockName'] ?? '' ) ) {
+		return $block_content;
+	}
+	if ( ! has_shortcode( $block_content, 'fluentform' ) ) {
+		return $block_content;
+	}
+	return do_shortcode( $block_content );
+}
+add_filter( 'render_block', 'divi_sales_child_run_shortcodes_in_code_module', 10, 2 );
