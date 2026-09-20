@@ -1,4 +1,7 @@
 <?php
+require_once get_stylesheet_directory() . '/includes/gdi-faq-system.php';
+require_once get_stylesheet_directory() . '/includes/gdi-testimonials-system.php';
+
 function divi_sales_child_enqueue_styles() {
     wp_enqueue_style( "divi-parent-style", get_template_directory_uri() . "/style.css" );
     wp_enqueue_style( "godindev-fonts",
@@ -21,10 +24,27 @@ function divi_sales_child_enqueue_styles() {
         array( "godindev-components" ),
         wp_get_theme()->get("Version")
     );
+    wp_enqueue_style( "godindev-faq-testimonials",
+        get_stylesheet_directory_uri() . "/03-faq-testimonials.css",
+        array( "godindev-typography" ),
+        wp_get_theme()->get("Version")
+    );
     wp_enqueue_style( "divi-sales-child-style",
         get_stylesheet_directory_uri() . "/style.css",
-        array( "divi-parent-style", "godindev-typography" ),
+        array( "divi-parent-style", "godindev-faq-testimonials" ),
         wp_get_theme()->get("Version")
+    );
+    wp_enqueue_script( "godindev-faq",
+        get_stylesheet_directory_uri() . "/js/gdi-faq.js",
+        array(),
+        wp_get_theme()->get("Version"),
+        true
+    );
+    wp_enqueue_script( "godindev-testimonials",
+        get_stylesheet_directory_uri() . "/js/gdi-testimonials.js",
+        array(),
+        wp_get_theme()->get("Version"),
+        true
     );
 }
 add_action( "wp_enqueue_scripts", "divi_sales_child_enqueue_styles" );

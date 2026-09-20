@@ -1,0 +1,341 @@
+/*
+ * 03-faq-testimonials.css
+ * FAQ + Testimonials components — REST-driven widgets rendered by
+ * js/gdi-faq.js and js/gdi-testimonials.js (see includes/gdi-faq-system.php
+ * and includes/gdi-testimonials-system.php for the CPTs behind them).
+ *
+ * Ported from fishbucklake.com's css/faq.css and css/testimonials.css —
+ * same component shapes (accordion FAQ, bordered-list testimonials with
+ * a quote mark), restyled to this site's own --gdi- tokens (00-tokens.css)
+ * instead of FBL's dark/gold skin tokens.
+ */
+
+/* [hidden] toggling (JS sets el.hidden = true/false on several elements
+   below) needs this explicit override — several of those same elements
+   also carry their own `display: flex`/`block` component rule further
+   down, and as an author-stylesheet rule it otherwise wins the cascade
+   over the browser's default `[hidden] { display: none }` UA style even
+   though both match with equal specificity. */
+.gdi-faq [hidden],
+.gdi-testimonials[hidden],
+.gdi-testimonials [hidden] {
+	display: none !important;
+}
+
+/* ============================================
+   FAQ
+   ============================================ */
+
+.gdi-faq {
+	width: 100%;
+	margin: var(--gdi-space-md) 0;
+}
+
+.gdi-faq-filter {
+	margin-bottom: var(--gdi-space-sm);
+	display: flex;
+	align-items: center;
+	gap: var(--gdi-space-xs);
+	flex-wrap: wrap;
+}
+
+.gdi-faq-filter label {
+	font-family: var(--gdi-font-heading);
+	font-weight: 600;
+	font-size: var(--gdi-text-sm);
+	color: var(--gdi-color-text);
+	white-space: nowrap;
+}
+
+.gdi-faq-category-select {
+	flex: 1;
+	min-width: 220px;
+	padding: var(--gdi-space-xs) var(--gdi-space-sm);
+	background: var(--gdi-color-bg);
+	color: var(--gdi-color-text);
+	border: 1px solid var(--gdi-color-border);
+	border-radius: var(--gdi-radius-sm);
+	font-family: var(--gdi-font-body);
+	font-size: var(--gdi-text-sm);
+	cursor: pointer;
+}
+
+.gdi-faq-category-select:focus {
+	outline: none;
+	border-color: var(--gdi-color-primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--gdi-teal-mid) 20%, transparent);
+}
+
+.gdi-faq-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gdi-space-xs);
+}
+
+.gdi-faq-loading {
+	color: var(--gdi-color-text-muted);
+	font-family: var(--gdi-font-body);
+	padding: var(--gdi-space-sm) 0;
+}
+
+.gdi-faq-item {
+	border: 1px solid var(--gdi-color-border);
+	border-radius: var(--gdi-radius-md);
+	overflow: hidden;
+	background: var(--gdi-color-bg);
+}
+
+.gdi-faq-item.is-open {
+	border-color: var(--gdi-color-primary);
+}
+
+.gdi-faq-question {
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: var(--gdi-space-sm) var(--gdi-space-md);
+	font-family: var(--gdi-font-heading);
+	font-weight: 600;
+	font-size: var(--gdi-text-base);
+	color: var(--gdi-color-text);
+	position: relative;
+}
+
+.gdi-faq-question::after {
+	content: '+';
+	position: absolute;
+	right: var(--gdi-space-md);
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--gdi-color-accent);
+	font-size: var(--gdi-text-lg);
+	line-height: 1;
+}
+
+.gdi-faq-item.is-open .gdi-faq-question::after {
+	content: '\2212';
+}
+
+.gdi-faq-question:hover {
+	color: var(--gdi-color-primary);
+}
+
+.gdi-faq-answer {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease;
+}
+
+.gdi-faq-item.is-open .gdi-faq-answer {
+	max-height: 2000px;
+}
+
+.gdi-faq-answer-content {
+	padding: 0 var(--gdi-space-md) var(--gdi-space-sm);
+	font-family: var(--gdi-font-body);
+	font-size: var(--gdi-text-sm);
+	line-height: 1.6;
+	color: var(--gdi-color-text-secondary);
+}
+
+.gdi-faq-answer-content p {
+	margin: 0 0 var(--gdi-space-xs);
+}
+
+.gdi-faq-answer-content p:last-child {
+	margin-bottom: 0;
+}
+
+.gdi-faq-answer-content a {
+	color: var(--gdi-color-link);
+}
+
+.gdi-faq-answer-content a:hover {
+	color: var(--gdi-color-link-hover);
+}
+
+.gdi-faq-empty,
+.gdi-faq-error {
+	text-align: center;
+	color: var(--gdi-color-text-muted);
+	font-family: var(--gdi-font-body);
+	padding: var(--gdi-space-sm) 0;
+}
+
+.gdi-faq-more {
+	margin-top: var(--gdi-space-sm);
+}
+
+.gdi-faq-more a {
+	font-family: var(--gdi-font-body);
+	font-weight: 600;
+	font-size: var(--gdi-text-sm);
+	color: var(--gdi-color-accent);
+}
+
+.gdi-faq-more a:hover {
+	color: var(--gdi-color-accent-light);
+}
+
+/* ============================================
+   TESTIMONIALS
+   ============================================ */
+
+.gdi-testimonials {
+	width: 100%;
+	margin: var(--gdi-space-md) 0;
+}
+
+.gdi-testimonial-filters {
+	margin-bottom: var(--gdi-space-md);
+	text-align: center;
+}
+
+.gdi-testimonial-filter-btn {
+	display: inline-block;
+	padding: var(--gdi-space-2xs) var(--gdi-space-sm);
+	margin: var(--gdi-space-2xs);
+	background: transparent;
+	color: var(--gdi-color-primary);
+	border: 1px solid var(--gdi-color-primary);
+	border-radius: var(--gdi-radius-sm);
+	font-family: var(--gdi-font-body);
+	font-size: var(--gdi-text-sm);
+	cursor: pointer;
+	transition: var(--gdi-transition);
+}
+
+.gdi-testimonial-filter-btn:hover,
+.gdi-testimonial-filter-btn.is-active {
+	background: var(--gdi-color-primary);
+	color: var(--gdi-white);
+}
+
+.gdi-testimonial-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gdi-space-md);
+}
+
+.gdi-testimonial-loading {
+	color: var(--gdi-color-text-muted);
+	font-family: var(--gdi-font-body);
+	padding: var(--gdi-space-sm) 0;
+}
+
+.gdi-testimonial-item {
+	position: relative;
+	padding: var(--gdi-space-md);
+	background: var(--gdi-color-bg);
+	border: 1px solid var(--gdi-color-border);
+	border-radius: var(--gdi-radius-md);
+	box-shadow: var(--gdi-shadow-sm);
+}
+
+.gdi-testimonial-item::before {
+	content: '\201C';
+	position: absolute;
+	top: 0;
+	left: var(--gdi-space-sm);
+	font-size: 3rem;
+	line-height: 1;
+	color: var(--gdi-color-accent-light);
+	opacity: 0.6;
+	font-family: Georgia, serif;
+}
+
+.gdi-testimonial-content {
+	font-family: var(--gdi-font-body);
+	font-size: var(--gdi-text-base);
+	line-height: 1.6;
+	color: var(--gdi-color-text);
+	padding-top: var(--gdi-space-sm);
+}
+
+.gdi-testimonial-content p {
+	margin: 0 0 var(--gdi-space-xs);
+}
+
+.gdi-testimonial-content p:last-child {
+	margin-bottom: 0;
+}
+
+.gdi-testimonial-author {
+	margin-top: var(--gdi-space-sm);
+	padding-top: var(--gdi-space-xs);
+	border-top: 1px solid var(--gdi-color-border);
+}
+
+.gdi-testimonial-author-name {
+	font-family: var(--gdi-font-heading);
+	font-weight: 700;
+	font-size: var(--gdi-text-sm);
+	color: var(--gdi-color-primary);
+}
+
+.gdi-testimonial-author-role {
+	font-family: var(--gdi-font-body);
+	font-size: var(--gdi-text-sm);
+	color: var(--gdi-color-text-muted);
+	font-style: italic;
+}
+
+.gdi-testimonial-rating {
+	margin-top: var(--gdi-space-2xs);
+	color: var(--gdi-color-accent);
+}
+
+.gdi-testimonial-empty {
+	text-align: center;
+	color: var(--gdi-color-text-muted);
+	font-family: var(--gdi-font-body);
+	padding: var(--gdi-space-lg) var(--gdi-space-md);
+	background: var(--gdi-color-bg-alt);
+	border-radius: var(--gdi-radius-md);
+}
+
+.gdi-testimonial-empty a {
+	color: var(--gdi-color-link);
+}
+
+.gdi-testimonial-error {
+	text-align: center;
+	color: var(--gdi-color-text-muted);
+	font-family: var(--gdi-font-body);
+	padding: var(--gdi-space-sm) 0;
+}
+
+.gdi-testimonial-more {
+	margin-top: var(--gdi-space-sm);
+	text-align: center;
+}
+
+.gdi-testimonial-more a {
+	font-family: var(--gdi-font-body);
+	font-weight: 600;
+	font-size: var(--gdi-text-sm);
+	color: var(--gdi-color-accent);
+}
+
+.gdi-testimonial-more a:hover {
+	color: var(--gdi-color-accent-light);
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+	.gdi-faq-filter {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.gdi-faq-category-select {
+		min-width: auto;
+	}
+
+	.gdi-testimonial-item::before {
+		display: none;
+	}
+}
