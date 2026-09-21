@@ -144,6 +144,55 @@
   text-decoration: underline;
 }
 
+/* Phone: full-width card, left-aligned body copy. Center-aligned multi-
+   sentence paragraphs read as a cramped, narrow column at phone widths
+   (each line only a few words wide) — title/icon stay centered since a
+   short heading doesn't have that problem, but the paragraph switches to
+   left-aligned, readable text. Icon and padding scale down to match the
+   narrower card. */
+@media (max-width: 767px) {
+  .gdi-card {
+    width: 100%;
+    padding: var(--gdi-space-sm);
+  }
+
+  .gdi-card p {
+    text-align: left;
+    align-self: stretch;
+  }
+
+  .gdi-card svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Phone: the Divi Section and Row wrapping the card grid both carry fixed
+   desktop padding (48px + 64px per side, from shared global presets) that
+   doesn't scale down at any breakpoint — at phone widths that eats ~224px
+   of the ~390px viewport, squeezing every card (and the "Take a look
+   around" intro above them) into a ~110px column regardless of the
+   .gdi-card rules above. Targeted with :has() rather than editing the
+   presets directly, since those presets are shared site-wide and
+   shrinking them globally is out of scope here — this only touches the
+   specific section/row that actually contains a card.
+   !important is needed because the preset rules Divi generates per-page
+   (e.g. ".preset--module--divi-row--h7tq8k99gc.et_pb_row") land at the
+   same two-class specificity as a plain ":has()" override, so without it
+   the winner is a coin flip on source order rather than something this
+   rule can rely on. */
+@media (max-width: 767px) {
+  .et_pb_section:has(.gdi-card) {
+    padding-left: var(--gdi-space-sm) !important;
+    padding-right: var(--gdi-space-sm) !important;
+  }
+
+  .et_pb_row:has(.gdi-card) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 .et_pb_row {
   row-gap: var(--gdi-space-md);
 }
