@@ -190,6 +190,19 @@
   .et_pb_row:has(.gdi-card) {
     padding-left: 0 !important;
     padding-right: 0 !important;
+    /* Divi's legacy (pre-flex) boxed-layout rule
+       ".et_boxed_layout #page-container .et_pb_row { width: 90%; margin: auto }"
+       still matches this nested row too (its selector doesn't distinguish
+       top-level rows from nested ones) and its #page-container ID beats
+       the newer ".et_flex_row .et_pb_row_nested.et_flex_row { width:100% }"
+       rule on specificity alone — insetting the whole card grid ~10%
+       inside the column even after the padding fix above, while the intro
+       heading/text (not wrapped in a .et_pb_row) sit at the column's full
+       width. !important is the only way to beat an ID selector here
+       without touching that global boxed-layout rule itself. */
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
