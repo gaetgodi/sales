@@ -180,11 +180,17 @@
    (e.g. ".preset--module--divi-row--h7tq8k99gc.et_pb_row") land at the
    same two-class specificity as a plain ":has()" override, so without it
    the winner is a coin flip on source order rather than something this
-   rule can rely on. */
+   rule can rely on.
+   Side padding is 2xs, not sm: the card's own colored box (and its
+   box-shadow) makes any inset from the white page-card's edge visually
+   obvious in a way the same inset isn't for the plain intro text above
+   it — sm (16px) still read as a clear "framed" gap on a real phone.
+   2xs keeps a hair of room so the card's own box-shadow doesn't get
+   clipped flush against the viewport edge. */
 @media (max-width: 767px) {
   .et_pb_section:has(.gdi-card) {
-    padding-left: var(--gdi-space-sm) !important;
-    padding-right: var(--gdi-space-sm) !important;
+    padding-left: var(--gdi-space-2xs) !important;
+    padding-right: var(--gdi-space-2xs) !important;
   }
 
   .et_pb_row:has(.gdi-card) {
@@ -870,6 +876,40 @@ body {
     margin-right: 0;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  /* The top/bottom margins above were sized for the desktop "floating
+     card" look (breathing room around a shadowed, rounded box). Since
+     that effect is already turned off at phone (immediately above), the
+     margins that existed only to frame it should shrink with it — left
+     as desktop-sized (64px above the header, 32px above/below main
+     content) they read as a large dead zone at the top of every page,
+     worst on phone where there's the least vertical room to spare.
+     Header goes to 0 (it now reads as an ordinary top-of-page banner,
+     not a card floating below one); main content keeps a small gap so
+     sections don't visually collide. */
+  .et-l--header {
+    margin-top: 0;
+  }
+
+  /* The header's own Section element (inside .et-l--header, which has
+     overflow:hidden) independently carries the SAME var(--gdi-space-lg)
+     margin-top as a leftover from before that margin was consolidated
+     onto .et-l--header above — never cleaned up. Blocked by the parent's
+     overflow:hidden from collapsing out, it renders as a plain gap
+     trapped inside the header box (before the header's own teal
+     background paints), on top of whatever the wrapper margin above
+     already removed. !important: its compound selector
+     (".et_pb_section_0_tb_header.et_pb_section") ties this rule's
+     specificity, so without it the winner is source order, not this
+     rule. */
+  .et-l--header .et_pb_section {
+    margin-top: 0 !important;
+  }
+
+  #main-content {
+    margin-top: var(--gdi-space-sm);
+    margin-bottom: var(--gdi-space-sm);
   }
 
   #main-content .et_pb_text,
