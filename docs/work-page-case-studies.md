@@ -30,6 +30,16 @@ Tone per `docs/content-briefs.md`: matter-of-fact, proof-focused, not a sales pi
   third-party plugin, plus the pre-existing passkey auth, photo booth, and forensic data recovery
   items. The stale "member dashboard" and "SMS notifications" bullets (no longer accurate) were
   dropped. "What was needed" and both live/sandbox links were left untouched.
+- **2026-09-24** — Brain Injury Association of Ontario published for all visitors (courtesy
+  sign-off received). Until now it was admin-only via two `render_block` filters in
+  `functions.php` (`divi_sales_child_hide_pending_case_studies()` on a
+  `.gdi-case-study--pending` wrapper div, and `divi_sales_child_hide_pending_nav_link()` on
+  `<!--GDI_PENDING_LINK_START/END-->` markers around its nav link), plus a dashed-amber
+  "Draft — pending sign-off" treatment in `01-components.css`. All of it was removed: the filters
+  and CSS from the theme, and the wrapper div, flag paragraph and markers from post 23's two
+  blocks (same `parse_blocks()`/`serialize_blocks()` method as above). BIAO is now a plain Text
+  module like the other three. The old unpublished draft `work-copy` (post 249) still has the
+  old markup and would show the draft label if ever published; delete it or don't publish it.
 
 **Rule for future edits:** as with `et_footer_layout` (see `docs/footer-legal-links.md`), never
 reconstruct post 23's whole `post_content` from an old copy — read current content, change only the

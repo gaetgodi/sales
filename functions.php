@@ -394,57 +394,6 @@ add_action( 'wp_footer', 'divi_sales_child_mobile_nav' );
 // Forms itself, not this repo — see demo/build notes for the tag ids and
 // board/stage used (source:footer, interest:general; Sales Pipeline, New).
 
-// Pending case studies (currently: the BIAO write-up on /work/, awaiting
-// the organization's sign-off before it goes public with real specifics
-// about them). The module itself is real, stored, visually-editable
-// Divi content — wrapped in a ".gdi-case-study--pending" div — but this
-// filter strips that whole block from the rendered output for anyone
-// without manage_options, so it's completely absent from the page for
-// every public visitor: not just unlinked, not just hidden by CSS,
-// genuinely never in the HTML that goes out. Logged-in admins (which
-// includes the Divi Builder canvas, and a normal logged-in visit to the
-// live URL) still see it, dashed-border-flagged as a draft (01-
-// components.css) so it can't be mistaken for finished, live content.
-// WP Super Cache doesn't cache logged-in views (its own "disabled for
-// logged-in visitors" default), so this always evaluates fresh for an
-// admin rather than risking a stale cached admin-view.
-//
-// To publish once sign-off is in: open the block in the Divi Builder
-// and remove the "gdi-case-study--pending" class from its wrapping div
-// (Text module, Text tab) — that's the only thing gating it, no code
-// change needed.
-function divi_sales_child_hide_pending_case_studies( $block_content, $block ) {
-	if ( false === strpos( $block_content, 'gdi-case-study--pending' ) ) {
-		return $block_content;
-	}
-	return current_user_can( 'manage_options' ) ? $block_content : '';
-}
-add_filter( 'render_block', 'divi_sales_child_hide_pending_case_studies', 10, 2 );
-
-// Same pending-case-study gate, applied to one link inside /work/'s
-// secondary nav rather than a whole block: the nav's four links (in
-// order: Outfitter, Stouffville, Recipes, BIAO) live together in one
-// Code module, so the whole-block filter above — which removes an
-// entire block — can't be reused as-is here without also hiding the
-// three links that ARE public. Instead the BIAO link alone is wrapped
-// in "<!--GDI_PENDING_LINK_START-->...<!--GDI_PENDING_LINK_END-->"
-// markers in that Code module's own content, and this filter strips
-// everything between them (markers included) for anyone without
-// manage_options — same capability check, same never-in-the-HTML
-// guarantee as the case-study block itself, just scoped to a substring
-// instead of the whole block. For an admin it just drops the markers
-// and leaves the link.
-function divi_sales_child_hide_pending_nav_link( $block_content, $block ) {
-	if ( false === strpos( $block_content, '<!--GDI_PENDING_LINK_START-->' ) ) {
-		return $block_content;
-	}
-	if ( current_user_can( 'manage_options' ) ) {
-		return str_replace( array( '<!--GDI_PENDING_LINK_START-->', '<!--GDI_PENDING_LINK_END-->' ), '', $block_content );
-	}
-	return preg_replace( '/<!--GDI_PENDING_LINK_START-->.*?<!--GDI_PENDING_LINK_END-->/s', '', $block_content );
-}
-add_filter( 'render_block', 'divi_sales_child_hide_pending_nav_link', 10, 2 );
-
 // Contact page lead form (Fluent Forms, form id 3) — populates its hidden
 // "referring_page" field with the visitor's actual document.referrer, so
 // FluentCRM's second tagging feed can tell a lead who arrived via
