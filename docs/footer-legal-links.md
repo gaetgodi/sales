@@ -69,7 +69,13 @@ wp post get 13 --field=post_content | grep -c gdi-footer-links
 `17 * * * * /root/bin/check-godindev-footer-links.sh` — read-only. It checks that all four hrefs are
 in post 13 and emails gaetgodi@gmail.com **once** when the state changes: when links go missing, when
 the check itself errors (e.g. wp-cli failing under cron's minimal PATH), and when they are restored.
-The last state is kept in `/var/tmp/godindev-footer-links.state`. The script is not in this repo (it
+The last state is kept in `/var/tmp/godindev-footer-links.state`.
+
+Alerts go out via `wp_mail()`, i.e. the site's FluentSMTP connection (Brevo, sender
+`sales@godindev.com`). Plain `mail`/sendmail from this server is **rejected by Gmail** (550 5.7.26:
+no SPF/DKIM for the server hostname, and godindev.com publishes neither in DNS), so do not switch it
+back. If FluentSMTP's connection breaks, alerts break with it; failures are logged to syslog under
+`footer-links-watchdog` and retried on the next run. The script is not in this repo (it
 lives with the other root admin scripts in `/root/bin`).
 
 ## How to restore
