@@ -133,6 +133,45 @@ remains a separate, larger piece of work than the short intro above.
 
 **Blog module:** no longer on Home — removed at some point after this note was written; nothing to flag for future editors.
 
+**Rows: boxed layout blocks Builder margin and width (all pages).** With
+Theme Options → Boxed Layout on (it is — `body.et_boxed_layout`, and the
+"boxed art on a screen" framing depends on it), Divi core applies
+`.et_boxed_layout #page-container .et_pb_row { width: 90%; max-width: 1200px; margin: auto }`
+to every Row (from `Divi/css/dynamic-assets/boxed_layout.css`; the 1360px
+max-width comes from the Customizer CSS in Divi's `functions.php`). The
+Builder writes a Row's own settings as `.et_pb_row_N.et_pb_row { … }`
+*without* `!important` (Divi 5 spacing defaults to `important => false`), so
+the `#page-container` ID in the boxed rule always wins. Nothing errors — the
+Builder just silently ignores the setting.
+
+Measured on /services/ (2026-09-30), Divi-shaped rule injected in-browser:
+
+| Row setting in the Builder | Effect |
+|---|---|
+| Margin left/right | **Ignored** (stays `auto`-centered) |
+| Margin top/bottom | **Ignored** (`margin: auto` covers these too) |
+| Width / Max Width | **Ignored** (stays 90% / 1200px cap) |
+| Padding (any side) | Works |
+| Section margin/padding | Works (the boxed rule doesn't target Sections) |
+
+What to do instead:
+- Horizontal inset for a Row's content → **Row padding**, or the Section's
+  margin/padding.
+- A genuine one-off Row margin/width → that Row's **Advanced → Custom CSS →
+  Main Element**, with `!important` (e.g. `margin-left: 10px !important;`).
+  That is Divi's own per-module escape hatch and stays scoped to that Row.
+  Set width alongside horizontal margins — forcing margin alone leaves the
+  Row at 90% width, so it sits off-center.
+
+Not the cause, despite looking like it: the `!important` Row rules in
+`01-components.css` (`.et_pb_row:has(.gdi-card)`) are phone-only
+(`max-width: 767px`) and only match the Home card-grid Row. No child-theme
+CSS rule can "release" the Row either — out-ranking the boxed rule's ID
+selector would out-rank the Builder's own values too. The only true
+site-wide fix would be stripping the Row selectors out of Divi's boxed CSS
+server-side and re-adding them at `:where()` specificity; deliberately not
+done (depends on Divi internals, no clean filter found).
+
 ---
 
 ## 7. File Structure (matches godin.com's pattern)
