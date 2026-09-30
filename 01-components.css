@@ -464,8 +464,19 @@
    it directly — solving that by giving the nav row its own solid,
    opaque background instead (reusing the gradient's own dark end) so nav
    contrast is guaranteed regardless of gradient position, while still
-   reading as "part of the same teal," not a foreign white strip. */
-.et_pb_row_1_tb_header {
+   reading as "part of the same teal," not a foreign white strip.
+
+   Header/footer module rules in this file target structure (".et-l--header
+   .et_pb_menu", the row that :has() it) rather than Divi's positional order
+   classes (".et_pb_row_1_tb_header", ".et_pb_menu_0_tb_header"). Those
+   positional classes only exist on the front end — the Visual Builder
+   canvas gives the same modules ID-based classes instead
+   (".et_pb_menu_6365e3b6-..."), so positional rules silently didn't apply
+   while editing — and they shift if a Row or module is added above. The
+   header has exactly one Menu module and the footer one Heading + one Text
+   module (post 12 / post 13); if that changes, revisit these selectors.
+   See docs/header-layouts.md. */
+.et-l--header .et_pb_row:has(.et_pb_menu) {
   background-color: var(--gdi-teal-dark);
   padding-top: var(--gdi-space-xs);
   padding-bottom: var(--gdi-space-xs);
@@ -476,8 +487,9 @@
    inlined in <style id="et-critical-inline-css"> which loads after this
    stylesheet — same specificity, later in the cascade, so it wins without
    !important. That's what was creating the separate white box against the
-   section's tinted background. */
-.et_pb_menu_0_tb_header.et_pb_menu {
+   section's tinted background. (On the Builder canvas the same white comes
+   from the ID-based class instead; !important beats both.) */
+.et-l--header .et_pb_menu {
   background-color: transparent !important;
 }
 
@@ -499,7 +511,7 @@
    desktop leaves the module at its natural full-row width on mobile, so
    the icon and its dropdown have real room. */
 @media (min-width: 981px) {
-  .et_pb_menu_0_tb_header {
+  .et-l--header .et_pb_menu {
     width: fit-content;
     max-width: 100%;
     margin: 0 auto;
@@ -514,33 +526,33 @@
    inheriting var(--gdi-font-heading) correctly (no leftover Open Sans —
    nothing in Divi's inline CSS sets font-family here), so it's included
    below for explicitness but wasn't the broken part. */
-.et_pb_heading_0_tb_footer .et_pb_heading_container h1 {
+.et-l--footer .et_pb_heading .et_pb_heading_container h1 {
   font-family: var(--gdi-font-heading);
   font-weight: var(--gdi-weight-heading) !important;
   font-size: var(--gdi-text-xl) !important;
 }
 
-/* Footer copyright text — the module wrapper (.et_pb_text_0_tb_footer) has
-   no width/max-width of its own, so it was simply filling its full-width
-   column; Divi pins its margin/padding with !important already, so ours
-   need to match. font-size is set separately on the nested
-   .et_pb_text_inner (13px, unguarded) rather than the wrapper, so that
-   needs its own rule to actually take effect. */
-.et_pb_text_0_tb_footer {
+/* Footer copyright text — the module wrapper has no width/max-width of its
+   own, so it was simply filling its full-width column. font-size is set
+   separately on the nested .et_pb_text_inner (13px, unguarded) rather than
+   the wrapper, so that needs its own rule to actually take effect.
+   No margin/padding here on purpose: this rule used to also set
+   margin auto / padding var(--gdi-space-md), all !important, but Divi's
+   own ".et_pb_text_0_tb_footer{margin-*:0!important;padding-*:...!important}"
+   tied it on specificity and loads later, so those never applied. The
+   structural selector below outranks Divi's, so keeping them would have
+   suddenly changed the approved live layout — dropped instead. */
+.et-l--footer .et_pb_text {
   font-family: var(--gdi-font-body);
   max-width: var(--gdi-max-width);
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: var(--gdi-space-md) !important;
-  padding-right: var(--gdi-space-md) !important;
 }
 
-.et_pb_text_0_tb_footer .et_pb_text_inner {
+.et-l--footer .et_pb_text .et_pb_text_inner {
   font-size: var(--gdi-text-sm) !important;
 }
 
 /* Footer Terms/Privacy links — sit in the column next to the footer
-   heading (see .et_pb_heading_0_tb_footer above), so same font-family
+   heading (see the footer heading rule above), so same font-family
    and a size between the heading (--gdi-text-xl) and copyright line
    (--gdi-text-sm). Explicit white + !important: Divi's own generated
    global link-color CSS (Customizer default, loaded after this

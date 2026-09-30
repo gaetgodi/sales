@@ -254,17 +254,23 @@ add_action( 'wp_footer', 'divi_sales_child_nav_jump_links' );
 // The panel's items are built by cloning the real primary menu's own
 // top-level links (".et_pb_menu__menu > nav > ul > li") rather than
 // hardcoding labels/URLs here, so it can't silently drift out of sync
-// if the menu is ever edited in wp-admin. If that selector finds
-// nothing (menu markup changed, or this ran before Divi's own menu
-// script populated it), the whole drawer is skipped rather than
-// inserted empty — Divi's native hamburger is only ever hidden via
-// CSS, not removed from the DOM, so there's no dead-end state where
-// mobile visitors have no menu at all.
+// if the menu is ever edited in wp-admin. The menu is found
+// structurally (".et-l--header .et_pb_menu" — the header layout has
+// exactly one Menu module) rather than by Divi's positional
+// ".et_pb_menu_0_tb_header" class, which shifts if another Menu module
+// is ever added above it (see docs/header-layouts.md).
+//
+// If that selector finds nothing (menu module deleted from the header
+// layout, or its markup changed), the drawer is skipped rather than
+// inserted empty. That IS a dead end below 980px: Divi's native
+// hamburger is display:none'd there unconditionally (01-components.css,
+// the "retired" rule), so phone/tablet visitors get no menu at all.
+// Check the drawer on a phone after any header layout change.
 function divi_sales_child_mobile_nav() {
 	?>
 	<script>
 	(function () {
-		var desktopItems = document.querySelectorAll( '.et_pb_menu_0_tb_header .et_pb_menu__menu > nav > ul > li' );
+		var desktopItems = document.querySelectorAll( '.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li' );
 		if ( ! desktopItems.length ) {
 			return;
 		}
