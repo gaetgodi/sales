@@ -120,8 +120,8 @@ function divi_sales_child_rotate_tagline() {
 }
 add_action( "wp_footer", "divi_sales_child_rotate_tagline" );
 
-// Secondary-nav jump links (.gdi-services-nav, on /services/ and
-// /work/) — Divi 5 has its own site-wide smooth-scroll handler for any
+// Secondary-nav jump links (.gdi-services-nav, on /services/, /work/,
+// /event-photography/ and /about/) — Divi 5 has its own site-wide smooth-scroll handler for any
 // in-page "#anchor" link (script-library-frontend-global-functions.js,
 // window.et_pb_smooth_scroll), and it does intercept clicks on these
 // links (preventDefault + stopPropagation, confirmed via
