@@ -26,14 +26,28 @@
    investigation for the contrast numbers (white on --gdi-teal-dark is
    ~7.7:1, comfortably clear of AA even at this 14px size). Uppercase +
    wider tracking + smaller size reads as considered/designed rather than
-   a default browser-ish nav link. */
-.et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
+   a default browser-ish nav link.
+
+   Split in two on purpose. The typography below is only a DEFAULT: the
+   Menu module's own Builder settings (Design → Menu Text: color,
+   capitalization, letter spacing, font) must win over it. Divi writes
+   those as ".et_pb_menu_0_tb_header.et_pb_menu ul li a" (0,2,3); the old
+   single rule here was (0,2,4) — one element more — so it silently beat
+   every Builder change to the nav text. :where() pins the defaults at
+   (0,2,1): still above Divi's core ".et-menu a" color default (0,1,1),
+   below any Builder setting. Properties the Builder has no control for
+   (padding, opacity, the ::after underline hooks) stay at full strength
+   in the second rule. */
+.et_pb_menu .et_pb_menu__menu :where(nav > ul > li) > a {
   font-family: var(--gdi-font-body);
   font-weight: 600;
   font-size: var(--gdi-text-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gdi-white);
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
   opacity: 0.82;
   padding: 0 var(--gdi-space-md);
   position: relative;
@@ -480,6 +494,20 @@
   background-color: var(--gdi-teal-dark);
   padding-top: var(--gdi-space-xs);
   padding-bottom: var(--gdi-space-xs);
+}
+
+/* Below 981px the nav row has nothing visible in it — the link list is
+   swapped out by Divi, Divi's own hamburger is retired (see "Custom mobile
+   nav drawer"), and the drawer's ☰ button lives on .et-l--header, not in
+   this row — so its teal background + padding showed as an empty ~17px
+   strip across the bottom of the header on every page (since the nav-row
+   background was added, 2026-08-31). Hide the row there. Safe for the
+   drawer: its script reads the menu's links from the DOM, which
+   display:none doesn't remove. */
+@media (max-width: 980px) {
+  .et-l--header .et_pb_row:has(.et_pb_menu) {
+    display: none;
+  }
 }
 
 /* Menu module: Divi's per-module builder setting paints an explicit
