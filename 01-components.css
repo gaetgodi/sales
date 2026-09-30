@@ -906,6 +906,28 @@ body {
   margin-right: auto;
 }
 
+/* Heading modules: fill the reading column like Text modules do, so the
+   Builder's own Text Alignment setting on a Heading actually shows.
+   Content columns here are flex columns with align-items:center, which
+   shrink-wraps any module without its own width — Text modules get one
+   from Divi, Heading modules don't. A shrink-wrapped Heading is exactly as
+   wide as its text, so "left" vs "center" inside it looks identical: the
+   whole box is centered by the column. That made Builder alignment on
+   /about/'s H2 section headings (the first Heading-module H2s on the site)
+   appear to do nothing.
+   The centered look every page title (and Home's "Take a look around.")
+   relied on is kept as a :where()-zero-specificity DEFAULT, so any
+   alignment set in the Builder (".et_pb_heading_N .et_pb_heading_container
+   h2", 0,2,1) wins over it — same pattern as the nav-link typography
+   defaults above. */
+#main-content .et_pb_heading {
+  width: 100%;
+}
+
+:where(#main-content .et_pb_heading .et_pb_heading_container) :is(h1, h2, h3, h4, h5, h6) {
+  text-align: center;
+}
+
 /* Phone: collapse to edge-to-edge, no floating card effect */
 @media (max-width: 767px) {
   .et-l--header,
