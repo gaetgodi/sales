@@ -399,6 +399,17 @@ add_action( 'wp_footer', 'divi_sales_child_mobile_nav' );
 // FluentCRM tagging, Fluent Boards feed) lives in the database via Fluent
 // Forms itself, not this repo — see demo/build notes for the tag ids and
 // board/stage used (source:footer, interest:general; Sales Pipeline, New).
+//
+// Spam protection for both forms (3 and 4) is Fluent Forms' own, also
+// DB-side: Global Settings → Security → Honeypot + Token Based Protection
+// (_fluentform_global_form_settings misc.honeypotStatus /
+// misc.tokenBasedProtectionStatus = 'yes'; global, so it covers every
+// form). Enabled 2026-10-02 after a bot submission came through the footer
+// form with neither on. Both are safe with WP Super Cache here: the token
+// is fetched by AJAX at submit time, and the page-baked token_nonce lasts
+// 12–24h vs. the 30-minute cache lifetime. After toggling either, flush
+// the page cache: the honeypot verify rejects a submission whose (cached)
+// HTML lacks the field. No reCAPTCHA/hCaptcha/Turnstile is configured.
 
 // Contact page lead form (Fluent Forms, form id 3) — populates its hidden
 // "referring_page" field with the visitor's actual document.referrer, so
