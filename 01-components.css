@@ -640,6 +640,19 @@
   width: 100%;
 }
 
+/* The current footer has no .gdi-footer-form-wrap (checked 2026-10-03):
+   the embed's Code module sits straight in a Divi column with
+   align-items:center, so it shrank to its content width. 448px on
+   desktop happened to look right, but on phones it was 216px of a 292px
+   column. Same fix as /contact/'s .et_pb_code:has(.fluentform_wrapper_3):
+   fill the column, capped at the 28rem (448px) desktop width it had. */
+.et_pb_code:has(.fluentform_wrapper_4) {
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Name + Email side by side, Message and Send spanning full width — a
    plain CSS grid over Fluent Forms' own flat, sequential .ff-el-group
    list (no Fluent Forms "row"/"container" element needed): 1st and 2nd
@@ -747,8 +760,10 @@
   box-shadow: none;
 }
 
+/* Stack Name/Email on phones. Targets the fieldset — where the grid
+   actually lives — not the form, which isn't a grid container. */
 @media (max-width: 767px) {
-  #fluentform_4.frm-fluent-form {
+  #fluentform_4 fieldset {
     grid-template-columns: 1fr;
   }
 }
