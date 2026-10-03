@@ -643,8 +643,12 @@
 /* Name + Email side by side, Message and Send spanning full width — a
    plain CSS grid over Fluent Forms' own flat, sequential .ff-el-group
    list (no Fluent Forms "row"/"container" element needed): 1st and 2nd
-   groups (Name, Email) auto-place into the two columns; the 3rd
-   (Message) and the submit-button group are pinned to span both. */
+   groups (Name, Email) auto-place into the two columns; Message and the
+   submit-button group are pinned to span both. Message is picked by its
+   textarea, not by position: enabling Fluent Forms' honeypot (2026-10-02)
+   added a hidden .ff-el-group.ff-hpsf-container as the fieldset's FIRST
+   div, so the old :nth-of-type(3) landed on Email and Message went
+   half-width. */
 /* The grid lives on the fieldset itself, not the form — the form's only
    other children are the (visually hidden, but not display:none) legend
    and a few type="hidden" inputs. Hidden inputs are display:none by
@@ -653,8 +657,9 @@
    throw off auto-placement (first attempt at this, with display:contents
    on the fieldset instead, put Name in column 2 next to the legend
    occupying column 1 — caught visually, not by reading the CSS). With
-   the legend excluded, the fieldset's only real grid items are the 4
-   .ff-el-group divs in DOM order, so plain auto-placement already puts
+   the legend excluded (and the honeypot group, display:none from Fluent
+   Forms' own CSS), the real grid items are the 4 visible .ff-el-group
+   divs in DOM order, so plain auto-placement already puts
    Name/Email into the two columns correctly. */
 #fluentform_4 legend {
   display: none;
@@ -666,7 +671,7 @@
   gap: 0 var(--gdi-space-sm);
 }
 
-#fluentform_4 .ff-el-group:nth-of-type(3),
+#fluentform_4 .ff-el-group:has(textarea),
 #fluentform_4 .ff-el-group.ff_submit_btn_wrapper {
   grid-column: 1 / -1;
 }
@@ -726,6 +731,20 @@
 
 #fluentform_4 .ff-btn-submit:hover {
   background: var(--gdi-color-accent-light);
+}
+
+/* Post-submit confirmation. Fluent Forms inserts it as a sibling AFTER
+   the form (#fluentform_4_success, not inside #fluentform_4), and its
+   own CSS sets only a light-grey border — so the text inherited Divi's
+   #666 body grey, ~1.5:1 on the dark-teal footer gradient. Footer text
+   colour instead (~7:1), with a border to match. */
+#fluentform_4_success {
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+  color: var(--gdi-color-footer-text);
+  border-color: color-mix(in srgb, var(--gdi-color-footer-text) 50%, transparent);
+  border-radius: var(--gdi-radius-sm);
+  box-shadow: none;
 }
 
 @media (max-width: 767px) {
