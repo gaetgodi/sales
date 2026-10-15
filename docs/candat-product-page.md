@@ -13,7 +13,7 @@ A product page for CANDAT under the Recipes section of Services, with a waitlist
 | Product page | WordPress page ID 319, slug `candat`, https://godindev.com/candat/ (top-level page, default template) |
 | Services entry point | Page ID 22 (`/services/`), Recipes section (`#recipes`): two paragraphs appended after the sandbox link, with a "Learn about CANDAT" link to `/candat/` (class `gdi-service-cta`) |
 | Waitlist form | Fluent Forms form 5, "CANDAT Waitlist", embedded with `[fluentform id="5"]` in a Divi Code module |
-| App links from the page | Calculator: https://candat.godindev.com/candatcalculator (opens in a new tab) |
+| App links from the page | Calculator button links to `/go/candat-calculator/` (opens in a new tab), which the server redirects to https://candat.godindev.com/candatcalculator. See "App links and query strings" below |
 
 The page is not in the header menu or footer links (deliberate: the footer links are covered by the hourly watchdog and the header stays at six items). Visitors reach it from Services.
 
@@ -63,6 +63,26 @@ The page does not read from the app; the copy is manual.
 2. Edit Divi 5 content with `parse_blocks()` / `serialize_blocks()` and write with `$wpdb->update`. Do not use `wp post update` or `wp_update_post` on Divi pages (kses can mangle the blocks when run without a user).
 3. Back up the old `post_content` first. Flush WP Super Cache (clear the cache directory or use the admin bar "Delete Cache"; `wp super-cache flush` is not registered here) and the object cache (`wp cache flush`).
 4. Keep the claims policy below.
+
+## App links and query strings
+
+The CANDAT app rejects any request with a query string (nginx 400). Google's tag appends `?_gl=...` to links that leave godindev.com for another domain, so a direct link to the app broke for real visitors (found 2026-10-15, after launch; the first smoke test used a URL typed by hand and missed it).
+
+Fix: the page links to a same-domain path, `/go/candat-calculator/`, and a rule at the top of the docroot `.htaccess` (outside this repo) redirects it with an empty query string:
+
+    # BEGIN CANDAT redirect
+    <IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^go/candat-calculator/?$ https://candat.godindev.com/candatcalculator? [R=302,L]
+    </IfModule>
+    # END CANDAT redirect
+
+Rules for anyone editing this page:
+
+- Never link straight to candat.godindev.com from a WordPress page. Add a `/go/...` redirect with the same trailing `?` and link to that.
+- If the docroot `.htaccess` is ever replaced or regenerated, check that the CANDAT block is still there and still above the WordPress block.
+- Test a new app link with `curl -sI "https://godindev.com/go/<name>/?_gl=test"`: expect 302 and a Location with no `?`. Check the target with a GET, not HEAD (the app returns 405 for HEAD).
+- Preferred long-term fix: the app strips or ignores query strings on GET /candat and /candatcalculator. Once that ships, the redirect can stay as harmless.
 
 ## Claims policy for this page
 
