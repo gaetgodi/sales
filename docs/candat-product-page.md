@@ -1,6 +1,6 @@
 # CANDAT product page (godindev.com/candat)
 
-Status: live since 2026-10-15. Operational record of what was built, where it lives, and how to update it.
+Status: live since 2026-10-15. Copy updated 2026-10-15 for the live recipe library (two tools available: calculator, recipe library). Operational record of what was built, where it lives, and how to update it.
 
 ## What it is
 
@@ -88,7 +88,8 @@ Rules for anyone editing this page:
 
 - Describe only what is available now; mark everything else as planned or in development, with no dates.
 - No accuracy figures, no pricing, no privacy or compliance claims.
-- Recipes integration is described as in development until it is live.
+- Recipes integration (connecting the Recipes site on godindev.com to CANDAT) is described as in development until it is live.
+- The CANDAT app's own recipe library (Recipes, task 200) went live 2026-10-15. Visitors can view recipes; only the owner creates them. The page describes it as a recipe library and calls the other recipe tasks (management, nutrient analysis, cooking and yield factors, convert recipe to food) planned, matching the "Planned" badges in the app menu.
 
 ## Open items
 
