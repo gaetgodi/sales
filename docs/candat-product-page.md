@@ -66,7 +66,9 @@ The page does not read from the app; the copy is manual.
 
 ## App links and query strings
 
-The CANDAT app rejects any request with a query string (nginx 400). Google's tag appends `?_gl=...` to links that leave godindev.com for another domain, so a direct link to the app broke for real visitors (found 2026-10-15, after launch; the first smoke test used a URL typed by hand and missed it).
+At launch the CANDAT app rejected any request with a query string (nginx 400). Google's tag (which setting triggers it was not identified) appends `?_gl=...` to links that leave godindev.com for another domain, so a direct link to the app broke for real visitors (found 2026-10-15, after launch; the first smoke test used a URL typed by hand and missed it).
+
+Update 2026-10-15: the app now ignores query strings on `/candat` and `/candatcalculator` (confirmed: both return 200 with a query string appended). The redirect below is kept as a safety net, so the button works even if the app behaviour changes.
 
 Fix: the page links to a same-domain path, `/go/candat-calculator/`, and a rule at the top of the docroot `.htaccess` (outside this repo) redirects it with an empty query string:
 
@@ -79,10 +81,10 @@ Fix: the page links to a same-domain path, `/go/candat-calculator/`, and a rule 
 
 Rules for anyone editing this page:
 
-- Never link straight to candat.godindev.com from a WordPress page. Add a `/go/...` redirect with the same trailing `?` and link to that.
+- Keep linking to app pages through a `/go/...` redirect with the same trailing `?` rather than straight to candat.godindev.com, even though the app now tolerates query strings on the two pages above. Other app routes have not been tested with a query string.
 - If the docroot `.htaccess` is ever replaced or regenerated, check that the CANDAT block is still there and still above the WordPress block.
 - Test a new app link with `curl -sI "https://godindev.com/go/<name>/?_gl=test"`: expect 302 and a Location with no `?`. Check the target with a GET, not HEAD (the app returns 405 for HEAD).
-- Preferred long-term fix: the app strips or ignores query strings on GET /candat and /candatcalculator. Once that ships, the redirect can stay as harmless.
+- The app-side fix (ignore query strings on GET /candat and /candatcalculator) has shipped. The redirect stays as a harmless safety net.
 
 ## Claims policy for this page
 
