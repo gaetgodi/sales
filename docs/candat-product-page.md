@@ -1,6 +1,6 @@
 # CANDAT product page (godindev.com/candat)
 
-Status: live since 2026-10-15. Copy updated 2026-10-15 for the live recipe library (two tools available: calculator, recipe library). Operational record of what was built, where it lives, and how to update it.
+Status: live since 2026-10-15. Copy last updated 2026-10-21 (two tools available: calculator, recipe library). Operational record of what was built, where it lives, and how to update it.
 
 ## What it is
 
@@ -61,8 +61,9 @@ The page does not read from the app; the copy is manual.
 
 1. Update the "Available now" and "What's next" Text modules on page 319, and the Services Recipes paragraph if it needs changing.
 2. Edit Divi 5 content with `parse_blocks()` / `serialize_blocks()` and write with `$wpdb->update`. Do not use `wp post update` or `wp_update_post` on Divi pages (kses can mangle the blocks when run without a user).
-3. Back up the old `post_content` first. Flush WP Super Cache (clear the cache directory or use the admin bar "Delete Cache"; `wp super-cache flush` is not registered here) and the object cache (`wp cache flush`).
-4. Keep the claims policy below.
+3. Back up the old `post_content` first. Flush WP Super Cache (clear the cache directory, including any `.needs-rebuild` files, or use the admin bar "Delete Cache"; `wp super-cache flush` is not registered here), the object cache (`wp cache flush`) and Divi's cached CSS for the page (`wp-content/et-cache/<page id>/`).
+4. Verify from OUTSIDE the server (a private browser window, not only curl on the server). On 2026-10-21 the page was found serving its pre-2026-10-15 wording to outside visitors while the database and server-side curl already had the new text; a stale cached copy was the likely cause and clearing the caches fixed it.
+5. Keep the claims policy below.
 
 ## App links and query strings
 
@@ -91,7 +92,8 @@ Rules for anyone editing this page:
 - Describe only what is available now; mark everything else as planned or in development, with no dates.
 - No accuracy figures, no pricing, no privacy or compliance claims.
 - Recipes integration (connecting the Recipes site on godindev.com to CANDAT) is described as in development until it is live.
-- The CANDAT app's own recipe library (Recipes, task 200) went live 2026-10-15. Visitors can view recipes; only the owner creates them. The page describes it as a recipe library and calls the other recipe tasks (management, nutrient analysis, cooking and yield factors, convert recipe to food) planned, matching the "Planned" badges in the app menu.
+- The CANDAT app's own recipe library (Recipes, task 200) is live (Pass 4, 2026-10-19). Visitors can view recipes; only the owner creates them. The page says each recipe calculates nutrient quantities and edible-weight reports from Canadian Nutrient File data (whole recipe, per 100 g, per portion), that weights are calculated before cooking, and that cooking losses and nutrient retention are not applied. The other recipe tasks (recipe management, a dedicated recipe nutrient calculation, cooking and yield factors, convert recipe to food) are described as planned, matching the "Planned" badges in the app menu.
+- Wording: the app uses "calculation" for computed features (the official name, Canadian Nutrient Analysis System, is unchanged). Use "calculation" in new copy.
 
 ## Open items
 
