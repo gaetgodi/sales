@@ -1,6 +1,6 @@
 # CANDAT product page (godindev.com/candat)
 
-Status: live since 2026-10-15. Copy last updated 2026-10-21 (two tools available: calculator, recipe library). Operational record of what was built, where it lives, and how to update it.
+Status: live since 2026-10-15. Copy and button last updated 2026-10-21 (two tools available: calculator, recipe library). Operational record of what was built, where it lives, and how to update it.
 
 ## What it is
 
@@ -13,7 +13,7 @@ A product page for CANDAT under the Recipes section of Services, with a waitlist
 | Product page | WordPress page ID 319, slug `candat`, https://godindev.com/candat/ (top-level page, default template) |
 | Services entry point | Page ID 22 (`/services/`), Recipes section (`#recipes`): two paragraphs appended after the sandbox link, with a "Learn about CANDAT" link to `/candat/` (class `gdi-service-cta`) |
 | Waitlist form | Fluent Forms form 5, "CANDAT Waitlist", embedded with `[fluentform id="5"]` in a Divi Code module |
-| App links from the page | Calculator button links to `/go/candat-calculator/` (opens in a new tab), which the server redirects to https://candat.godindev.com/candatcalculator. See "App links and query strings" below |
+| App links from the page | The hero button ("CANDAT – in progress") links to `/go/candat-calculator/` (opens in a new tab), which the server redirects to the CANDAT homepage, https://candat.godindev.com/candat. See "App links and query strings" below |
 
 The page is not in the header menu or footer links (deliberate: the footer links are covered by the hourly watchdog and the header stays at six items). Visitors reach it from Services.
 
@@ -23,7 +23,7 @@ Built as Divi 5 blocks, cloned from the About page (ID 24): section -> row -> co
 
 1. H1 "CANDAT"
 2. Intro text
-3. Button "Open the calculator" (`gdi-service-cta`) and caption
+3. Button "CANDAT – in progress" (`gdi-service-cta`) and caption
 4. Jump nav (`gdi-services-nav`, aria-label "CANDAT sections")
 5. Five H2 sections with anchors: `what-it-is`, `available-now`, `whats-next`, `who-its-for`, `stay-in-the-loop`
 6. Code module with the waitlist form
@@ -69,14 +69,14 @@ The page does not read from the app; the copy is manual.
 
 At launch the CANDAT app rejected any request with a query string (nginx 400). Google's tag (which setting triggers it was not identified) appends `?_gl=...` to links that leave godindev.com for another domain, so a direct link to the app broke for real visitors (found 2026-10-15, after launch; the first smoke test used a URL typed by hand and missed it).
 
-Update 2026-10-15: the app now ignores query strings on `/candat` and `/candatcalculator` (confirmed: both return 200 with a query string appended). The redirect below is kept as a safety net, so the button works even if the app behaviour changes.
+Update 2026-10-15: the app now ignores query strings on `/candat` and `/candatcalculator` (confirmed: both return 200 with a query string appended). The bare address, `https://candat.godindev.com/`, still returns 400 with a query string (tested 2026-10-21), so the button must not link to it directly. Since 2026-10-21 the redirect below sends visitors to the CANDAT homepage (`/candat`) and is no longer only a safety net: it is what keeps the button working.
 
 Fix: the page links to a same-domain path, `/go/candat-calculator/`, and a rule at the top of the docroot `.htaccess` (outside this repo) redirects it with an empty query string:
 
     # BEGIN CANDAT redirect
     <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^go/candat-calculator/?$ https://candat.godindev.com/candatcalculator? [R=302,L]
+    RewriteRule ^go/candat-calculator/?$ https://candat.godindev.com/candat? [R=302,L]
     </IfModule>
     # END CANDAT redirect
 
@@ -85,7 +85,7 @@ Rules for anyone editing this page:
 - Keep linking to app pages through a `/go/...` redirect with the same trailing `?` rather than straight to candat.godindev.com, even though the app now tolerates query strings on the two pages above. Other app routes have not been tested with a query string.
 - If the docroot `.htaccess` is ever replaced or regenerated, check that the CANDAT block is still there and still above the WordPress block.
 - Test a new app link with `curl -sI "https://godindev.com/go/<name>/?_gl=test"`: expect 302 and a Location with no `?`. Check the target with a GET, not HEAD (the app returns 405 for HEAD).
-- The app-side fix (ignore query strings on GET /candat and /candatcalculator) has shipped. The redirect stays as a harmless safety net.
+- The app-side fix (ignore query strings on GET /candat and /candatcalculator) has shipped, but the bare address still rejects query strings. Keep the redirect.
 
 ## Claims policy for this page
 
