@@ -1,6 +1,7 @@
 <?php
 require_once get_stylesheet_directory() . '/includes/gdi-faq-system.php';
 require_once get_stylesheet_directory() . '/includes/gdi-testimonials-system.php';
+require_once get_stylesheet_directory() . '/includes/gdi-shell.php';
 
 function divi_sales_child_enqueue_styles() {
     wp_enqueue_style( "divi-parent-style", get_template_directory_uri() . "/style.css" );
@@ -14,9 +15,15 @@ function divi_sales_child_enqueue_styles() {
         array( "godindev-fonts" ),
         wp_get_theme()->get("Version")
     );
+    // Order: tokens -> themes -> components -> typography -> faq/testimonials -> shell -> a11y -> child style.
+    wp_enqueue_style( "godindev-themes",
+        get_stylesheet_directory_uri() . "/00-themes.css",
+        array( "godindev-tokens" ),
+        wp_get_theme()->get("Version")
+    );
     wp_enqueue_style( "godindev-components",
         get_stylesheet_directory_uri() . "/01-components.css",
-        array( "godindev-tokens" ),
+        array( "godindev-themes" ),
         wp_get_theme()->get("Version")
     );
     wp_enqueue_style( "godindev-typography",
@@ -29,9 +36,19 @@ function divi_sales_child_enqueue_styles() {
         array( "godindev-typography" ),
         wp_get_theme()->get("Version")
     );
+    wp_enqueue_style( "godindev-shell",
+        get_stylesheet_directory_uri() . "/04-shell.css",
+        array( "godindev-faq-testimonials" ),
+        wp_get_theme()->get("Version")
+    );
+    wp_enqueue_style( "godindev-a11y",
+        get_stylesheet_directory_uri() . "/05-a11y.css",
+        array( "godindev-shell" ),
+        wp_get_theme()->get("Version")
+    );
     wp_enqueue_style( "divi-sales-child-style",
         get_stylesheet_directory_uri() . "/style.css",
-        array( "divi-parent-style", "godindev-faq-testimonials" ),
+        array( "divi-parent-style", "godindev-a11y" ),
         wp_get_theme()->get("Version")
     );
     wp_enqueue_script( "godindev-faq",
@@ -42,6 +59,12 @@ function divi_sales_child_enqueue_styles() {
     );
     wp_enqueue_script( "godindev-testimonials",
         get_stylesheet_directory_uri() . "/js/gdi-testimonials.js",
+        array(),
+        wp_get_theme()->get("Version"),
+        true
+    );
+    wp_enqueue_script( "godindev-shell",
+        get_stylesheet_directory_uri() . "/js/gdi-shell.js",
         array(),
         wp_get_theme()->get("Version"),
         true
@@ -229,166 +252,9 @@ function divi_sales_child_nav_jump_links() {
 }
 add_action( 'wp_footer', 'divi_sales_child_nav_jump_links' );
 
-// Custom mobile nav drawer — replaces Divi's native mobile
-// hamburger/dropdown entirely (see the "Divi's native mobile
-// hamburger/dropdown ... is retired" comment in 01-components.css for
-// the full history: three separate confirmed-real bugs fixed there in
-// turn — a width collapse, then two different ancestor
-// overflow:hidden clips — and the dropdown still wasn't reliably
-// landing on a non-zero height on a real device. The remaining piece
-// was Divi's own JS-computed slideDown/slideUp height animation
-// itself getting stuck, not anything left in our CSS or markup by
-// that point.
-//
-// Rather than keep chasing Divi's mechanism, this bypasses it: a
-// right-side slide-in panel driven by one class on <body> plus a
-// plain CSS position/transition (01-components.css, "Custom mobile
-// nav drawer") — nothing here is ever "mid-calculation" the way a
-// JS-computed height can be stuck partway. Loosely follows the same
-// drawer pattern already proven on pickleballstouffville.ca
-// (github.com/gaetgodi/SPP, css/spp-drawers.css + js/spp-drawers.js),
-// simplified since this menu is flat (no accordion/submenu needed for
-// 6 top-level items) and restyled to this site's own tokens instead of
-// SPP's palette.
-//
-// The panel's items are built by cloning the real primary menu's own
-// top-level links (".et_pb_menu__menu > nav > ul > li") rather than
-// hardcoding labels/URLs here, so it can't silently drift out of sync
-// if the menu is ever edited in wp-admin. The menu is found
-// structurally (".et-l--header .et_pb_menu" — the header layout has
-// exactly one Menu module) rather than by Divi's positional
-// ".et_pb_menu_0_tb_header" class, which shifts if another Menu module
-// is ever added above it (see docs/header-layouts.md).
-//
-// If that selector finds nothing (menu module deleted from the header
-// layout, or its markup changed), the drawer is skipped rather than
-// inserted empty. That IS a dead end below 980px: Divi's native
-// hamburger is display:none'd there unconditionally (01-components.css,
-// the "retired" rule), so phone/tablet visitors get no menu at all.
-// Check the drawer on a phone after any header layout change.
-function divi_sales_child_mobile_nav() {
-	?>
-	<script>
-	(function () {
-		var desktopItems = document.querySelectorAll( '.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li' );
-		if ( ! desktopItems.length ) {
-			return;
-		}
-
-		var overlay = document.createElement( 'div' );
-		overlay.id = 'gdi-mm-overlay';
-
-		var openBtn = document.createElement( 'button' );
-		openBtn.id = 'gdi-mm-open';
-		openBtn.type = 'button';
-		openBtn.setAttribute( 'aria-label', 'Open menu' );
-		openBtn.setAttribute( 'aria-expanded', 'false' );
-		openBtn.setAttribute( 'aria-controls', 'gdi-mm-panel' );
-		var openIcon = document.createElement( 'span' );
-		openIcon.className = 'gdi-mm-open-icon';
-		openIcon.setAttribute( 'aria-hidden', 'true' );
-		openBtn.appendChild( openIcon );
-
-		var panel = document.createElement( 'nav' );
-		panel.id = 'gdi-mm-panel';
-		panel.setAttribute( 'aria-label', 'Mobile navigation' );
-
-		var panelHeader = document.createElement( 'div' );
-		panelHeader.className = 'gdi-mm-panel-header';
-		var panelTitle = document.createElement( 'span' );
-		panelTitle.className = 'gdi-mm-panel-title';
-		panelTitle.textContent = 'Menu';
-		var closeBtn = document.createElement( 'button' );
-		closeBtn.id = 'gdi-mm-close';
-		closeBtn.type = 'button';
-		closeBtn.setAttribute( 'aria-label', 'Close menu' );
-		var closeIcon = document.createElement( 'span' );
-		closeIcon.className = 'gdi-mm-close-icon';
-		closeIcon.setAttribute( 'aria-hidden', 'true' );
-		closeBtn.appendChild( closeIcon );
-		panelHeader.appendChild( panelTitle );
-		panelHeader.appendChild( closeBtn );
-
-		var list = document.createElement( 'ul' );
-		list.className = 'gdi-mm-list';
-		desktopItems.forEach( function ( li ) {
-			var a = li.querySelector( 'a' );
-			if ( ! a ) {
-				return;
-			}
-			var item = document.createElement( 'li' );
-			if ( li.classList.contains( 'current-menu-item' ) ) {
-				item.className = 'current-menu-item';
-			}
-			var link = document.createElement( 'a' );
-			link.href = a.getAttribute( 'href' );
-			link.textContent = a.textContent.trim();
-			item.appendChild( link );
-			list.appendChild( item );
-		} );
-
-		panel.appendChild( panelHeader );
-		panel.appendChild( list );
-
-		// The open button is appended into .et-l--header itself, not
-		// <body> — it needs to be a real descendant for its own
-		// position:absolute (01-components.css) to anchor against the
-		// header card's own edge rather than the viewport. Falls back
-		// to <body> (viewport-fixed positioning would be wrong, but a
-		// misplaced button beats no button at all) only if that
-		// wrapper somehow isn't there.
-		var headerEl = document.querySelector( '.et-l--header' ) || document.body;
-		headerEl.appendChild( openBtn );
-		document.body.appendChild( overlay );
-		document.body.appendChild( panel );
-
-		function closeMenu() {
-			document.body.classList.remove( 'gdi-mm-open' );
-			openBtn.setAttribute( 'aria-expanded', 'false' );
-		}
-
-		function toggleMenu() {
-			if ( document.body.classList.contains( 'gdi-mm-open' ) ) {
-				closeMenu();
-			} else {
-				document.body.classList.add( 'gdi-mm-open' );
-				openBtn.setAttribute( 'aria-expanded', 'true' );
-			}
-		}
-
-		openBtn.addEventListener( 'click', toggleMenu );
-		closeBtn.addEventListener( 'click', closeMenu );
-		overlay.addEventListener( 'click', closeMenu );
-		list.addEventListener( 'click', function ( e ) {
-			if ( e.target.tagName === 'A' ) {
-				closeMenu();
-			}
-		} );
-
-		// Click-outside-closes, matching the reference drawer's own
-		// pattern — guarded so it only ever acts while open, and never
-		// fights the open button's own click (which toggleMenu already
-		// handles).
-		document.addEventListener( 'click', function ( e ) {
-			if ( ! document.body.classList.contains( 'gdi-mm-open' ) ) {
-				return;
-			}
-			if ( e.target.closest( '#gdi-mm-panel' ) || e.target.closest( '#gdi-mm-open' ) ) {
-				return;
-			}
-			closeMenu();
-		} );
-
-		document.addEventListener( 'keydown', function ( e ) {
-			if ( e.key === 'Escape' ) {
-				closeMenu();
-			}
-		} );
-	})();
-	</script>
-	<?php
-}
-add_action( 'wp_footer', 'divi_sales_child_mobile_nav' );
+// Mobile nav drawer: now rendered by PHP from the primary menu (includes/gdi-shell.php, behaviour in
+// js/gdi-shell.js, styling in 04-shell.css), so every page has it, including Home. The earlier
+// JavaScript-built drawer that cloned the header's Menu module links was retired in the redesign.
 
 // Footer contact form — now a real Fluent Forms embed (form id 4), same
 // pattern as the Contact page's own form (id 3): [fluentform id="4"] in a
@@ -471,7 +337,16 @@ function divi_sales_child_run_shortcodes_in_code_module( $block_content, $block 
 	if ( 'divi/code' !== ( $block['blockName'] ?? '' ) ) {
 		return $block_content;
 	}
-	if ( ! has_shortcode( $block_content, 'fluentform' ) ) {
+	// Fluent Forms plus the child theme's own shell shortcodes (includes/gdi-shell.php).
+	$shortcodes = array( 'fluentform', 'gdi_breadcrumbs', 'gdi_subnav', 'gdi_footer_sitemap', 'gdi_theme_picker' );
+	$has_one    = false;
+	foreach ( $shortcodes as $tag ) {
+		if ( has_shortcode( $block_content, $tag ) ) {
+			$has_one = true;
+			break;
+		}
+	}
+	if ( ! $has_one ) {
 		return $block_content;
 	}
 	return do_shortcode( $block_content );
