@@ -1,0 +1,111 @@
+/*
+ * 00-themes.css
+ * Colour themes for divi-sales-child (godindev.com).
+ *
+ * Brand (the default, light) lives in 00-tokens.css on :root, so it applies with no
+ * attribute and with JavaScript off. This file overrides only the CORE semantic tokens
+ * for the other themes; every legacy alias (--gdi-color-bg, -page-bg, ...) follows.
+ *
+ * The attribute is set before first paint by the inline script in includes/gdi-shell.php:
+ *   html[data-gdi-choice]  the visitor's saved pick: brand | parchment | slate | system
+ *   html[data-gdi-theme]   the EFFECTIVE theme:      brand | parchment | slate
+ * "system" is resolved by that script (dark device -> slate, otherwise brand), so the
+ * Slate values exist exactly once here.
+ *
+ * Values are derived from the Recipes sandbox palettes (gui2-shell.css) but keep the
+ * teal primary and ochre accent so the site stays recognisably godindev.com.
+ * Contrast is verified by the inline computation listed in docs/redesign-foundation.md.
+ */
+
+html[data-gdi-theme="parchment"] {
+  color-scheme: light;
+  --gdi-color-page:           #eadcc5;
+  --gdi-color-surface:        #fbf1dd;
+  --gdi-color-surface-alt:    #f0dfc3;
+  --gdi-color-text:           #3d2b1f;
+  --gdi-color-text-secondary: #5a4333;
+  --gdi-color-text-muted:     #715844;
+  --gdi-color-border:         #cbb595;
+  --gdi-color-control-border: #876a45;
+
+  --gdi-color-primary:        #0d5c63;
+  --gdi-color-on-primary:     #ffffff;
+  --gdi-color-primary-text:   #0d5c63;
+  --gdi-color-accent:         #c17f24;
+  --gdi-color-on-accent:      #1a1a1a;
+  --gdi-color-accent-light:   #e0a84d;
+  --gdi-color-accent-text:    #7a4d0c;
+  --gdi-color-link:           #71391f;
+  --gdi-color-link-hover:     #4f2815;
+  --gdi-color-focus:          #1d70b8;
+
+  --gdi-color-header-bg:      #fbf1dd;
+  --gdi-color-header-text:    #3d2b1f;
+  --gdi-color-header-border:  #cbb595;
+  --gdi-color-logo-bg:        transparent;
+  --gdi-color-footer-bg:      #493326;
+  --gdi-color-footer-text:    #fff8e9;
+  --gdi-color-footer-link:    #f1bd86;
+  --gdi-color-footer-muted:   #e9d9bd;
+  --gdi-color-footer-focus:   #ffd166;
+
+  --gdi-color-success:        #236341;
+  --gdi-color-error:          #a83232;
+  --gdi-color-overlay:        rgba(34, 29, 24, 0.62);
+  --gdi-shadow-color:         rgba(62, 48, 31, 0.12);
+}
+
+html[data-gdi-theme="slate"] {
+  color-scheme: dark;
+  --gdi-color-page:           #171b20;
+  --gdi-color-surface:        #20262d;
+  --gdi-color-surface-alt:    #29313a;
+  --gdi-color-text:           #edf2f6;
+  --gdi-color-text-secondary: #cfd8e0;
+  --gdi-color-text-muted:     #b5c0ca;
+  --gdi-color-border:         #46525e;
+  --gdi-color-control-border: #78899a;
+
+  --gdi-color-primary:        #0b6e77;
+  --gdi-color-on-primary:     #ffffff;
+  --gdi-color-primary-text:   #7ecfd4;
+  --gdi-color-accent:         #e0a84d;
+  --gdi-color-on-accent:      #1a1a1a;
+  --gdi-color-accent-light:   #f0c06a;
+  --gdi-color-accent-text:    #e0a84d;
+  --gdi-color-link:           #7ecfd4;
+  --gdi-color-link-hover:     #a8e3e7;
+  --gdi-color-focus:          #ffd166;
+
+  --gdi-color-header-bg:      #101419;
+  --gdi-color-header-text:    #edf2f6;
+  --gdi-color-header-border:  #46525e;
+  /* TEMPORARY: the current logo artwork is dark navy and unreadable on a dark header.
+     It sits on a light chip until a light logo file exists (see 04-shell.css, "Logo"). */
+  --gdi-color-logo-bg:        #f4f6f6;
+  --gdi-color-footer-bg:      #101419;
+  --gdi-color-footer-text:    #f3f7fa;
+  --gdi-color-footer-link:    #7ecfd4;
+  --gdi-color-footer-muted:   #b5c0ca;
+  --gdi-color-footer-focus:   #ffd166;
+
+  --gdi-color-success:        #9dd8b4;
+  --gdi-color-error:          #ffaaa3;
+  --gdi-color-overlay:        rgba(0, 0, 0, 0.74);
+  --gdi-shadow-color:         rgba(0, 0, 0, 0.32);
+}
+
+/* Theme picker preview chips (the three small swatches inside each option).
+   These are preview colours of the OTHER themes, so they are fixed values by design. */
+.gdi-theme-option--brand {
+  --gdi-sw-page: #ffffff; --gdi-sw-a: #0d5c63; --gdi-sw-b: #c17f24;
+}
+.gdi-theme-option--parchment {
+  --gdi-sw-page: #fbf1dd; --gdi-sw-a: #93652f; --gdi-sw-b: #8b4b2a;
+}
+.gdi-theme-option--slate {
+  --gdi-sw-page: #20262d; --gdi-sw-a: #7ecfd4; --gdi-sw-b: #e0a84d;
+}
+.gdi-theme-option--system {
+  --gdi-sw-page: linear-gradient(90deg, #ffffff 50%, #20262d 50%); --gdi-sw-a: #0d5c63; --gdi-sw-b: #e0a84d;
+}
