@@ -304,15 +304,16 @@ html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
     transition-delay: 0s;
   }
 
-  /* Closed state: off-screen AND visibility:hidden (+ the inert attribute set by the script), so
-     the links are not reachable by Tab or a screen reader while closed. Slides via "right"
-     (a plain layout offset), not transform, as before. */
+  /* Closed state: pushed off-screen with transform AND visibility:hidden (+ the inert attribute set
+     by the script), so the links are not reachable by Tab or a screen reader while closed. The panel
+     is position:fixed, so a translated closed panel adds no horizontal scroll (the earlier
+     "right: -100vw" offset could at 360px and 768px). */
   #gdi-mm-panel {
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
-    right: -100vw;
+    right: 0;
     bottom: 0;
     width: 80vw;
     max-width: 320px;
@@ -320,14 +321,15 @@ html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
     color: var(--gdi-color-text);
     border-left: 1px solid var(--gdi-color-border);
     box-shadow: var(--gdi-shadow-md);
-    transition: right 0.25s ease-out, visibility 0s linear 0.25s;
+    transform: translateX(100%);
+    transition: transform 0.25s ease-out, visibility 0s linear 0.25s;
     visibility: hidden;
     z-index: 99999;
     overflow-y: auto;
   }
 
   body.gdi-mm-open #gdi-mm-panel {
-    right: 0;
+    transform: none;
     visibility: visible;
     transition-delay: 0s;
   }

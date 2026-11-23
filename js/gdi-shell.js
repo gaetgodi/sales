@@ -16,7 +16,14 @@
 
 	/* ---------------- Theme picker ---------------- */
 
+	// The current choice is also held in memory, so it survives when localStorage is blocked
+	// (otherwise "System" would be forgotten and OS colour-scheme changes would stop being followed).
+	var currentChoice = null;
+
 	function readChoice() {
+		if (currentChoice !== null && CHOICES.indexOf(currentChoice) !== -1) {
+			return currentChoice;
+		}
 		try {
 			var saved = window.localStorage.getItem(STORAGE_KEY);
 			if (CHOICES.indexOf(saved) !== -1) {
@@ -45,6 +52,7 @@
 	}
 
 	function onPick(choice) {
+		currentChoice = choice;
 		try {
 			window.localStorage.setItem(STORAGE_KEY, choice);
 		} catch (e) {}
@@ -56,6 +64,11 @@
 		// Footer fallback: if no picker was placed in the footer layout, copy the drawer's one there.
 		var footer = document.querySelector('.et-l--footer');
 		var source = document.querySelector('#gdi-mm-panel .gdi-theme-picker');
+		if (!source) {
+			// No drawer (no primary menu assigned): the picker comes from the PHP-rendered template.
+			var tpl = document.getElementById('gdi-picker-template');
+			source = tpl && tpl.content ? tpl.content.querySelector('.gdi-theme-picker') : null;
+		}
 		if (footer && source && !footer.querySelector('.gdi-theme-picker')) {
 			var wrap = document.createElement('div');
 			wrap.className = 'gdi-theme-picker-wrap';
@@ -95,7 +108,9 @@
 		// Keep other open tabs in step.
 		window.addEventListener('storage', function (e) {
 			if (e.key === STORAGE_KEY) {
+				currentChoice = null; // another tab changed it: storage is the source of truth now
 				var next = readChoice();
+				currentChoice = next;
 				apply(next);
 				syncPickers(next);
 			}

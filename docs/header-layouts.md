@@ -14,14 +14,13 @@ menu, not the layout.
 
 ### Selectors: structural, not positional (since 2026-09-30)
 
-The nav, footer heading/copyright rules in `01-components.css` and the mobile drawer script in
-`functions.php` target structure:
+The nav, footer heading/copyright rules (now in `04-shell.css`) target structure. The mobile drawer no
+longer reads the header at all (see below):
 
 | What | Selector |
 |---|---|
 | Nav row (teal bar, padding) | `.et-l--header .et_pb_row:has(.et_pb_menu)` |
 | Menu (transparent bg, desktop fit-content centering) | `.et-l--header .et_pb_menu` |
-| Drawer source links (`functions.php`) | `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li` |
 | Footer heading | `.et-l--footer .et_pb_heading .et_pb_heading_container h1` |
 | Footer copyright | `.et-l--footer .et_pb_text` (+ `.et_pb_text_inner`) |
 
@@ -33,16 +32,19 @@ with those:
    (`.et_pb_menu_6365e3b6-…`), so the nav showed as a white, full-width bar with no teal row while
    editing — even though the live site was fine.
 2. **They shift with position.** Adding a Row above the nav made it `row_2`; adding another Menu
-   module above made it `menu_1` — silently dropping the styling, and (for the drawer) the whole
-   phone/tablet menu.
+   module above made it `menu_1` — silently dropping the styling.
 
 The structural selectors assume the header has **exactly one Menu module** and the footer **one
 Heading and one Text module** (true as of 2026-09-30). If a second one is ever added, revisit them.
 
-**Mobile drawer = the high-stakes one.** Below 980px Divi's own hamburger is always hidden
-(`01-components.css`, "retired" rule), so if the drawer script finds no menu links it builds nothing
-and phone/tablet visitors have no navigation at all. After any header layout change, open the site at
-phone width and tap the ☰ button.
+**Mobile drawer.** Below 980px Divi's own hamburger is always hidden (`01-components.css`, "retired"
+rule). The drawer is rendered by PHP in `wp_footer` (`includes/gdi-shell.php`) from the WordPress menu
+assigned to the `primary-menu` location (`wp_nav_menu`, depth 1), so it exists on every page, including
+Home, whatever modules the header layout contains. Behaviour (open/close, focus trap, Escape,
+`aria-expanded`) is in `js/gdi-shell.js`; styling is in `04-shell.css`. The script moves the ☰ button into
+`.et-l--header` when that wrapper exists. If no menu is assigned to `primary-menu`, neither the button nor
+the drawer is rendered, so phone/tablet visitors have no navigation: keep the menu assigned, and after any
+menu change open the site at phone width and tap the ☰ button.
 
 (Unrelated to position, one deliberate behavior note: the old footer copyright rule also declared
 `margin: auto` / `padding: var(--gdi-space-md)` with `!important`, but Divi's own

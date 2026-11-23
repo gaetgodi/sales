@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 require_once get_stylesheet_directory() . '/includes/gdi-faq-system.php';
 require_once get_stylesheet_directory() . '/includes/gdi-testimonials-system.php';
 require_once get_stylesheet_directory() . '/includes/gdi-shell.php';
@@ -337,19 +341,22 @@ function divi_sales_child_run_shortcodes_in_code_module( $block_content, $block 
 	if ( 'divi/code' !== ( $block['blockName'] ?? '' ) ) {
 		return $block_content;
 	}
-	// Fluent Forms plus the child theme's own shell shortcodes (includes/gdi-shell.php).
-	$shortcodes = array( 'fluentform', 'gdi_breadcrumbs', 'gdi_subnav', 'gdi_footer_sitemap', 'gdi_theme_picker' );
-	$has_one    = false;
-	foreach ( $shortcodes as $tag ) {
+	// Only an explicit allow-list runs inside Code modules: Fluent Forms plus the child theme's own
+	// shell shortcodes (includes/gdi-shell.php). A Code module holds raw HTML/script, so running
+	// do_shortcode() on all of it would also execute any other registered shortcode found in it.
+	// Anything outside the list is left as plain text.
+	$allowed = array( 'fluentform', 'gdi_breadcrumbs', 'gdi_subnav', 'gdi_footer_sitemap', 'gdi_theme_picker' );
+	$present = false;
+	foreach ( $allowed as $tag ) {
 		if ( has_shortcode( $block_content, $tag ) ) {
-			$has_one = true;
+			$present = true;
 			break;
 		}
 	}
-	if ( ! $has_one ) {
+	if ( ! $present ) {
 		return $block_content;
 	}
-	return do_shortcode( $block_content );
+	return preg_replace_callback( '/' . get_shortcode_regex( $allowed ) . '/', 'do_shortcode_tag', $block_content );
 }
 add_filter( 'render_block', 'divi_sales_child_run_shortcodes_in_code_module', 10, 2 );
 

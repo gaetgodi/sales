@@ -122,6 +122,7 @@ function gdi_shell_theme_picker_html() {
  * Mobile drawer: button, overlay and panel, rendered from the primary WordPress menu.
  * The panel starts inert; js/gdi-shell.js toggles inert/aria state and moves the button into
  * the header. Without JavaScript the button stays hidden and the footer sitemap carries the links.
+ * With no primary menu assigned, neither the button nor the drawer is rendered.
  */
 function gdi_shell_render_drawer() {
 	if ( gdi_shell_is_builder() ) {
@@ -138,6 +139,12 @@ function gdi_shell_render_drawer() {
 			'echo'           => false,
 		)
 	);
+	if ( ! $menu ) {
+		// No menu is assigned to the primary location: no menu button and no drawer navigation.
+		// The picker stays available: the script copies it from this inert template into the footer.
+		echo '<template id="gdi-picker-template">' . gdi_shell_theme_picker_html() . '</template>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the function.
+		return;
+	}
 	?>
 	<button type="button" id="gdi-mm-open" hidden aria-label="<?php echo esc_attr__( 'Open menu', 'divi-sales-child' ); ?>" aria-expanded="false" aria-controls="gdi-mm-panel"><span class="gdi-mm-open-icon" aria-hidden="true"></span></button>
 	<div id="gdi-mm-overlay" aria-hidden="true"></div>
@@ -146,11 +153,7 @@ function gdi_shell_render_drawer() {
 			<span class="gdi-mm-panel-title"><?php echo esc_html__( 'Menu', 'divi-sales-child' ); ?></span>
 			<button type="button" id="gdi-mm-close" aria-label="<?php echo esc_attr__( 'Close menu', 'divi-sales-child' ); ?>"><span class="gdi-mm-close-icon" aria-hidden="true"></span></button>
 		</div>
-		<?php
-		if ( $menu ) {
-			echo $menu; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_nav_menu() output.
-		}
-		?>
+		<?php echo $menu; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_nav_menu() output. ?>
 		<div class="gdi-mm-panel-appearance">
 			<?php echo gdi_shell_theme_picker_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside the function. ?>
 		</div>

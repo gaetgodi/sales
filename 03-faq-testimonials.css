@@ -53,7 +53,7 @@
 	padding: var(--gdi-space-xs) var(--gdi-space-sm);
 	background: var(--gdi-color-bg);
 	color: var(--gdi-color-text);
-	border: 1px solid var(--gdi-color-border);
+	border: 1px solid var(--gdi-color-control-border);
 	border-radius: var(--gdi-radius-sm);
 	font-family: var(--gdi-font-body);
 	font-size: var(--gdi-text-sm);
