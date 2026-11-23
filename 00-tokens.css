@@ -46,6 +46,7 @@
   --gdi-color-primary:        var(--gdi-teal-dark);  /* primary action background */
   --gdi-color-on-primary:     #ffffff;
   --gdi-color-primary-text:   var(--gdi-teal-dark);  /* primary-coloured text/icons/borders on a surface */
+  --gdi-color-heading:        var(--gdi-teal-dark);  /* Heading module text in the page body */
   --gdi-color-accent:         var(--gdi-amber);      /* accent action background */
   --gdi-color-on-accent:      var(--gdi-gray-900);
   --gdi-color-accent-light:   var(--gdi-amber-light);/* accent hover background */

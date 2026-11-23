@@ -19,9 +19,10 @@ longer reads the header at all (see below):
 
 | What | Selector |
 |---|---|
-| Nav row (teal bar, padding) | `.et-l--header .et_pb_row:has(.et_pb_menu)` |
-| Menu (transparent bg, desktop fit-content centering) | `.et-l--header .et_pb_menu` |
-| Footer heading | `.et-l--footer .et_pb_heading .et_pb_heading_container h1` |
+| Header row (vertical padding, centred items; header is a flat bar with a bottom border, not a teal bar) | `.et-l--header .et_pb_row` |
+| Menu on the right | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` (flex-end), then `.et-l--header .et_pb_menu .et_pb_menu__wrap` and the `ul` (`justify-content: flex-end`) |
+| Menu (transparent bg) and link colour | `.et-l--header .et_pb_menu`, `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` |
+| Footer heading (h1 to h4) | `.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` |
 | Footer copyright | `.et-l--footer .et_pb_text` (+ `.et_pb_text_inner`) |
 
 They used to target Divi's positional order classes (`.et_pb_row_1_tb_header`,
@@ -39,8 +40,8 @@ Heading and one Text module** (true as of 2026-09-30). If a second one is ever a
 
 **Mobile drawer.** Below 980px Divi's own hamburger is always hidden (`01-components.css`, "retired"
 rule). The drawer is rendered by PHP in `wp_footer` (`includes/gdi-shell.php`) from the WordPress menu
-assigned to the `primary-menu` location (`wp_nav_menu`, depth 1), so it exists on every page, including
-Home, whatever modules the header layout contains. Behaviour (open/close, focus trap, Escape,
+assigned to the `primary-menu` location (`wp_nav_menu`, depth 1), so, while a menu is assigned, it exists
+on every page, including Home, whatever modules the header layout contains. Behaviour (open/close, focus trap, Escape,
 `aria-expanded`) is in `js/gdi-shell.js`; styling is in `04-shell.css`. The script moves the ☰ button into
 `.et-l--header` when that wrapper exists. If no menu is assigned to `primary-menu`, neither the button nor
 the drawer is rendered, so phone/tablet visitors have no navigation: keep the menu assigned, and after any

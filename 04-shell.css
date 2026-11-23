@@ -75,7 +75,9 @@ html body #page-container .et_pb_row_nested {
    Selector basis: Divi writes preset classes as "preset--module--divi-row--<id>"
    (seen in earlier comments of this repo); the section variant is assumed by analogy.
    The ID selector beats the preset rules, and also any per-row Builder padding. */
-html body #page-container .et_pb_row[class*="preset--module--divi-row--"] {
+/* Body rows only (.et-l--post): the header row also carries a row preset class and must not become a card;
+   footer rows are outside .et-l--post as well. */
+html body #page-container .et-l--post .et_pb_row[class*="preset--module--divi-row--"] {
   padding: var(--gdi-pad-card);
   border: 1px solid var(--gdi-color-border);
   border-radius: var(--gdi-radius-md);
@@ -127,6 +129,14 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
   align-items: center;
 }
 
+/* Menu on the right. Divi gives the last header column flex-direction:column; align-items:flex-start and no
+   desktop width, so the menu hugs the logo. In a column, align-items is the HORIZONTAL alignment.
+   Specificity 0,4,0 beats Divi's single-class column rule. The logo column is not touched. */
+.et-l--header .et_pb_row > .et_pb_column.et-last-child {
+  flex: 1 1 auto;
+  align-items: flex-end;
+}
+
 /* The Menu module's own Builder setting paints a white background. */
 .et-l--header .et_pb_menu {
   background-color: transparent !important;
@@ -164,10 +174,24 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
   background-color: var(--gdi-color-surface-alt);
 }
 
-/* Current page: filled pill. */
-.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a,
-.et_pb_menu .et_pb_menu__menu > nav > ul > li.current_page_item > a,
-.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-ancestor > a {
+/* Header menu link colour. Divi stores #000000 on ".et_pb_menu_0_tb_header.et_pb_menu ul li a" (0,2,3) in
+   an inline block that loads after this file. This selector is 0,3,4, so it wins without !important.
+   Hover/focus use header tokens only. The pill rule below is prefixed to 0,4,4 and comes later, so the
+   current item keeps white-on-primary in hover/focus too. */
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
+  color: var(--gdi-color-header-text);
+}
+
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a:focus-visible {
+  color: var(--gdi-color-header-text);
+  background-color: var(--gdi-color-surface-alt);
+}
+
+/* Current page: filled pill. Divi sets white !important on it; on-primary is white in every theme. */
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current_page_item > a,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-ancestor > a {
   background-color: var(--gdi-color-primary);
   color: var(--gdi-color-on-primary);
   font-weight: 700;
@@ -570,6 +594,14 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   font-weight: var(--gdi-weight-heading) !important;
   font-size: var(--gdi-text-lg) !important;
   color: var(--gdi-color-footer-text) !important;
+}
+
+/* Body Heading modules follow the theme heading colour. !important is needed because Divi stores the colour
+   (var(--gdi-color-primary)) as !important on ".et_pb_heading_0 .et_pb_heading_container h1/h2" (0,2,1);
+   this selector is 0,3,1 and also !important, so it wins. It recolours EVERY Heading module's text in the
+   page body: a deliberately coloured heading inside a dark band would be recoloured as well. */
+.et-l--post .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4) {
+  color: var(--gdi-color-heading) !important;
 }
 
 .et-l--footer .et_pb_text {

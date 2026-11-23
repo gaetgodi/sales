@@ -31,6 +31,7 @@ html[data-gdi-theme="parchment"] {
   --gdi-color-primary:        #0d5c63;
   --gdi-color-on-primary:     #ffffff;
   --gdi-color-primary-text:   #0d5c63;
+  --gdi-color-heading:        #0d5c63;
   --gdi-color-accent:         #c17f24;
   --gdi-color-on-accent:      #1a1a1a;
   --gdi-color-accent-light:   #e0a84d;
@@ -69,6 +70,7 @@ html[data-gdi-theme="slate"] {
   --gdi-color-primary:        #0b6e77;
   --gdi-color-on-primary:     #ffffff;
   --gdi-color-primary-text:   #7ecfd4;
+  --gdi-color-heading:        #7ecfd4;
   --gdi-color-accent:         #e0a84d;
   --gdi-color-on-accent:      #1a1a1a;
   --gdi-color-accent-light:   #f0c06a;

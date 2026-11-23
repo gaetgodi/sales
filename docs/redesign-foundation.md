@@ -56,6 +56,20 @@ The tagline is no longer part of the header design. Put the Text module (CSS cla
 
 `04-shell.css`, block "TEMPORARY interim flatten of the Divi presets", flattens row presets (`[class*="preset--module--divi-row--"]`) and section presets (`[class*="preset--module--divi-section--"]`, assumed by analogy). It also overrides per-row Builder padding. Fix the presets in Divi (Content Card padding to `var(--gdi-pad-card)`, radius to `var(--gdi-radius-md)`, no shadow) and delete the block.
 
+## Divi specificity fixes (FIX-2)
+
+Our CSS loads before Divi's per-page inline block, so Divi wins ties. Each rule below is one step higher than the Divi rule it must beat.
+
+| | Rule in `04-shell.css` | Why | Outranks |
+|---|---|---|---|
+| R1 | `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` (colour, plus hover and focus-visible) | Divi stores the menu link colour as `#000000`, unreadable in Slate | `.et_pb_menu_0_tb_header.et_pb_menu ul li a` (0,2,3), no `!important` |
+| R2 | `.et-l--post .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` with `!important` | Heading text follows the theme (`--gdi-color-heading`) | Divi's `.et_pb_heading_0 .et_pb_heading_container h1/h2` (0,2,1) `!important` |
+| R3 | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` | The last header column is `flex-direction: column; align-items: flex-start`, so the menu hugs the logo | Divi's single-class column rule (0,1,0) |
+| R4 | The interim card rule now starts `html body #page-container .et-l--post .et_pb_row[...]` | The header row also carries a row preset class and was turned into a card | (restricts scope; no Divi rule involved) |
+
+New token `--gdi-color-heading`: Brand `#0d5c63` (same as primary), Parchment `#0d5c63`, Slate `#7ecfd4`.
+`.et-l--post` as the body-content wrapper is assumed from the audit; it is not described elsewhere in this repo.
+
 ## Still to do in Divi (staging, not in this repo)
 
 1. One header layout for every page, including Home: logo left, one Menu module right (assign the same layout to the Home template).

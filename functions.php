@@ -325,10 +325,13 @@ add_action( 'wp_footer', 'divi_sales_child_contact_form_referrer' );
 // entities), by design, so raw script/HTML embeds aren't mangled — which
 // means a shortcode placed there renders as literal bracket text unless
 // something else processes it. This is that something else: a plain
-// do_shortcode() pass over that one module's rendered output — scoped to
-// Code modules that actually contain a [fluentform] shortcode, rather than
-// running shortcode processing over every Code module on the site (most of
-// which hold raw HTML/SVG that has no business being shortcode-parsed).
+// shortcode replacement over that one module's rendered output, limited to
+// an explicit allow-list: fluentform and the four gdi_ shortcodes
+// (gdi_breadcrumbs, gdi_subnav, gdi_footer_sitemap, gdi_theme_picker). It
+// uses get_shortcode_regex() with only those tags and do_shortcode_tag() as
+// the callback, so any other shortcode in a Code module stays as plain text
+// (most Code modules hold raw HTML/SVG that has no business being
+// shortcode-parsed), and modules with none of the five are returned as-is.
 //
 // (Two alternatives were tried and rejected first: the core WordPress
 // "Shortcode" block works correctly on the front end, but Divi 5's Builder
