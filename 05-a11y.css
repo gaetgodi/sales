@@ -1,0 +1,56 @@
+/*
+ * 05-a11y.css
+ * Accessibility foundation for divi-sales-child (godindev.com).
+ * Loaded after every other stylesheet so these rules are the last word on focus, touch targets
+ * and motion. Colours come from the --gdi-* tokens.
+ */
+
+/* Visible keyboard focus everywhere. "html body :is(...)" gives specificity (0,2,2): it beats
+   Divi's and plugins' "outline: 0" rules but not ID-based component rules (none remove outlines). */
+html body :is(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 3px solid var(--gdi-color-focus);
+  outline-offset: 2px;
+}
+
+/* Minimum 44px touch targets for controls that are not already sized in 04-shell.css. */
+.gdi-service-cta,
+.et_pb_button,
+.gdi-testimonial-filter-btn,
+#fluentform_3 .ff-btn-submit,
+#fluentform_4 .ff-btn-submit,
+.gdi-faq-question,
+.gdi-faq-more a,
+.gdi-testimonial-more a,
+.gdi-footer-link {
+  min-height: var(--gdi-touch);
+}
+
+.gdi-service-cta,
+.gdi-testimonial-filter-btn,
+.gdi-faq-more a,
+.gdi-testimonial-more a,
+.gdi-footer-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.gdi-faq-category-select,
+#fluentform_3 .ff-el-form-control,
+#fluentform_4 .ff-el-form-control {
+  min-height: var(--gdi-touch);
+}
+
+/* Footer pieces on the footer background: use the footer focus colour (set in 04-shell.css). */
+
+/* Reduced motion: no transitions, no lift, no smooth scrolling for visitors who ask. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
