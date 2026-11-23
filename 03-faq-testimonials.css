@@ -61,9 +61,8 @@
 }
 
 .gdi-faq-category-select:focus {
-	outline: none;
-	border-color: var(--gdi-color-primary);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--gdi-teal-mid) 20%, transparent);
+	border-color: var(--gdi-color-primary-text);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--gdi-color-primary-text) 25%, transparent);
 }
 
 .gdi-faq-list {
@@ -86,7 +85,7 @@
 }
 
 .gdi-faq-item.is-open {
-	border-color: var(--gdi-color-primary);
+	border-color: var(--gdi-color-primary-text);
 }
 
 .gdi-faq-question {
@@ -120,7 +119,7 @@
 }
 
 .gdi-faq-question:hover {
-	color: var(--gdi-color-primary);
+	color: var(--gdi-color-primary-text);
 }
 
 .gdi-faq-answer {
@@ -136,7 +135,7 @@
 .gdi-faq-answer-content {
 	padding: 0 var(--gdi-space-md) var(--gdi-space-sm);
 	font-family: var(--gdi-font-body);
-	font-size: var(--gdi-text-sm);
+	font-size: var(--gdi-text-base);
 	line-height: 1.6;
 	color: var(--gdi-color-text-secondary);
 }
@@ -172,12 +171,12 @@
 .gdi-faq-more a {
 	font-family: var(--gdi-font-body);
 	font-weight: 600;
-	font-size: var(--gdi-text-sm);
-	color: var(--gdi-color-accent);
+	font-size: var(--gdi-text-base);
+	color: var(--gdi-color-accent-text);
 }
 
 .gdi-faq-more a:hover {
-	color: var(--gdi-color-accent-light);
+	color: var(--gdi-color-link-hover);
 }
 
 /* ============================================
@@ -199,8 +198,8 @@
 	padding: var(--gdi-space-2xs) var(--gdi-space-sm);
 	margin: var(--gdi-space-2xs);
 	background: transparent;
-	color: var(--gdi-color-primary);
-	border: 1px solid var(--gdi-color-primary);
+	color: var(--gdi-color-primary-text);
+	border: 1px solid var(--gdi-color-primary-text);
 	border-radius: var(--gdi-radius-sm);
 	font-family: var(--gdi-font-body);
 	font-size: var(--gdi-text-sm);
@@ -211,7 +210,7 @@
 .gdi-testimonial-filter-btn:hover,
 .gdi-testimonial-filter-btn.is-active {
 	background: var(--gdi-color-primary);
-	color: var(--gdi-white);
+	color: var(--gdi-color-on-primary);
 }
 
 .gdi-testimonial-list {
@@ -232,7 +231,7 @@
 	background: var(--gdi-color-bg);
 	border: 1px solid var(--gdi-color-border);
 	border-radius: var(--gdi-radius-md);
-	box-shadow: var(--gdi-shadow-sm);
+	box-shadow: none;
 }
 
 .gdi-testimonial-item::before {
@@ -272,13 +271,13 @@
 .gdi-testimonial-author-name {
 	font-family: var(--gdi-font-heading);
 	font-weight: 700;
-	font-size: var(--gdi-text-sm);
-	color: var(--gdi-color-primary);
+	font-size: var(--gdi-text-base);
+	color: var(--gdi-color-primary-text);
 }
 
 .gdi-testimonial-author-role {
 	font-family: var(--gdi-font-body);
-	font-size: var(--gdi-text-sm);
+	font-size: var(--gdi-text-base);
 	color: var(--gdi-color-text-muted);
 	font-style: italic;
 }
@@ -292,7 +291,7 @@
 	text-align: center;
 	color: var(--gdi-color-text-muted);
 	font-family: var(--gdi-font-body);
-	padding: var(--gdi-space-lg) var(--gdi-space-md);
+	padding: var(--gdi-pad-card);
 	background: var(--gdi-color-bg-alt);
 	border-radius: var(--gdi-radius-md);
 }
@@ -316,12 +315,12 @@
 .gdi-testimonial-more a {
 	font-family: var(--gdi-font-body);
 	font-weight: 600;
-	font-size: var(--gdi-text-sm);
-	color: var(--gdi-color-accent);
+	font-size: var(--gdi-text-base);
+	color: var(--gdi-color-accent-text);
 }
 
 .gdi-testimonial-more a:hover {
-	color: var(--gdi-color-accent-light);
+	color: var(--gdi-color-link-hover);
 }
 
 /* Mobile */
