@@ -4,231 +4,7 @@
  * Kept separate from 00-tokens.css so tokens stay pure values, matching godin.com's pattern.
  */
 
-/* Nav — flat, centered, professional (Section 19 of the plan).
-   Note: Divi 5's actual centering is handled via the Design tab's Text Alignment: Center
-   setting on the Menu module (adds et_pb_text_align_center, which Divi's own core CSS
-   already centers). This rule is a fallback only, kept in case that setting is ever reset. */
-.et_pb_menu .et_pb_menu__menu > nav > ul {
-  justify-content: center;
-}
-
-@media (max-width: 767px) {
-  .et_pb_menu .et_pb_menu__menu > nav > ul {
-    justify-content: flex-start;
-  }
-}
-
-/* Main nav styling — typography, spacing, active state, hover underline.
-   Redesigned to read as one unit with the header rather than a flat,
-   disconnected white bar: the row's own background (below) now matches
-   the gradient's dark end, so link color needs to work against a solid
-   dark teal, not the previous near-white strip — see the header redesign
-   investigation for the contrast numbers (white on --gdi-teal-dark is
-   ~7.7:1, comfortably clear of AA even at this 14px size). Uppercase +
-   wider tracking + smaller size reads as considered/designed rather than
-   a default browser-ish nav link.
-
-   Split in two on purpose. The typography below is only a DEFAULT: the
-   Menu module's own Builder settings (Design → Menu Text: color,
-   capitalization, letter spacing, font) must win over it. Divi writes
-   those as ".et_pb_menu_0_tb_header.et_pb_menu ul li a" (0,2,3); the old
-   single rule here was (0,2,4) — one element more — so it silently beat
-   every Builder change to the nav text. :where() pins the defaults at
-   (0,2,1): still above Divi's core ".et-menu a" color default (0,1,1),
-   below any Builder setting. Properties the Builder has no control for
-   (padding, opacity, the ::after underline hooks) stay at full strength
-   in the second rule. */
-.et_pb_menu .et_pb_menu__menu :where(nav > ul > li) > a {
-  font-family: var(--gdi-font-body);
-  font-weight: 600;
-  font-size: var(--gdi-text-sm);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gdi-white);
-}
-
-.et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
-  opacity: 0.82;
-  padding: 0 var(--gdi-space-md);
-  position: relative;
-  transition: var(--gdi-transition);
-}
-
-.et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover {
-  opacity: 1;
-}
-
-.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a {
-  opacity: 1;
-  font-weight: 700;
-}
-
-.et_pb_menu .et_pb_menu__menu > nav > ul > li > a::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: var(--gdi-space-md);
-  right: var(--gdi-space-md);
-  width: 0;
-  height: 2px;
-  background: var(--gdi-white);
-  transition: var(--gdi-transition);
-}
-
-.et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover::after,
-.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a::after {
-  width: calc(100% - var(--gdi-space-md) * 2);
-}
-
-/* Blurb cards — Home page signposts */
-.et_pb_blurb {
-  background: var(--gdi-color-bg);
-  border-radius: var(--gdi-radius-md);
-  box-shadow: var(--gdi-shadow-sm);
-  padding: var(--gdi-space-md);
-  transition: var(--gdi-transition);
-  height: 100%;
-}
-
-.et_pb_blurb:hover {
-  box-shadow: var(--gdi-shadow-md);
-  transform: translateY(-2px);
-}
-
-/* Card link — replaces .et_pb_blurb styling above for cards rendered as a real <a> */
-.gdi-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  text-decoration: none;
-  background: var(--gdi-color-bg);
-  border-radius: var(--gdi-radius-md);
-  box-shadow: var(--gdi-shadow-sm);
-  padding: var(--gdi-space-md);
-  height: 100%;
-  transition: var(--gdi-transition);
-  color: inherit;
-}
-
-.gdi-card:hover {
-  box-shadow: var(--gdi-shadow-md);
-  transform: translateY(-2px);
-}
-
-.gdi-card svg {
-  width: 64px;
-  height: 64px;
-  color: var(--gdi-color-primary);
-  margin-bottom: var(--gdi-space-sm);
-}
-
-.gdi-card h3 {
-  font-family: var(--gdi-font-heading);
-  font-weight: var(--gdi-weight-heading);
-  font-size: var(--gdi-text-lg);
-  color: var(--gdi-color-text);
-  margin: 0 0 var(--gdi-space-xs);
-}
-
-.gdi-card p {
-  font-family: var(--gdi-font-body);
-  color: var(--gdi-color-text-muted);
-  font-size: var(--gdi-text-sm);
-  margin: 0;
-}
-
-/* Card CTA line — the visible "click to explore" cue inside each whole-card
-   link (see .gdi-card above). Amber accent, same color as .gdi-service-cta's
-   button elsewhere on the site, but plain text here rather than a pill/button
-   — the card itself is already the clickable target, so a second button-
-   looking element inside it would read as a nested, redundant control. */
-.gdi-card-cta {
-  display: inline-block;
-  margin-top: var(--gdi-space-sm);
-  font-family: var(--gdi-font-body);
-  font-weight: 600;
-  font-size: var(--gdi-text-sm);
-  color: var(--gdi-color-accent);
-  transition: var(--gdi-transition);
-}
-
-.gdi-card:hover .gdi-card-cta {
-  color: var(--gdi-color-accent-light);
-  text-decoration: underline;
-}
-
-/* Phone: full-width card, left-aligned body copy. Center-aligned multi-
-   sentence paragraphs read as a cramped, narrow column at phone widths
-   (each line only a few words wide) — title/icon stay centered since a
-   short heading doesn't have that problem, but the paragraph switches to
-   left-aligned, readable text. Icon and padding scale down to match the
-   narrower card. */
-@media (max-width: 767px) {
-  .gdi-card {
-    width: 100%;
-    padding: var(--gdi-space-sm);
-  }
-
-  .gdi-card p {
-    text-align: left;
-    align-self: stretch;
-  }
-
-  .gdi-card svg {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-/* Phone: the Divi Section and Row wrapping the card grid both carry fixed
-   desktop padding (48px + 64px per side, from shared global presets) that
-   doesn't scale down at any breakpoint — at phone widths that eats ~224px
-   of the ~390px viewport, squeezing every card (and the "Take a look
-   around" intro above them) into a ~110px column regardless of the
-   .gdi-card rules above. Targeted with :has() rather than editing the
-   presets directly, since those presets are shared site-wide and
-   shrinking them globally is out of scope here — this only touches the
-   specific section/row that actually contains a card.
-   !important is needed because the preset rules Divi generates per-page
-   (e.g. ".preset--module--divi-row--h7tq8k99gc.et_pb_row") land at the
-   same two-class specificity as a plain ":has()" override, so without it
-   the winner is a coin flip on source order rather than something this
-   rule can rely on.
-   Side padding is 2xs, not sm: the card's own colored box (and its
-   box-shadow) makes any inset from the white page-card's edge visually
-   obvious in a way the same inset isn't for the plain intro text above
-   it — sm (16px) still read as a clear "framed" gap on a real phone.
-   2xs keeps a hair of room so the card's own box-shadow doesn't get
-   clipped flush against the viewport edge. */
-@media (max-width: 767px) {
-  .et_pb_section:has(.gdi-card) {
-    padding-left: var(--gdi-space-2xs) !important;
-    padding-right: var(--gdi-space-2xs) !important;
-  }
-
-  .et_pb_row:has(.gdi-card) {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    /* Divi's legacy (pre-flex) boxed-layout rule
-       ".et_boxed_layout #page-container .et_pb_row { width: 90%; margin: auto }"
-       still matches this nested row too (its selector doesn't distinguish
-       top-level rows from nested ones) and its #page-container ID beats
-       the newer ".et_flex_row .et_pb_row_nested.et_flex_row { width:100% }"
-       rule on specificity alone — insetting the whole card grid ~10%
-       inside the column even after the padding fix above, while the intro
-       heading/text (not wrapped in a .et_pb_row) sit at the column's full
-       width. !important is the only way to beat an ID selector here
-       without touching that global boxed-layout rule itself. */
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-}
-
-.et_pb_row {
-  row-gap: var(--gdi-space-md);
-}
+/* Menu, card, blurb and row-gap rules moved to 04-shell.css ("Header", "Cards"). */
 
 /* Divi's native mobile hamburger/dropdown (.mobile_menu_bar,
    .et_mobile_nav_menu, .et_mobile_menu) is retired in favor of the
@@ -250,220 +26,8 @@
   }
 }
 
-/* =====================================================
-   Custom mobile nav drawer (gdi-mm-*)
-   Right-side slide-in panel + hamburger button, replacing Divi's
-   native mobile menu (retired above). Loosely follows the drawer
-   pattern already proven on pickleballstouffville.ca
-   (github.com/gaetgodi/SPP, css/spp-drawers.css) — simplified for a
-   flat 6-item menu (no accordion/submenu needed here) and restyled to
-   this site's own tokens (Inter, teal/amber) rather than SPP's
-   palette. The key thing carried over from that pattern, and the
-   actual reason this doesn't inherit Divi's stuck-animation problem:
-   the panel's OPEN/CLOSED state is a single CSS position offset
-   ("right", see the panel rule further down for why not "transform")
-   driven by one class on <body>, not a JS-computed height — nothing
-   here is ever "mid-calculation." Markup and the
-   toggle/outside-click/Escape JS live in functions.php
-   (divi_sales_child_mobile_nav, wp_footer) — it clones the real nav
-   menu's own links rather than hardcoding label/URL text, so it can't
-   drift out of sync with the primary menu. */
-#gdi-mm-open,
-#gdi-mm-overlay,
-#gdi-mm-panel {
-  display: none;
-}
-
-@media (max-width: 980px) {
-  /* position:absolute, not fixed — and anchored inside .et-l--header
-     itself (the JS appends the button there, not to <body>; see
-     divi_sales_child_mobile_nav) rather than computed against the
-     viewport. The header/main/footer "cards" are centered at
-     max-width:var(--gdi-max-width) with visible page background
-     showing outside them as gutters (the "boxed art on a screen"
-     layout, further down this file) whenever the viewport is wider
-     than that — true in the 768–980px tablet gap this button targets
-     (Divi's own hamburger-nav cutoff is 980px). A fixed, viewport-edge
-     "right" pinned the button to the raw browser frame regardless of
-     where the card's own edge actually was — "pasted to the wall"
-     instead of sitting on the artwork. Anchoring inside the card
-     (which already has position:relative — see "Stacking context for
-     the header" further down) makes "right: 12px" measure from the
-     CARD's own edge for free, no viewport math needed, and — since
-     the header isn't sticky below the desktop breakpoint (its Theme
-     Builder "sticky" setting is phone/tablet:"none", same fact
-     divi_sales_child_nav_jump_links relies on) — means the button
-     scrolls away with the header exactly like the rest of its
-     content, matching "move and scale with the header card" rather
-     than staying fixed while the card scrolls out from under it.
-     Below 767px the card itself collapses to edge-to-edge (see the
-     phone-width rule further down) — right:12px still measures from
-     the card's own edge there, which by that point *is* the viewport
-     edge, so this needs no separate phone-specific case. */
-  #gdi-mm-open {
-    display: flex;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 100000;
-    width: 44px;
-    height: 44px;
-    align-items: center;
-    justify-content: center;
-    background: var(--gdi-teal-dark);
-    border: 1px solid var(--gdi-color-accent);
-    border-radius: var(--gdi-radius-md);
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .gdi-mm-open-icon:before {
-    content: "\61"; /* Divi's own ETmodules hamburger glyph — already
-                        loaded, and matches the icon this button
-                        replaces */
-    font-family: "ETmodules";
-    font-size: 22px;
-    color: var(--gdi-white);
-  }
-
-  body.gdi-mm-open .gdi-mm-open-icon:before {
-    content: "\4d"; /* ETmodules "X" glyph */
-  }
-
-  #gdi-mm-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 99998;
-  }
-
-  body.gdi-mm-open #gdi-mm-overlay {
-    display: block;
-  }
-
-  /* display:flex unconditionally (not toggled) — the panel is always
-     laid out, just pushed off-screen (via "right", see below) when
-     closed. Toggling display would both break the slide transition
-     (you can't animate to/from display:none) and reintroduce exactly
-     the "JS has to get the state right at the right moment" fragility
-     this drawer exists to avoid.
-
-     Slides via "right" (a plain layout offset), not "transform:
-     translateX()" — deliberately, not just a style preference: this
-     was originally transform-based, and while verifying it here the
-     rendered/computed transform value stopped reflecting live changes
-     entirely in this browser-automation tab specifically (confirmed
-     it's compositor/environment-specific, not a real cascade bug — a
-     plain "right" change on the same element updated correctly and
-     immediately in the same tab where "transform" appeared frozen).
-     Given this session's already seen one other animation mechanism
-     (Divi's own JS-driven slideDown, the reason this drawer exists at
-     all) fail in a way that could only be confirmed on a real device,
-     switching to a plain, non-compositor property here is the more
-     conservative choice, not just a workaround for this one test.
-
-     Unlike the open button above, this panel is deliberately still
-     position:fixed against the raw viewport, not anchored inside the
-     boxed-card layout — a slide-in drawer is a temporary UI layer
-     above the page (like a modal), not page content, so it reads as
-     an intrusion from off the actual screen edge, at full device
-     height, the same way SPP's own reference drawer works and the way
-     off-canvas nav conventionally behaves generally. Constraining it
-     to the card's own width/height would leave a visible strip of
-     page (or, on a shorter card, blank space) between the drawer's
-     edge and the real screen edge, undercutting exactly the "slides
-     in from off-screen" motion this pattern is for. The dark overlay
-     backdrop below intentionally dims the whole viewport for the same
-     reason — it's covering the page, not just the card. */
-  #gdi-mm-panel {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: -100vw;
-    bottom: 0;
-    width: 80vw;
-    max-width: 320px;
-    background: var(--gdi-color-bg);
-    border-left: 2px solid var(--gdi-color-primary);
-    box-shadow: var(--gdi-shadow-md);
-    transition: right 0.25s ease-out;
-    z-index: 99999;
-    overflow-y: auto;
-  }
-
-  body.gdi-mm-open #gdi-mm-panel {
-    right: 0;
-  }
-}
-
-.gdi-mm-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--gdi-space-sm) var(--gdi-space-md);
-  background: var(--gdi-teal-dark);
-}
-
-.gdi-mm-panel-title {
-  font-family: var(--gdi-font-heading);
-  font-weight: var(--gdi-weight-heading);
-  color: var(--gdi-white);
-}
-
-#gdi-mm-close {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  line-height: 0;
-}
-
-.gdi-mm-close-icon:before {
-  content: "\4d";
-  font-family: "ETmodules";
-  font-size: 20px;
-  color: var(--gdi-white);
-}
-
-.gdi-mm-list {
-  list-style: none;
-  margin: 0;
-  padding: var(--gdi-space-sm);
-}
-
-.gdi-mm-list li {
-  margin-bottom: 2px;
-}
-
-.gdi-mm-list a {
-  display: block;
-  font-family: var(--gdi-font-body);
-  font-weight: 600;
-  font-size: var(--gdi-text-sm);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gdi-color-text-secondary);
-  text-decoration: none;
-  padding: var(--gdi-space-sm) var(--gdi-space-md);
-  border-radius: var(--gdi-radius-md);
-  border-left: 2px solid transparent;
-  transition: var(--gdi-transition);
-}
-
-.gdi-mm-list a:hover,
-.gdi-mm-list a:focus-visible {
-  color: var(--gdi-color-primary);
-  background: var(--gdi-color-bg-alt);
-  border-left-color: var(--gdi-color-primary);
-}
-
-.gdi-mm-list li.current-menu-item a {
-  color: var(--gdi-color-primary);
-  font-weight: 700;
-  border-left-color: var(--gdi-color-primary);
-}
+/* Custom mobile nav drawer: markup is now rendered by PHP (includes/gdi-shell.php) and its CSS
+   lives in 04-shell.css ("Mobile drawer"). */
 
 /* Stacking context for the header above adjacent content */
 .et-l--header {
@@ -471,140 +35,7 @@
   z-index: 99;
 }
 
-/* Nav row background — was a near-white tint, which is what read as a
-   "stark, disconnected" flat bar sitting on top of the gradient. The
-   header gradient is horizontal (light-left for the logo, dark-right),
-   so a single link text color can't have good contrast at both ends of
-   it directly — solving that by giving the nav row its own solid,
-   opaque background instead (reusing the gradient's own dark end) so nav
-   contrast is guaranteed regardless of gradient position, while still
-   reading as "part of the same teal," not a foreign white strip.
-
-   Header/footer module rules in this file target structure (".et-l--header
-   .et_pb_menu", the row that :has() it) rather than Divi's positional order
-   classes (".et_pb_row_1_tb_header", ".et_pb_menu_0_tb_header"). Those
-   positional classes only exist on the front end — the Visual Builder
-   canvas gives the same modules ID-based classes instead
-   (".et_pb_menu_6365e3b6-..."), so positional rules silently didn't apply
-   while editing — and they shift if a Row or module is added above. The
-   header has exactly one Menu module and the footer one Heading + one Text
-   module (post 12 / post 13); if that changes, revisit these selectors.
-   See docs/header-layouts.md. */
-.et-l--header .et_pb_row:has(.et_pb_menu) {
-  background-color: var(--gdi-teal-dark);
-  padding-top: var(--gdi-space-xs);
-  padding-bottom: var(--gdi-space-xs);
-}
-
-/* Below 981px the nav row has nothing visible in it — the link list is
-   swapped out by Divi, Divi's own hamburger is retired (see "Custom mobile
-   nav drawer"), and the drawer's ☰ button lives on .et-l--header, not in
-   this row — so its teal background + padding showed as an empty ~17px
-   strip across the bottom of the header on every page (since the nav-row
-   background was added, 2026-08-31). Hide the row there. Safe for the
-   drawer: its script reads the menu's links from the DOM, which
-   display:none doesn't remove. */
-@media (max-width: 980px) {
-  .et-l--header .et_pb_row:has(.et_pb_menu) {
-    display: none;
-  }
-}
-
-/* Menu module: Divi's per-module builder setting paints an explicit
-   #ffffff background (.et_pb_menu_0_tb_header.et_pb_menu{background-color:#ffffff}),
-   inlined in <style id="et-critical-inline-css"> which loads after this
-   stylesheet — same specificity, later in the cascade, so it wins without
-   !important. That's what was creating the separate white box against the
-   section's tinted background. (On the Builder canvas the same white comes
-   from the ID-based class instead; !important beats both.) */
-.et-l--header .et_pb_menu {
-  background-color: transparent !important;
-}
-
-/* Menu module has no width rule of its own — it fills the full-width column
-   (et_flex_column_24_24) by Divi's flex defaults, which is what left the
-   nav links (right-aligned inside it) sitting far from the module's own
-   edges. Shrink the module to its content and center it in the row.
-
-   Desktop-only (matching Divi's own 980px tablet/mobile cutoff, same as
-   --gdi-bp-tablet in 00-tokens.css): below that width Divi swaps the
-   visible nav content from the full link list (".et_pb_menu__menu") to
-   just the hamburger icon (".et_mobile_nav_menu", its dropdown panel is
-   position:absolute so it doesn't count toward fit-content sizing). This
-   rule used to apply unconditionally, so on mobile "shrink to content"
-   meant shrinking to the ~32px hamburger icon alone — collapsing the
-   whole menu module (and, since the dropdown panel's own width is a
-   percentage of it, the open panel too) to a sliver, which is what made
-   the hamburger read as broken/unusable on phone. Scoping this to
-   desktop leaves the module at its natural full-row width on mobile, so
-   the icon and its dropdown have real room. */
-@media (min-width: 981px) {
-  .et-l--header .et_pb_menu {
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 auto;
-  }
-}
-
-/* Footer heading ("Godin London Incorporated") — Divi's per-module setting
-   already pins font-size to var(--gdi-text-lg) and font-weight to a
-   hardcoded 600, both at higher specificity than 02-typography.css's
-   generic ".et_pb_module h1" rule, so weight/size need matching
-   specificity + !important to actually change. font-family was already
-   inheriting var(--gdi-font-heading) correctly (no leftover Open Sans —
-   nothing in Divi's inline CSS sets font-family here), so it's included
-   below for explicitness but wasn't the broken part. */
-.et-l--footer .et_pb_heading .et_pb_heading_container h1 {
-  font-family: var(--gdi-font-heading);
-  font-weight: var(--gdi-weight-heading) !important;
-  font-size: var(--gdi-text-xl) !important;
-}
-
-/* Footer copyright text — the module wrapper has no width/max-width of its
-   own, so it was simply filling its full-width column. font-size is set
-   separately on the nested .et_pb_text_inner (13px, unguarded) rather than
-   the wrapper, so that needs its own rule to actually take effect.
-   No margin/padding here on purpose: this rule used to also set
-   margin auto / padding var(--gdi-space-md), all !important, but Divi's
-   own ".et_pb_text_0_tb_footer{margin-*:0!important;padding-*:...!important}"
-   tied it on specificity and loads later, so those never applied. The
-   structural selector below outranks Divi's, so keeping them would have
-   suddenly changed the approved live layout — dropped instead. */
-.et-l--footer .et_pb_text {
-  font-family: var(--gdi-font-body);
-  max-width: var(--gdi-max-width);
-}
-
-.et-l--footer .et_pb_text .et_pb_text_inner {
-  font-size: var(--gdi-text-sm) !important;
-}
-
-/* Footer Terms/Privacy links — sit in the column next to the footer
-   heading (see the footer heading rule above), so same font-family
-   and a size between the heading (--gdi-text-xl) and copyright line
-   (--gdi-text-sm). Explicit white + !important: Divi's own generated
-   global link-color CSS (Customizer default, loaded after this
-   stylesheet) otherwise wins at equal class specificity — same reason
-   the header/footer gradient rules above need !important. */
-.gdi-footer-links {
-  font-family: var(--gdi-font-body);
-  font-size: var(--gdi-text-sm);
-}
-
-.gdi-footer-link {
-  color: var(--gdi-color-footer-text) !important;
-  text-decoration: none;
-}
-
-.gdi-footer-link:hover {
-  color: var(--gdi-color-accent-light) !important;
-  text-decoration: underline;
-}
-
-.gdi-footer-links-sep {
-  color: var(--gdi-color-footer-text);
-  opacity: 0.5;
-}
+/* Header nav row, menu module, footer heading/copyright/links rules moved to 04-shell.css. */
 
 /* Footer contact form — now a real Fluent Forms embed (form id 4,
    [fluentform id="4"] run through the same Code-module do_shortcode()
@@ -699,7 +130,7 @@
 
 #fluentform_4 .ff-el-input--label label {
   font-family: var(--gdi-font-body);
-  font-size: var(--gdi-text-xs);
+  font-size: var(--gdi-text-sm);
   font-weight: 600;
   color: var(--gdi-color-footer-text);
 }
@@ -709,9 +140,9 @@
   width: 100%;
   font-family: var(--gdi-font-body);
   font-size: var(--gdi-text-sm);
-  color: var(--gdi-gray-900);
-  background: var(--gdi-white);
-  border: 1px solid var(--gdi-gray-200);
+  color: var(--gdi-color-text);
+  background: var(--gdi-color-surface);
+  border: 1px solid var(--gdi-color-control-border);
   border-radius: var(--gdi-radius-sm);
   padding: var(--gdi-space-xs);
   transition: var(--gdi-transition);
@@ -723,7 +154,6 @@
 }
 
 #fluentform_4 .ff-el-form-control:focus {
-  outline: none;
   border-color: var(--gdi-color-accent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--gdi-color-accent) 35%, transparent);
 }
@@ -731,10 +161,10 @@
 #fluentform_4 .ff-btn-submit {
   font-family: var(--gdi-font-body);
   font-weight: 600;
-  font-size: var(--gdi-text-sm);
+  font-size: var(--gdi-text-base);
   /* Dark text, not white — same ~5:1-vs-~3.4:1 AA contrast reasoning as
      /contact/'s #fluentform_3 .ff-btn-submit rule above. */
-  color: var(--gdi-color-text);
+  color: var(--gdi-color-on-accent);
   background: var(--gdi-color-accent);
   border: none;
   border-radius: var(--gdi-radius-sm);
@@ -768,174 +198,15 @@
   }
 }
 
-/* === Boxed "art on a screen" layout === */
-
-body {
-  background-color: var(--gdi-color-page-bg) !important;
-}
-
-/* Divi's own boxed-layout wrapper (see investigation: no background-color
-   rule exists on this element anywhere in Divi core or here previously —
-   it was transparent, letting body's tint show through). Give it its own
-   subtle off-white tint plus a tileable paper texture, sitting one layer
-   above the body background but still behind the header/main/footer cards. */
-.et_boxed_layout #page-container {
-  background-color: var(--gdi-color-boxed-bg);
-  background-image: url('images/texture-paper.png');
-  background-repeat: repeat;
-}
-
-/* Three regions as capped, centered, rounded cards with breathing room
-   between them — collapsing to edge-to-edge below phone breakpoint */
-
-.et-l--header,
-#main-content,
-.et-l--footer {
-  max-width: var(--gdi-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: var(--gdi-radius-lg);
-  overflow: hidden;
-}
-
-/* All header card spacing/shape rules live on .et-l--header (the theme
-   builder wrapper), not #gli-header (the actual Section element) — matching
-   how .et-l--footer already works, with no ID dependency at all now.
-   #gli-header's ID selector would otherwise outrank — and silently override
-   — Divi's own class-based Section presets (box-shadow, border-radius,
-   max-width, margin) applied to that same element.
-   margin-top lives here rather than on the nested #gli-header for another
-   reason too: .et-l--header has overflow:hidden, which stops a child's
-   margin from collapsing out of it — so margin-top on #gli-header used to
-   stay trapped inside the header's own box as a textured strip (see the
-   header/footer gap investigation). With margin-top on .et-l--header
-   itself instead, it collapses straight through #page-container's
-   overflow:visible ancestors exactly like .et-l--footer's margin-bottom
-   already does — a genuine flat gap outside the frame, not textured space
-   inside it. */
-.et-l--header {
-  margin-top: var(--gdi-space-lg);
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-#main-content {
-  margin-top: var(--gdi-space-md);
-  margin-bottom: var(--gdi-space-md);
-}
-
-.et-l--footer {
-  margin-bottom: var(--gdi-space-lg);
-}
-
-/* Header/footer brand gradient (see --gdi-gradient-header/-footer in
-   00-tokens.css for the full contrast reasoning). Targets the actual
-   Section element via a stable two-class selector — .et-l--header/-footer
-   are theme-builder wrappers with no background of their own; the Section
-   inside them (.et_pb_section) is what Divi paints. Using
-   ".et-l--header .et_pb_section" rather than the positional
-   ".et_pb_section_0_tb_header" class keeps this safe if the Section is
-   ever reordered, and its two-class specificity beats Divi's single-class
-   selector even with matching !important.
-   The header needs !important: Divi bakes its own leftover gradient into
-   a dynamically-generated, !important-flagged inline <style> block per
-   page load (not a preset, not editable from the builder's normal
-   controls) — see the header/footer gradient investigation. The footer
-   currently has no competing background rule at all (its own preset
-   reference is orphaned — see the earlier preset investigation), so
-   !important isn't needed there. */
-.et-l--header .et_pb_section {
-  background-image: var(--gdi-gradient-header) !important;
-  /* Divi's default section padding here was a flat 60px top/bottom (not
-     one of our tokens) — tightened now that the header holds more visual
-     weight (larger logo, bolder nav): proportionate rather than tall and
-     loose. */
-  padding-top: var(--gdi-space-md);
-  padding-bottom: var(--gdi-space-md);
-}
-
-.et-l--footer .et_pb_section {
-  background-image: var(--gdi-gradient-footer);
-}
-
-/* Logo — Divi's builder-set image height (125px, baked into per-page
-   critical CSS via the module's own Sizing field, not inline style) reads
-   as small because the source PNG has heavy internal transparent padding:
-   pixel-sampling shows the actual visible mark (leaf + "GLi") fills only
-   ~30% of the canvas width and ~44% of its height. At 125px container
-   height the real glyph is only ~56px tall. This is a stylesheet override
-   (matching the header gradient's approach), not a builder change, since
-   we're staying in git-tracked CSS rather than editing the Theme Builder
-   template directly — 190px container height puts the visible glyph at
-   roughly ~85px, a proper header-scale mark. !important is needed:
-   Divi's own rule has equal selector specificity and loads later in the
-   cascade, so it would otherwise win by source order alone. */
-.et-l--header .et_pb_image_wrap img {
-  height: 190px !important;
-  width: auto;
-}
-
-/* Tagline (.gdi-header-tagline, a real Text module added by hand in the
-   builder). Now set in --gdi-font-accent (Newsreader italic, self-hosted
-   — see 00-fonts.css/00-tokens.css) instead of Inter, reserved
-   specifically for this kind of expressive one-off moment.
-   Contrast history: this module's rendered position (~29%-61%+ across
-   the header Section's horizontal gradient) sits in a medium-teal zone
-   — closer to "light" than "dark" in absolute luminance — where white
-   text (matching the nav) fails (as low as 2.57:1) and --gdi-teal-dark
-   also fails (as low as 2.02:1). --gdi-color-text (--gdi-gray-900,
-   #1a1a1a, already used site-wide for body copy) is the color that
-   actually holds up here; re-verified again after this font swap since
-   changing the rendered box width shifts how far right it reaches into
-   the gradient's darker end — see the font-swap investigation for the
-   current exact numbers.
-   Selector note: ".gdi-header-tagline" alone (0,0,1,0) tied on
-   specificity with 02-typography.css's "p, .et_pb_module" rule
-   (also 0,0,1,0, font-family: var(--gdi-font-body)) — and since
-   02-typography.css loads after this file, that rule was silently
-   winning the font-family tie-break by source order alone (confirmed
-   live: computed font-family was still Inter, not Newsreader). Pairing
-   with the module's own existing ".et_pb_module" class bumps this to
-   two classes (0,0,2,0), safely ahead regardless of load order.
-   Second bug found after that fix shipped: the wrapper div's own
-   computed font-family was correctly Newsreader, but the *visible text*
-   sits two levels deeper — Divi wraps Text-module content in
-   ".et_pb_text_inner > p" — and 02-typography.css's "p" selector
-   (bare tag, 0,0,0,1) matches that <p> directly. A direct match on an
-   element always wins over whatever its ancestor computed to, no
-   matter the ancestor's specificity; that's not part of the
-   specificity fight above at all, so the wrapper fix never reached it
-   (confirmed live: the <p> itself still computed to the Inter stack,
-   which is what was actually rendering — sans-serif, not the
-   Newsreader on the wrapper). Explicit child selector below beats the
-   bare "p" outright (0,0,1,1 > 0,0,0,1).
-   Sized up from --gdi-text-base to --gdi-text-xl (16px -> 28px desktop,
-   scaling down to 24px/21.6px at the existing tablet/phone breakpoints
-   via 00-tokens.css) once the font itself was confirmed correct — checked
-   for wrapping and clearance above the nav row (none, plenty of margin)
-   and re-verified contrast since the wider box now reaches further right
-   into the header gradient: worst case (right edge, ~76% across the
-   section) samples ~3.4:1 against --gdi-color-text, which clears the
-   3:1 WCAG AA-large threshold this text size qualifies for (>=24px) —
-   tighter than the ~4.1:1 the same spot held at the old size/width, but
-   passing. --gdi-text-lg was the fallback if xl looked oversized; it
-   didn't. */
-.et_pb_module.gdi-header-tagline,
-.gdi-header-tagline .et_pb_text_inner p {
-  font-family: var(--gdi-font-accent);
-  font-size: var(--gdi-text-xl);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: 0.01em;
-  color: var(--gdi-color-text);
-}
+/* Wall, boxed wrapper, rounded region cards, gradients, logo and tagline rules retired:
+   the layout is flat (see 04-shell.css, "Flat page", "Header", "Logo", "Tagline"). */
 
 /* Constrain prose specifically, inside the wider content card — keeps
    grid/card layouts (like Home's Blurb rows) at full card width, while
    paragraphs and headings sit in a comfortable ~720px reading column */
 #main-content .et_pb_text,
 #main-content .et_pb_heading {
-  max-width: 720px;
+  max-width: var(--gdi-measure);
   margin-left: auto;
   margin-right: auto;
 }
@@ -962,57 +233,7 @@ body {
   text-align: center;
 }
 
-/* Phone: collapse to edge-to-edge, no floating card effect */
-@media (max-width: 767px) {
-  .et-l--header,
-  #main-content,
-  .et-l--footer {
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  /* The top/bottom margins above were sized for the desktop "floating
-     card" look (breathing room around a shadowed, rounded box). Since
-     that effect is already turned off at phone (immediately above), the
-     margins that existed only to frame it should shrink with it — left
-     as desktop-sized (64px above the header, 32px above/below main
-     content) they read as a large dead zone at the top of every page,
-     worst on phone where there's the least vertical room to spare.
-     Header goes to 0 (it now reads as an ordinary top-of-page banner,
-     not a card floating below one); main content keeps a small gap so
-     sections don't visually collide. */
-  .et-l--header {
-    margin-top: 0;
-  }
-
-  /* The header's own Section element (inside .et-l--header, which has
-     overflow:hidden) independently carries the SAME var(--gdi-space-lg)
-     margin-top as a leftover from before that margin was consolidated
-     onto .et-l--header above — never cleaned up. Blocked by the parent's
-     overflow:hidden from collapsing out, it renders as a plain gap
-     trapped inside the header box (before the header's own teal
-     background paints), on top of whatever the wrapper margin above
-     already removed. !important: its compound selector
-     (".et_pb_section_0_tb_header.et_pb_section") ties this rule's
-     specificity, so without it the winner is source order, not this
-     rule. */
-  .et-l--header .et_pb_section {
-    margin-top: 0 !important;
-  }
-
-  #main-content {
-    margin-top: var(--gdi-space-sm);
-    margin-bottom: var(--gdi-space-sm);
-  }
-
-  #main-content .et_pb_text,
-  #main-content .et_pb_heading {
-    max-width: 100%;
-  }
-}
+/* Phone card-collapse rules retired: the layout is flat now (see 04-shell.css). */
 
 /* Services page secondary nav — in-page wayfinding to the four
    sub-sections below (Custom Development & Hosting, Legacy Site
@@ -1035,7 +256,7 @@ body {
 .gdi-services-nav {
   display: flex;
   gap: var(--gdi-space-xs);
-  max-width: 720px;
+  max-width: var(--gdi-measure);
   margin: 0 auto var(--gdi-space-md);
   padding: var(--gdi-space-xs) 0;
   overflow-x: auto;
@@ -1081,7 +302,7 @@ body {
 
 .gdi-services-nav a:hover,
 .gdi-services-nav a:focus-visible {
-  color: var(--gdi-color-primary);
+  color: var(--gdi-color-primary-text);
   background: var(--gdi-color-bg-alt);
 }
 
@@ -1126,7 +347,7 @@ html {
   font-family: var(--gdi-font-body);
   font-weight: 600;
   font-size: var(--gdi-text-sm);
-  color: var(--gdi-color-text) !important;
+  color: var(--gdi-color-on-accent) !important;
   background: var(--gdi-color-accent);
   text-decoration: none !important;
   padding: var(--gdi-space-xs) var(--gdi-space-sm);
@@ -1160,7 +381,7 @@ html {
    one-off number, per the request to match it. */
 .et_pb_code:has(.fluentform_wrapper_3) {
   width: 100%;
-  max-width: 720px;
+  max-width: var(--gdi-measure);
   margin-left: auto;
   margin-right: auto;
 }
@@ -1210,7 +431,7 @@ html {
 #fluentform_3 .ff-btn-submit {
   font-family: var(--gdi-font-body);
   font-weight: 600;
-  color: var(--gdi-color-text);
+  color: var(--gdi-color-on-accent);
   background: var(--gdi-color-accent);
   border: none;
   border-radius: var(--gdi-radius-sm);

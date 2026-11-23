@@ -1,0 +1,824 @@
+/*
+ * 04-shell.css
+ * Page shell for divi-sales-child (godindev.com), redesign foundation:
+ * flat page, slim header, mobile drawer, cards, sitemap footer, breadcrumbs, theme picker.
+ * Every colour comes from the --gdi-* tokens (00-tokens.css, 00-themes.css).
+ *
+ * Header/footer rules target structure (".et-l--header .et_pb_menu"), not Divi's positional
+ * order classes (see docs/header-layouts.md for why). The header is one Theme Builder layout
+ * for every page: logo left, one Menu module right.
+ */
+
+/* =====================================================
+   Flat page
+   ===================================================== */
+html {
+  background-color: var(--gdi-color-page);
+}
+
+html body {
+  background-color: var(--gdi-color-page) !important;
+  color: var(--gdi-color-text);
+  font-size: var(--gdi-text-base);
+  line-height: 1.6;
+}
+
+/* Boxed layout (Theme Options) is neutralised: no wrapper box, texture or shadow.
+   Specificity (1,2,2) beats Divi's ".et_boxed_layout #page-container" (1,1,0). */
+html body #page-container {
+  background-color: var(--gdi-color-page);
+  background-image: none;
+  box-shadow: none;
+  max-width: none;
+  width: 100%;
+}
+
+.et-l--header,
+#main-content,
+.et-l--footer {
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+
+#main-content {
+  background-color: transparent;
+}
+
+/* Rows: a centred container up to 1200px, with a gutter on small screens.
+   Divi's boxed rule ".et_boxed_layout #page-container .et_pb_row { width: 90% }" ignores
+   Builder width/margin anyway (see docs/design-system.md), so nothing is lost here.
+   Nested rows fill their column. */
+html body #page-container .et_pb_row:not(.et_pb_row_nested) {
+  width: var(--gdi-container);
+  max-width: var(--gdi-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+html body #page-container .et_pb_row_nested {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.et_pb_row {
+  row-gap: var(--gdi-gap-grid);
+}
+
+/* ---- TEMPORARY interim flatten of the Divi presets ---------------------------------
+   The "Content Card" row preset (16px radius, soft shadow, 4rem padding) and two framed
+   section presets live in the Divi database, not in this repo. Until they are edited on
+   staging, these rules flatten them. REMOVE this block once the presets are fixed.
+   Selector basis: Divi writes preset classes as "preset--module--divi-row--<id>"
+   (seen in earlier comments of this repo); the section variant is assumed by analogy.
+   The ID selector beats the preset rules, and also any per-row Builder padding. */
+html body #page-container .et_pb_row[class*="preset--module--divi-row--"] {
+  padding: var(--gdi-pad-card);
+  border: 1px solid var(--gdi-color-border);
+  border-radius: var(--gdi-radius-md);
+  box-shadow: none;
+  background-color: var(--gdi-color-surface);
+  background-image: none;
+}
+
+html body #page-container .et_pb_section[class*="preset--module--divi-section--"] {
+  padding-top: var(--gdi-gap-section);
+  padding-bottom: var(--gdi-gap-section);
+  padding-left: 0;
+  padding-right: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: transparent;
+  background-image: none;
+}
+/* ---- end TEMPORARY block ---------------------------------------------------------- */
+
+/* Body copy colours follow the theme. Links inside text modules use the link token. */
+html body #main-content .et_pb_text_inner a:not([class]) {
+  color: var(--gdi-color-link);
+  text-decoration: underline;
+}
+
+html body #main-content .et_pb_text_inner a:not([class]):hover {
+  color: var(--gdi-color-link-hover);
+}
+
+/* =====================================================
+   Header (Theme Builder layout: logo left, Menu module right)
+   ===================================================== */
+.et-l--header .et_pb_section {
+  /* !important: Divi bakes a leftover gradient into a per-page !important inline block. */
+  background-color: var(--gdi-color-header-bg) !important;
+  background-image: none !important;
+  border-bottom: 1px solid var(--gdi-color-header-border);
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  min-height: var(--gdi-header-h);
+}
+
+.et-l--header .et_pb_row {
+  padding-top: var(--gdi-space-xs);
+  padding-bottom: var(--gdi-space-xs);
+  align-items: center;
+}
+
+/* The Menu module's own Builder setting paints a white background. */
+.et-l--header .et_pb_menu {
+  background-color: transparent !important;
+}
+
+.et-l--header .et_pb_menu .et_pb_menu__wrap,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul {
+  justify-content: flex-end;
+}
+
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul {
+  gap: var(--gdi-space-2xs);
+}
+
+/* Typography is only a DEFAULT: :where() keeps it below any Builder Menu setting. */
+.et_pb_menu .et_pb_menu__menu :where(nav > ul > li) > a {
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-header-text);
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  padding: 0 var(--gdi-space-sm);
+  border-radius: var(--gdi-radius-md);
+  opacity: 1;
+  text-decoration: none;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.et_pb_menu .et_pb_menu__menu > nav > ul > li > a:hover {
+  background-color: var(--gdi-color-surface-alt);
+}
+
+/* Current page: filled pill. */
+.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a,
+.et_pb_menu .et_pb_menu__menu > nav > ul > li.current_page_item > a,
+.et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-ancestor > a {
+  background-color: var(--gdi-color-primary);
+  color: var(--gdi-color-on-primary);
+  font-weight: 700;
+}
+
+/* Divi's own hamburger stays retired below 981px (see 01-components.css); the drawer replaces it. */
+
+/* ---- Logo -------------------------------------------------------------------------
+   Height is driven by --gdi-logo-h (48 / 44 / 40px). Replacing the logo FILE needs no code change.
+   LIGHT LOGO HOOK: to show a light logo in the Slate theme, add a second Image module next to
+   the normal logo in the header layout, set its CSS Class to "gdi-logo-light" (and the original's
+   to "gdi-logo-dark"). It is hidden except in Slate, where it replaces the dark one.
+   TEMPORARY (until a light logo exists): in Slate the existing logo sits on a light chip
+   (--gdi-color-logo-bg, transparent in the other themes). */
+.et-l--header .et_pb_image_wrap img {
+  height: var(--gdi-logo-h) !important;
+  width: auto;
+}
+
+.et-l--header .et_pb_image:not(.gdi-logo-light) .et_pb_image_wrap img {
+  background-color: var(--gdi-color-logo-bg);
+  border-radius: var(--gdi-radius-md);
+  padding: var(--gdi-space-2xs) var(--gdi-space-xs);
+  box-sizing: content-box;
+}
+
+.et-l--header .gdi-logo-light {
+  display: none !important;
+}
+
+html[data-gdi-theme="slate"] .et-l--header .gdi-logo-light {
+  display: block !important;
+}
+
+html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
+  display: none !important;
+}
+
+/* A light logo exists: the chip is not needed. */
+.et-l--header:has(.gdi-logo-light) .et_pb_image .et_pb_image_wrap img {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* ---- Tagline ----------------------------------------------------------------------
+   The tagline no longer belongs to the header: it lives in the Home hero (a Text module with
+   the class "gdi-header-tagline"; the rotation script in functions.php still targets it).
+   Any copy still left in the header layout is hidden so it cannot affect header height. */
+.et-l--header .gdi-header-tagline {
+  display: none !important;
+}
+
+.et_pb_module.gdi-header-tagline,
+.gdi-header-tagline .et_pb_text_inner p {
+  font-family: var(--gdi-font-accent);
+  font-size: var(--gdi-text-xl);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  color: var(--gdi-color-text);
+}
+
+/* =====================================================
+   Mobile drawer (markup rendered by includes/gdi-shell.php, behaviour in js/gdi-shell.js)
+   ===================================================== */
+#gdi-mm-open,
+#gdi-mm-overlay,
+#gdi-mm-panel {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  #gdi-mm-open:not([hidden]) {
+    display: flex;
+    position: fixed;
+    top: calc((var(--gdi-header-h) - var(--gdi-touch)) / 2);
+    right: var(--gdi-gutter);
+    z-index: 100000;
+    width: var(--gdi-touch);
+    height: var(--gdi-touch);
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    color: var(--gdi-color-on-primary);
+    background: var(--gdi-color-primary);
+    border: 1px solid var(--gdi-color-primary);
+    border-radius: var(--gdi-radius-md);
+  }
+
+  /* Once moved into the header it scrolls away with it (the header is not sticky below 981px). */
+  .et-l--header #gdi-mm-open:not([hidden]) {
+    position: absolute;
+  }
+
+  .gdi-mm-open-icon,
+  .gdi-mm-open-icon::before,
+  .gdi-mm-open-icon::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+
+  .gdi-mm-open-icon {
+    position: relative;
+  }
+
+  .gdi-mm-open-icon::before,
+  .gdi-mm-open-icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+
+  .gdi-mm-open-icon::before { top: -6px; }
+  .gdi-mm-open-icon::after  { top: 6px; }
+
+  #gdi-mm-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--gdi-color-overlay);
+    z-index: 99998;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-out, visibility 0s linear 0.2s;
+  }
+
+  body.gdi-mm-open #gdi-mm-overlay {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  /* Closed state: off-screen AND visibility:hidden (+ the inert attribute set by the script), so
+     the links are not reachable by Tab or a screen reader while closed. Slides via "right"
+     (a plain layout offset), not transform, as before. */
+  #gdi-mm-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100vw;
+    bottom: 0;
+    width: 80vw;
+    max-width: 320px;
+    background: var(--gdi-color-surface);
+    color: var(--gdi-color-text);
+    border-left: 1px solid var(--gdi-color-border);
+    box-shadow: var(--gdi-shadow-md);
+    transition: right 0.25s ease-out, visibility 0s linear 0.25s;
+    visibility: hidden;
+    z-index: 99999;
+    overflow-y: auto;
+  }
+
+  body.gdi-mm-open #gdi-mm-panel {
+    right: 0;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  body.gdi-mm-open {
+    overflow: hidden;
+  }
+}
+
+.gdi-mm-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--gdi-header-h);
+  padding: 0 var(--gdi-space-sm);
+  background: var(--gdi-color-header-bg);
+  border-bottom: 1px solid var(--gdi-color-header-border);
+}
+
+.gdi-mm-panel-title {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  color: var(--gdi-color-header-text);
+}
+
+#gdi-mm-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--gdi-touch);
+  height: var(--gdi-touch);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--gdi-radius-md);
+  color: var(--gdi-color-header-text);
+  cursor: pointer;
+}
+
+.gdi-mm-close-icon {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.gdi-mm-close-icon::before,
+.gdi-mm-close-icon::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+}
+
+.gdi-mm-close-icon::before { transform: rotate(45deg); }
+.gdi-mm-close-icon::after  { transform: rotate(-45deg); }
+
+.gdi-mm-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--gdi-space-sm);
+}
+
+.gdi-mm-list li {
+  margin: 0 0 var(--gdi-space-2xs);
+}
+
+.gdi-mm-list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-text);
+  text-decoration: none;
+  padding: 0 var(--gdi-space-sm);
+  border-radius: var(--gdi-radius-md);
+}
+
+.gdi-mm-list a:hover {
+  background: var(--gdi-color-surface-alt);
+  color: var(--gdi-color-primary-text);
+}
+
+.gdi-mm-list li.current-menu-item > a,
+.gdi-mm-list li.current_page_item > a {
+  background: var(--gdi-color-primary);
+  color: var(--gdi-color-on-primary);
+  font-weight: 700;
+}
+
+.gdi-mm-panel-appearance {
+  margin-top: auto;
+  padding: var(--gdi-space-sm);
+  border-top: 1px solid var(--gdi-color-border);
+}
+
+/* =====================================================
+   Cards (flat: thin border, no shadow, no lift)
+   ===================================================== */
+.et_pb_blurb,
+.gdi-card {
+  background: var(--gdi-color-surface);
+  border: 1px solid var(--gdi-color-border);
+  border-radius: var(--gdi-radius-md);
+  box-shadow: none;
+  padding: var(--gdi-pad-card);
+  height: 100%;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.et_pb_blurb:hover,
+.gdi-card:hover {
+  border-color: var(--gdi-color-primary-text);
+}
+
+.gdi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.gdi-card svg {
+  width: 56px;
+  height: 56px;
+  color: var(--gdi-color-primary-text);
+  margin-bottom: var(--gdi-space-sm);
+}
+
+.gdi-card h3 {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  font-size: var(--gdi-text-lg);
+  color: var(--gdi-color-text);
+  margin: 0 0 var(--gdi-space-xs);
+}
+
+.gdi-card p {
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-text-muted);
+  margin: 0;
+}
+
+/* The "click to explore" cue inside a whole-card link: plain text, not a nested button. */
+.gdi-card-cta {
+  display: inline-block;
+  margin-top: var(--gdi-space-sm);
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-accent-text);
+}
+
+.gdi-card:hover .gdi-card-cta {
+  color: var(--gdi-color-link-hover);
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .gdi-card {
+    width: 100%;
+  }
+
+  .gdi-card p {
+    text-align: left;
+    align-self: stretch;
+  }
+
+  .gdi-card svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Generic button (same look as .gdi-service-cta, which stays for existing page content). */
+.gdi-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  font-family: var(--gdi-font-body);
+  font-weight: 600;
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-on-accent) !important;
+  background: var(--gdi-color-accent);
+  text-decoration: none !important;
+  padding: 0 var(--gdi-space-md);
+  border-radius: var(--gdi-radius-sm);
+  transition: background-color 0.15s ease-in-out;
+}
+
+.gdi-btn:hover {
+  background: var(--gdi-color-accent-light);
+}
+
+.gdi-btn--primary {
+  color: var(--gdi-color-on-primary) !important;
+  background: var(--gdi-color-primary);
+}
+
+.gdi-btn--primary:hover {
+  background: var(--gdi-color-primary);
+  filter: brightness(1.15);
+}
+
+/* =====================================================
+   Footer (Theme Builder layout; sitemap columns come from [gdi_footer_sitemap])
+   ===================================================== */
+html body .et-l--footer .et_pb_section {
+  background-color: var(--gdi-color-footer-bg);
+  background-image: none;
+  border-top: 1px solid var(--gdi-color-header-border);
+  padding-top: var(--gdi-gap-section);
+  padding-bottom: var(--gdi-gap-section);
+  color: var(--gdi-color-footer-text);
+}
+
+/* Footer focus rings must contrast with the footer background, not the page. */
+.et-l--footer {
+  --gdi-color-focus: var(--gdi-color-footer-focus);
+}
+
+html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
+  color: var(--gdi-color-footer-text);
+}
+
+/* The footer heading is an H1 in the Divi footer layout (post 13); that must be changed to a
+   lower level in Divi. Until then it is styled by container, not by tag, and sized like a heading. */
+.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4) {
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading) !important;
+  font-size: var(--gdi-text-lg) !important;
+  color: var(--gdi-color-footer-text) !important;
+}
+
+.et-l--footer .et_pb_text {
+  font-family: var(--gdi-font-body);
+  max-width: var(--gdi-max-width);
+}
+
+.et-l--footer .et_pb_text .et_pb_text_inner {
+  font-size: var(--gdi-text-base) !important;
+}
+
+.gdi-footer-links {
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-base);
+}
+
+/* Explicit + !important: Divi's generated global link colour otherwise wins at equal specificity. */
+.gdi-footer-link {
+  color: var(--gdi-color-footer-link) !important;
+  text-decoration: underline;
+}
+
+.gdi-footer-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.gdi-footer-links-sep {
+  color: var(--gdi-color-footer-muted);
+}
+
+.gdi-footer-form-heading {
+  font-size: var(--gdi-text-lg);
+}
+
+/* ---- Sitemap columns ---- */
+.gdi-sitemap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--gdi-gap-grid);
+  width: 100%;
+  font-family: var(--gdi-font-body);
+}
+
+.gdi-sitemap-title {
+  margin: 0 0 var(--gdi-space-xs);
+  font-family: var(--gdi-font-heading);
+  font-weight: var(--gdi-weight-heading);
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-footer-text);
+}
+
+.gdi-sitemap ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gdi-sitemap a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  font-size: var(--gdi-text-base);
+  color: var(--gdi-color-footer-link) !important;
+  text-decoration: none;
+}
+
+.gdi-sitemap a:hover {
+  text-decoration: underline;
+}
+
+.gdi-sitemap a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* =====================================================
+   Breadcrumbs  ([gdi_breadcrumbs])
+   ===================================================== */
+.gdi-breadcrumbs {
+  width: var(--gdi-container);
+  margin: 0 auto;
+  font-family: var(--gdi-font-body);
+  font-size: var(--gdi-text-sm);
+}
+
+.gdi-breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gdi-breadcrumbs li {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  color: var(--gdi-color-text-muted);
+}
+
+.gdi-breadcrumbs li + li::before {
+  content: "/";
+  margin: 0 var(--gdi-space-xs);
+  color: var(--gdi-color-text-muted);
+}
+
+.gdi-breadcrumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  color: var(--gdi-color-link);
+}
+
+/* =====================================================
+   Secondary navigation  ([gdi_subnav] reuses .gdi-services-nav from 01-components.css)
+   ===================================================== */
+.gdi-services-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+  font-size: var(--gdi-text-base);
+}
+
+.gdi-services-nav a[aria-current="page"] {
+  background: var(--gdi-color-primary);
+  color: var(--gdi-color-on-primary);
+}
+
+/* =====================================================
+   Theme picker  ([gdi_theme_picker], the drawer, and a footer fallback injected by the script)
+   Hidden until JavaScript runs: without JavaScript the site stays on Brand.
+   ===================================================== */
+.gdi-theme-picker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  font-family: var(--gdi-font-body);
+}
+
+.gdi-theme-picker[hidden] {
+  display: none;
+}
+
+.gdi-theme-picker legend {
+  padding: 0;
+  margin-bottom: var(--gdi-space-xs);
+  font-weight: 700;
+  font-size: var(--gdi-text-base);
+  color: inherit;
+}
+
+.gdi-theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gdi-space-xs);
+}
+
+.gdi-theme-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--gdi-space-xs);
+  min-height: var(--gdi-touch);
+  padding: var(--gdi-space-2xs) var(--gdi-space-xs);
+  background: var(--gdi-color-surface);
+  color: var(--gdi-color-text);
+  border: 1px solid var(--gdi-color-control-border);
+  border-radius: var(--gdi-radius-md);
+  cursor: pointer;
+}
+
+/* The native radio stays in the accessibility tree and keeps arrow-key navigation. */
+.gdi-theme-option input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.gdi-theme-option:has(input:checked) {
+  border-color: var(--gdi-color-primary-text);
+  box-shadow: inset 0 0 0 2px var(--gdi-color-primary-text);
+}
+
+.gdi-theme-option:has(input:focus-visible) {
+  outline: 3px solid var(--gdi-color-focus);
+  outline-offset: 2px;
+}
+
+.gdi-theme-swatch {
+  display: flex;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 24px;
+  overflow: hidden;
+  border: 1px solid var(--gdi-color-control-border);
+  border-radius: var(--gdi-radius-sm);
+  background: var(--gdi-sw-page);
+}
+
+.gdi-theme-swatch i {
+  display: block;
+  flex: 1;
+}
+
+.gdi-theme-swatch i:nth-child(2) { background: var(--gdi-sw-a); }
+.gdi-theme-swatch i:nth-child(3) { background: var(--gdi-sw-b); }
+
+.gdi-theme-label {
+  font-size: var(--gdi-text-base);
+  font-weight: 600;
+}
+
+/* Inside the footer the generic footer-text rule would turn the option labels footer-coloured
+   on a surface-coloured tile; keep them readable on the tile. */
+html body .et-l--footer .gdi-theme-option .gdi-theme-label {
+  color: var(--gdi-color-text);
+}
+
+/* Footer placement: sits on the footer background, so use the footer colours. */
+.gdi-theme-picker-wrap {
+  width: var(--gdi-container);
+  margin: 0 auto;
+  padding: var(--gdi-space-sm) 0 var(--gdi-gap-section);
+  color: var(--gdi-color-footer-text);
+  background: var(--gdi-color-footer-bg);
+}
+
+.et-l--footer .gdi-theme-picker {
+  max-width: 480px;
+}
+
+/* Skip link */
+.gdi-skip-link {
+  position: fixed;
+  top: var(--gdi-space-xs);
+  left: var(--gdi-space-xs);
+  z-index: 100001;
+  padding: var(--gdi-space-xs) var(--gdi-space-sm);
+  background: var(--gdi-color-surface);
+  color: var(--gdi-color-text) !important;
+  border: 2px solid var(--gdi-color-focus);
+  border-radius: var(--gdi-radius-sm);
+  transform: translateY(-200%);
+}
+
+.gdi-skip-link:focus {
+  transform: translateY(0);
+}
