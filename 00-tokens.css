@@ -3,63 +3,87 @@
  * Design tokens for divi-sales-child (godindev.com)
  * Brand colors match godin.com (Section 1 of the Strategic Plan). Typography, neutrals,
  * and scale decisions made deliberately for godindev.com — see design-system.md for rationale.
- * These decisions are candidates to port back into godin.com's 00-tokens.css later.
+ *
+ * Structure (redesign foundation, see docs/redesign-foundation.md):
+ *   1. Primitives  — raw palette values. Never used directly in component rules.
+ *   2. Semantic    — what a colour is FOR. This block holds the Brand theme (the default).
+ *                    00-themes.css overrides the CORE semantic tokens for Warm Parchment
+ *                    and Dark Slate; every alias below re-resolves automatically.
+ *   3. Spacing / layout / shape / motion.
+ * Every pre-redesign token name is kept: Divi's database settings reference some of them
+ * (e.g. var(--gdi-text-lg)), so a name must never be removed or renamed.
  */
 
 :root {
-  /* Core brand palette — matches godin.com exactly */
+  color-scheme: light;
+
+  /* ---- 1. Primitives ---- */
   --gdi-teal-dark:    #0d5c63;
-  --gdi-teal-mid:      #0e8c96;
-  --gdi-teal-light:    #7ecfd4;
-  --gdi-amber:         #c17f24;
-  --gdi-amber-light:   #e0a84d;
+  --gdi-teal-mid:     #0e8c96;
+  --gdi-teal-light:   #7ecfd4;
+  --gdi-amber:        #c17f24;
+  --gdi-amber-light:  #e0a84d;
 
   /* Neutrals — true gray (deliberately not teal-tinted; better legibility at body-text sizes) */
   --gdi-gray-900: #1a1a1a;
   --gdi-gray-600: #444444;
-  --gdi-gray-400: #777777;
+  --gdi-gray-500: #5c5c5c;  /* muted text: 6.7:1 on white (the old #777 was 4.48:1) */
+  --gdi-gray-400: #777777;  /* legacy; no longer used for text */
   --gdi-gray-200: #dddddd;
   --gdi-gray-100: #f4f4f4;
   --gdi-white:    #ffffff;
 
-  /* Semantic aliases — reference these in modules, not the raw values above */
-  --gdi-color-primary:      var(--gdi-teal-dark);
-  --gdi-color-accent:       var(--gdi-amber);
-  --gdi-color-accent-light: var(--gdi-amber-light);
-  --gdi-color-link:         var(--gdi-teal-mid);
-  --gdi-color-link-hover:   var(--gdi-teal-dark);
-  --gdi-color-text:         var(--gdi-gray-900);
+  /* ---- 2. Semantic: CORE tokens (themes override these) ---- */
+  --gdi-color-page:           #ffffff;  /* page background */
+  --gdi-color-surface:        #ffffff;  /* cards, panels, form controls */
+  --gdi-color-surface-alt:    #f4f6f6;  /* alternating bands, hover fills */
+  --gdi-color-text:           var(--gdi-gray-900);
   --gdi-color-text-secondary: var(--gdi-gray-600);
-  --gdi-color-text-muted:   var(--gdi-gray-400);
-  --gdi-color-border:       var(--gdi-gray-200);
-  --gdi-color-bg:           var(--gdi-white);
-  --gdi-color-bg-alt:       var(--gdi-gray-100);
-  --gdi-color-page-bg:      color-mix(in srgb, var(--gdi-teal-light) 15%, white);
-  --gdi-color-boxed-bg:     color-mix(in srgb, var(--gdi-teal-light) 5%, white);
-  --gdi-color-content-bg:   color-mix(in srgb, var(--gdi-teal-light) 45%, white);
-  --gdi-color-content-frame: color-mix(in srgb, var(--gdi-teal-mid) 60%, white);
-  --gdi-color-card-border:  color-mix(in srgb, var(--gdi-teal-light) 70%, white);
-  --gdi-color-footer-bg:    var(--gdi-teal-dark);
-  --gdi-color-footer-text:  var(--gdi-white);
+  --gdi-color-text-muted:     var(--gdi-gray-500);
+  --gdi-color-border:         #d4dcdc;  /* decorative card / divider borders */
+  --gdi-color-control-border: #767676;  /* borders a user needs to see (>= 3:1) */
 
-  /* Header/footer brand gradient — one shared teal progression (light to
-     dark), applied with the direction/range each element's own content
-     needs, not literally identical CSS. Verified against actual pixel-
-     sampled content, not eyeballed:
-     - Header: the "GLi" wordmark is itself a dark navy-teal (~rgb(5,62,97),
-       essentially --gdi-teal-dark), so it needs to sit on the *light* end
-       (--gdi-teal-light gives ~6.3:1 contrast against it). The nav row has
-       its own opaque light strip already, independent of this gradient, so
-       only the logo's corner matters here — hence a horizontal sweep with
-       light on the left, where the logo sits.
-     - Footer: heading + copyright are white text, both #fff. --gdi-teal-dark
-       gives white text ~7.7:1 contrast; --gdi-teal-light would give white
-       text only ~1.8:1 (fails badly) — so the footer gradient must never
-       reach the light end at all. It stays inside the safe dark range,
-       vertically, from --gdi-color-footer-bg down to a still-dark
-       teal-mid/footer-bg blend (~5.2:1, still comfortably AA-safe). */
-  --gdi-gradient-header: linear-gradient(90deg, var(--gdi-teal-light) 0%, var(--gdi-teal-dark) 100%);
-  --gdi-gradient-footer: linear-gradient(180deg, var(--gdi-color-footer-bg) 0%, color-mix(in srgb, var(--gdi-teal-mid) 60%, var(--gdi-color-footer-bg) 40%) 100%);
+  --gdi-color-primary:        var(--gdi-teal-dark);  /* primary action background */
+  --gdi-color-on-primary:     #ffffff;
+  --gdi-color-primary-text:   var(--gdi-teal-dark);  /* primary-coloured text/icons/borders on a surface */
+  --gdi-color-accent:         var(--gdi-amber);      /* accent action background */
+  --gdi-color-on-accent:      var(--gdi-gray-900);
+  --gdi-color-accent-light:   var(--gdi-amber-light);/* accent hover background */
+  --gdi-color-accent-text:    #8f5a0f;               /* amber used AS TEXT (CTA lines, links) */
+  --gdi-color-link:           var(--gdi-teal-dark);
+  --gdi-color-link-hover:     #083d42;
+  --gdi-color-focus:          var(--gdi-teal-dark);
+
+  --gdi-color-header-bg:      #ffffff;
+  --gdi-color-header-text:    var(--gdi-gray-900);
+  --gdi-color-header-border:  #d4dcdc;
+  --gdi-color-logo-bg:        transparent;          /* light chip behind the logo on dark themes */
+  --gdi-color-footer-bg:      var(--gdi-teal-dark);
+  --gdi-color-footer-text:    #ffffff;
+  --gdi-color-footer-link:    #ffffff;
+  --gdi-color-footer-muted:   #cfe9eb;
+  --gdi-color-footer-focus:   #ffffff;
+
+  --gdi-color-success:        #1e6b3a;
+  --gdi-color-error:          #a83232;
+  --gdi-color-overlay:        rgba(0, 0, 0, 0.55);
+
+  --gdi-shadow-color:         rgba(0, 0, 0, 0.08);
+
+  /* ---- 2b. Semantic: ALIASES (legacy names; never set directly, they follow the core tokens) ---- */
+  --gdi-color-accent-hover:   var(--gdi-color-accent-light);
+  --gdi-color-bg:             var(--gdi-color-surface);
+  --gdi-color-bg-alt:         var(--gdi-color-surface-alt);
+  --gdi-color-page-bg:        var(--gdi-color-page);
+  --gdi-color-boxed-bg:       var(--gdi-color-page);
+  --gdi-color-content-bg:     var(--gdi-color-surface-alt);
+  --gdi-color-content-frame:  var(--gdi-color-border);
+  --gdi-color-card-border:    var(--gdi-color-border);
+
+  /* Legacy gradients: the redesign is flat, so both resolve to a solid colour.
+     Names kept in case anything in the database references them. */
+  --gdi-gradient-header: linear-gradient(var(--gdi-color-header-bg), var(--gdi-color-header-bg));
+  --gdi-gradient-footer: linear-gradient(var(--gdi-color-footer-bg), var(--gdi-color-footer-bg));
 
   /* Typography — single family (Inter), weight/size carry the hierarchy, not a font pairing */
   --gdi-font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -82,7 +106,7 @@
   --gdi-text-2xl:  2.5rem;
   --gdi-text-3xl:  3rem;
 
-  /* Spacing — 6 steps */
+  /* ---- 3. Spacing — the original 6-step scale is unchanged (database presets may use it) ---- */
   --gdi-space-2xs: 0.25rem;
   --gdi-space-xs:  0.5rem;
   --gdi-space-sm:  1rem;
@@ -90,17 +114,29 @@
   --gdi-space-lg:  4rem;
   --gdi-space-2xl: 6rem;
 
-  /* Layout / shape / motion — matches godin.com's mechanical values */
+  /* Compact layout tokens (redesign). Desktop values; tablet/phone below. */
+  --gdi-pad-card:    24px;   /* inside a card */
+  --gdi-gap-grid:    24px;   /* between cards / columns */
+  --gdi-gap-stack:   24px;   /* between stacked blocks */
+  --gdi-gap-section: 48px;   /* vertical padding of a page section */
+  --gdi-gutter:      24px;   /* page side padding */
+  --gdi-header-h:    80px;   /* header bar height */
+  --gdi-logo-h:      48px;   /* logo image height (48 / 44 / 40). Assumes the trimmed logo file */
+  --gdi-touch:       44px;   /* minimum touch target */
+  --gdi-measure:     720px;  /* reading column */
+
+  /* Layout / shape / motion */
   /* Must also be manually kept in sync with Divi's Theme Customizer →
      Layout Settings → Website Content Width field — that Customizer
      field doesn't support CSS variable references. */
   --gdi-max-width: 1200px;
+  --gdi-container: min(calc(100% - 2 * var(--gdi-gutter)), var(--gdi-max-width));
   --gdi-radius-sm: 4px;
   --gdi-radius-md: 8px;
   --gdi-radius-lg: 16px;
-  --gdi-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-  --gdi-shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --gdi-shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+  --gdi-shadow-sm: 0 1px 2px var(--gdi-shadow-color);
+  --gdi-shadow-md: 0 4px 12px var(--gdi-shadow-color);
+  --gdi-shadow-lg: 0 12px 32px var(--gdi-shadow-color);
   --gdi-transition: all 0.2s ease-in-out;
 
   /* Breakpoints (reference only) */
@@ -108,12 +144,20 @@
   --gdi-bp-phone:  767px;
 }
 
-/* Responsive type scale-down, matches Divi's own breakpoints */
+/* Responsive scale-down, matches Divi's own breakpoints */
 @media (max-width: 980px) {
   :root {
     --gdi-text-3xl: 2.25rem;
     --gdi-text-2xl: 2rem;
     --gdi-text-xl:  1.5rem;
+
+    --gdi-pad-card:    20px;
+    --gdi-gap-grid:    20px;
+    --gdi-gap-stack:   20px;
+    --gdi-gap-section: 40px;
+    --gdi-gutter:      20px;
+    --gdi-header-h:    72px;
+    --gdi-logo-h:      44px;
   }
 }
 
@@ -122,5 +166,13 @@
     --gdi-text-3xl: 1.85rem;
     --gdi-text-2xl: 1.65rem;
     --gdi-text-xl:  1.35rem;
+
+    --gdi-pad-card:    16px;
+    --gdi-gap-grid:    16px;
+    --gdi-gap-stack:   16px;
+    --gdi-gap-section: 32px;
+    --gdi-gutter:      16px;
+    --gdi-header-h:    64px;
+    --gdi-logo-h:      40px;
   }
 }
