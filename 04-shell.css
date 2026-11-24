@@ -6,7 +6,7 @@
  *
  * Header/footer rules target structure (".et-l--header .et_pb_menu"), not Divi's positional
  * order classes (see docs/header-layouts.md for why). The header is one Theme Builder layout
- * for every page: logo left, one Menu module right.
+ * for every page: logo left, one centred Menu module.
  */
 
 /* =====================================================
@@ -110,7 +110,7 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
 }
 
 /* =====================================================
-   Header (Theme Builder layout: logo left, Menu module right)
+   Header (Theme Builder layout: logo left, centred Menu module)
    ===================================================== */
 .et-l--header .et_pb_section {
   /* !important: Divi bakes a leftover gradient into a per-page !important inline block. */
@@ -129,9 +129,9 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
   align-items: center;
 }
 
-/* Menu on the right. Divi gives the last header column flex-direction:column; align-items:flex-start and no
-   desktop width, so the menu hugs the logo. In a column, align-items is the HORIZONTAL alignment.
-   Specificity 0,4,0 beats Divi's single-class column rule. The logo column is not touched. */
+/* The menu column grows to fill the row instead of hugging the logo. Divi's centred menu style centres
+   the menu list within that space. Specificity 0,4,0 beats Divi's single-class column rule.
+   The logo column is not touched. */
 .et-l--header .et_pb_row > .et_pb_column.et-last-child {
   flex: 1 1 auto;
   align-items: flex-end;
@@ -483,6 +483,18 @@ html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
   color: inherit;
 }
 
+.et-l--post .gdi-eyebrow {
+  display: block;
+  font-size: var(--gdi-text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  margin: 0 0 var(--gdi-space-xs);
+  color: var(--gdi-color-accent-text);
+  text-align: inherit;
+}
+
 .gdi-card svg {
   width: 56px;
   height: 56px;
@@ -602,6 +614,11 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
    page body: a deliberately coloured heading inside a dark band would be recoloured as well. */
 .et-l--post .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4) {
   color: var(--gdi-color-heading) !important;
+}
+
+/* Divi's static h1-h6 rule sets #333; this deliberately weak rule only supplies the themed default. */
+.et-l--post :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--gdi-color-heading);
 }
 
 .et-l--footer .et_pb_text {

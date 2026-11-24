@@ -64,7 +64,7 @@ Our CSS loads before Divi's per-page inline block, so Divi wins ties. Each rule 
 |---|---|---|---|
 | R1 | `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` (colour, plus hover and focus-visible) | Divi stores the menu link colour as `#000000`, unreadable in Slate | `.et_pb_menu_0_tb_header.et_pb_menu ul li a` (0,2,3), no `!important` |
 | R2 | `.et-l--post .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` with `!important` | Heading text follows the theme (`--gdi-color-heading`) | Divi's `.et_pb_heading_0 .et_pb_heading_container h1/h2` (0,2,1) `!important` |
-| R3 | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` | The last header column is `flex-direction: column; align-items: flex-start`, so the menu hugs the logo | Divi's single-class column rule (0,1,0) |
+| R3 | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` | The last header column grows to fill the row, while Divi's centred menu style centres the menu list in that space | Divi's single-class column rule (0,1,0) |
 | R4 | The interim card rule now starts `html body #page-container .et-l--post .et_pb_row[...]` | The header row also carries a row preset class and was turned into a card | (restricts scope; no Divi rule involved) |
 
 New token `--gdi-color-heading`: Brand `#0d5c63` (same as primary), Parchment `#0d5c63`, Slate `#7ecfd4`.
@@ -72,12 +72,16 @@ New token `--gdi-color-heading`: Brand `#0d5c63` (same as primary), Parchment `#
 
 ## Still to do in Divi (staging, not in this repo)
 
-1. One header layout for every page, including Home: logo left, one Menu module right (assign the same layout to the Home template).
+1. One header layout for every page, including Home: logo left, one centred Menu module (assign the same layout to the Home template).
 2. Footer layout: place `[gdi_footer_sitemap]` (and optionally `[gdi_theme_picker]`), create the "Footer sitemap" menu, change the footer heading from H1 to a lower level.
 3. Fix the Content Card and section presets (see above); check whether they store `4rem` literally or `var(--gdi-space-lg)`.
 4. Set the Customizer body font size to 16px (the child theme also sets 16px on `body`, but Divi's inline CSS may win).
 5. Build the Products hub page and menu (deferred).
 6. Check Slate by eye for modules with hard-coded colours stored in the database.
+
+## Deployment notes
+
+Asset versions follow file modification times. After a deploy the file times change, so browsers fetch new files. The page cache on live (WP Super Cache) stores HTML containing the old `?ver` values, so the live cache must be cleared after deployment.
 
 ## Checks recorded for this change
 

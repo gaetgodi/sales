@@ -20,7 +20,7 @@ longer reads the header at all (see below):
 | What | Selector |
 |---|---|
 | Header row (vertical padding, centred items; header is a flat bar with a bottom border, not a teal bar) | `.et-l--header .et_pb_row` |
-| Menu on the right | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` (flex-end), then `.et-l--header .et_pb_menu .et_pb_menu__wrap` and the `ul` (`justify-content: flex-end`) |
+| Centred menu beside the logo | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` grows to fill the row; Divi's centred menu style centres the menu list in that space |
 | Menu (transparent bg) and link colour | `.et-l--header .et_pb_menu`, `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` |
 | Footer heading (h1 to h4) | `.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` |
 | Footer copyright | `.et-l--footer .et_pb_text` (+ `.et_pb_text_inner`) |
