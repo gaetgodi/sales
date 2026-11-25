@@ -86,6 +86,13 @@ html body #page-container .et-l--post .et_pb_row[class*="preset--module--divi-ro
   background-image: none;
 }
 
+html body #page-container .et-l--post .et_pb_row.gdi-plain[class*="preset--module--divi-row--"] {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+}
+
 html body #page-container .et_pb_section[class*="preset--module--divi-section--"] {
   padding-top: var(--gdi-gap-section);
   padding-bottom: var(--gdi-gap-section);
@@ -698,7 +705,7 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
    Breadcrumbs  ([gdi_breadcrumbs])
    ===================================================== */
 .gdi-breadcrumbs {
-  width: var(--gdi-container);
+  width: 100%;
   margin: 0 auto;
   font-family: var(--gdi-font-body);
   font-size: var(--gdi-text-sm);
@@ -708,6 +715,7 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -716,12 +724,15 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
 .gdi-breadcrumbs li {
   display: inline-flex;
   align-items: center;
+  max-width: 100%;
   margin: 0;
   color: var(--gdi-color-text-muted);
+  overflow-wrap: anywhere;
 }
 
-.gdi-breadcrumbs li + li::before {
-  content: "/";
+/* The slash travels with the item before it when the trail wraps. */
+.gdi-breadcrumbs li:not(:last-child)::after {
+  content: "/" / "";
   margin: 0 var(--gdi-space-xs);
   color: var(--gdi-color-text-muted);
 }
@@ -746,6 +757,36 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
 .gdi-services-nav a[aria-current="page"] {
   background: var(--gdi-color-primary);
   color: var(--gdi-color-on-primary);
+}
+
+.gdi-sidenav .gdi-subnav {
+  flex-direction: column;
+  gap: var(--gdi-space-xs);
+  max-width: none;
+  overflow-x: visible;
+  border-bottom: 0;
+}
+
+.gdi-sidenav .gdi-subnav > a {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--gdi-space-xs) var(--gdi-space-sm);
+  border-bottom: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+  color: var(--gdi-color-text);
+  background-color: var(--gdi-color-surface);
+}
+
+.gdi-sidenav .gdi-subnav > a:is(:hover, :focus-visible) {
+  background-color: var(--gdi-color-surface-alt);
+}
+
+.gdi-sidenav .gdi-subnav > a[aria-current="page"] {
+  background-color: var(--gdi-color-primary);
+  color: var(--gdi-color-on-primary);
+  font-weight: 700;
 }
 
 /* =====================================================

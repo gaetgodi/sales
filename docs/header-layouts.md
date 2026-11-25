@@ -19,7 +19,8 @@ longer reads the header at all (see below):
 
 | What | Selector |
 |---|---|
-| Header row (vertical padding, centred items; header is a flat bar with a bottom border, not a teal bar) | `.et-l--header .et_pb_row` |
+| Flat header bar with a themed background and bottom border | `.et-l--header .et_pb_section` |
+| Header row with vertical padding and vertically centred columns | `.et-l--header .et_pb_row` |
 | Centred menu beside the logo | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` grows to fill the row; Divi's centred menu style centres the menu list in that space |
 | Menu (transparent bg) and link colour | `.et-l--header .et_pb_menu`, `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` |
 | Footer heading (h1 to h4) | `.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` |
@@ -30,15 +31,15 @@ They used to target Divi's positional order classes (`.et_pb_row_1_tb_header`,
 with those:
 
 1. **They don't exist in the Visual Builder.** The canvas gives the same modules ID-based classes
-   (`.et_pb_menu_6365e3b6-…`), so the nav showed as a white, full-width bar with no teal row while
-   editing — even though the live site was fine.
+   (`.et_pb_menu_6365e3b6-…`). With the old selectors, the Visual Builder fell back to Divi's
+   white, full-width menu bar.
 2. **They shift with position.** Adding a Row above the nav made it `row_2`; adding another Menu
    module above made it `menu_1` — silently dropping the styling.
 
-The structural selectors assume the header has **exactly one Menu module** and the footer **one
-Heading and one Text module** (true as of 2026-09-30). If a second one is ever added, revisit them.
+The structural selectors assume one Menu module in layouts that render a desktop menu and one
+Heading and one Text module in the footer. Revisit the selectors if more of those modules are added.
 
-**Mobile drawer.** Below 980px Divi's own hamburger is always hidden (`01-components.css`, "retired"
+**Mobile drawer.** At 980px and below Divi's own hamburger is hidden (`01-components.css`, "retired"
 rule). The drawer is rendered by PHP in `wp_footer` (`includes/gdi-shell.php`) from the WordPress menu
 assigned to the `primary-menu` location (`wp_nav_menu`, depth 1), so, while a menu is assigned, it exists
 on every page, including Home, whatever modules the header layout contains. Behaviour (open/close, focus trap, Escape,

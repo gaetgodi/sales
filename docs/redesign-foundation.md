@@ -52,6 +52,22 @@ The tagline is no longer part of the header design. Put the Text module (CSS cla
 - `[gdi_footer_sitemap]`: columns from the WordPress menu location "Footer sitemap". Top-level items with children become columns; items without children collect under "Explore". With no menu assigned it shows the primary menu as one column.
 - `[gdi_theme_picker]`: the appearance control.
 
+## Child-page layout
+
+Start with the page heading, a one-line intro, and a centred `[gdi_breadcrumbs]` Code module.
+Below the breadcrumb, use a two-column row with the main content on the left. Add `gdi-sidenav`
+to the right-hand Divi column and place `[gdi_subnav]` in a Code module inside it. The sibling
+links stack vertically, the current page has a filled highlight, and long titles wrap. On phones,
+the column follows the main content and the links fill the column.
+
+The breadcrumb used the page container token inside the Code module, subtracting gutters a second
+time. Its flex list wrapped the whole item, including the slash at the front. The trail now uses
+the available module width and centres each line. Each slash belongs to the preceding item, so it
+cannot start a wrapped line on its own.
+
+Add `gdi-plain` to a Divi row to opt out of the interim Content Card styling. For rows using a
+row preset, it clears the card padding, border, corner radius, and background.
+
 ## TEMPORARY interim CSS (remove when the presets are fixed in Divi)
 
 `04-shell.css`, block "TEMPORARY interim flatten of the Divi presets", flattens row presets (`[class*="preset--module--divi-row--"]`) and section presets (`[class*="preset--module--divi-section--"]`, assumed by analogy). It also overrides per-row Builder padding. Fix the presets in Divi (Content Card padding to `var(--gdi-pad-card)`, radius to `var(--gdi-radius-md)`, no shadow) and delete the block.
