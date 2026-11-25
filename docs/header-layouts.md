@@ -12,6 +12,11 @@ The nav is rendered by a plain `<!-- wp:divi/menu {"builderVersion":"5.11.0"} /-
 attributes; its styling comes from this repo and the menu items (and their order) come from the WP
 menu, not the layout.
 
+> **Required on every Divi header Row:** set Advanced > Visibility > Horizontal Overflow and
+> Vertical Overflow to **Visible**. Staging has this setting; live must repeat it. Otherwise the
+> desktop dropdown is clipped to its top border. Do not solve this with generated row selectors
+> such as `.et_pb_row_0_tb_header`.
+
 ### Selectors: structural, not positional (since 2026-09-30)
 
 The nav, footer heading/copyright rules (now in `04-shell.css`) target structure. The mobile drawer no
@@ -23,6 +28,7 @@ longer reads the header at all (see below):
 | Header row with vertical padding and vertically centred columns | `.et-l--header .et_pb_row` |
 | Centred menu beside the logo | `.et-l--header .et_pb_row > .et_pb_column.et-last-child` grows to fill the row; Divi's centred menu style centres the menu list in that space |
 | Menu (transparent bg) and link colour | `.et-l--header .et_pb_menu`, `.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li > a` |
+| Desktop dropdown panel and child states | `.et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul` and its child-link selectors, inside `min-width: 981px` |
 | Footer heading (h1 to h4) | `.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4)` |
 | Footer copyright | `.et-l--footer .et_pb_text` (+ `.et_pb_text_inner`) |
 
@@ -39,14 +45,34 @@ with those:
 The structural selectors assume one Menu module in layouts that render a desktop menu and one
 Heading and one Text module in the footer. Revisit the selectors if more of those modules are added.
 
+**Desktop dropdown.** At 981px and wider `04-shell.css` themes the Divi `.nav` dropdown only inside
+`.et-l--header .et_pb_menu`. It opens on Divi's hover state and on `li:focus-within`, retaining Divi's
+opacity/visibility animation. Child links wrap, use themed hover/focus/current states, and expose a
+visible keyboard focus ring. The top-level parent pill recognizes WordPress's `current-menu-item`,
+`current_page_item`, `current-menu-parent`, `current-menu-ancestor`, `current-page-ancestor`, and
+`current_page_ancestor` classes. No generated row or module class is part of these selectors.
+
 **Mobile drawer.** At 980px and below Divi's own hamburger is hidden (`01-components.css`, "retired"
-rule). The drawer is rendered by PHP in `wp_footer` (`includes/gdi-shell.php`) from the WordPress menu
-assigned to the `primary-menu` location (`wp_nav_menu`, depth 1), so, while a menu is assigned, it exists
-on every page, including Home, whatever modules the header layout contains. Behaviour (open/close, focus trap, Escape,
-`aria-expanded`) is in `js/gdi-shell.js`; styling is in `04-shell.css`. The script moves the ☰ button into
-`.et-l--header` when that wrapper exists. If no menu is assigned to `primary-menu`, neither the button nor
-the drawer is rendered, so phone/tablet visitors have no navigation: keep the menu assigned, and after any
-menu change open the site at phone width and tap the ☰ button.
+rule). PHP renders the `primary-menu` location in `wp_footer` (`includes/gdi-shell.php`) with the default
+walker and depth 2, preserving WordPress's `.menu-item-has-children`, `.sub-menu`, current-item classes,
+and `aria-current`. The root menu is `#gdi-mm-menu.gdi-mm-list`.
+
+`js/gdi-shell.js` progressively adds a real `.gdi-mm-submenu-toggle` button while leaving each parent
+link navigable. Each toggle gets an accessible name based on its parent, `aria-expanded`, and
+`aria-controls` for a unique submenu ID. A current branch starts open; other branches receive `hidden`
+and start collapsed. Without JavaScript, nested links remain visible. Native button Enter/Space toggles
+the branch, Tab ignores links in hidden branches, and Escape closes the complete drawer and restores
+focus to the opener. Closing and reopening the drawer preserves branch state for that page view. The
+delegated link handler closes the drawer only for navigation links, not toggle buttons.
+
+The script still moves the menu button into `.et-l--header` when that wrapper exists and maintains the
+drawer focus trap, overlay close, and inert closed panel. If no menu is assigned to `primary-menu`,
+neither button nor drawer is rendered, so phone/tablet visitors have no navigation: keep the menu
+assigned and visually accept both desktop keyboard/hover and the drawer in a narrow window after menu
+changes.
+
+The `.gdi-sidenav` stacked sibling list from the previous round is currently unused but remains in
+`04-shell.css` for possible reuse.
 
 (Unrelated to position, one deliberate behavior note: the old footer copyright rule also declared
 `margin: auto` / `padding: var(--gdi-space-md)` with `!important`, but Divi's own

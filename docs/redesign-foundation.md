@@ -3,6 +3,10 @@
 Flat layout, one slim header, sitemap footer, four colour themes, and a mobile drawer on every page.
 Everything below is in this repo; the Divi-database steps are listed at the end.
 
+> **Required Divi header setting:** in the header Row, set Advanced > Visibility > Horizontal
+> Overflow and Vertical Overflow to **Visible**. Staging has this setting; repeat it on live. If
+> either value clips overflow, the Services dropdown is cut off except for its top border.
+
 ## Files
 
 | File | Purpose |
@@ -14,7 +18,7 @@ Everything below is in this repo; the Divi-database steps are listed at the end.
 | `04-shell.css` | Flat page, interim preset flatten, header, logo, tagline, mobile drawer, cards, footer and sitemap, breadcrumbs, subnav, theme picker, skip link. |
 | `05-a11y.css` | Global `:focus-visible`, 44px targets, reduced motion. Loaded last. |
 | `includes/gdi-shell.php` | Head script, menu location, drawer markup, picker markup, skip link, four shortcodes. |
-| `js/gdi-shell.js` | Drawer behaviour (focus trap, Escape, `aria-expanded`) and picker behaviour. |
+| `js/gdi-shell.js` | Drawer and submenu behaviour (focus trap, Escape, `aria-expanded`, `hidden`) and picker behaviour. |
 | `functions.php` | Requires the shell, new enqueue order, old JS-built drawer removed, shortcode filter extended. The tagline rotation (`divi_sales_child_rotate_tagline`) is untouched. |
 | `style.css` | Version 1.0.3 to 1.1.0 (the enqueue uses it for cache busting). |
 
@@ -45,6 +49,27 @@ Enqueue order: parent, fonts, tokens, themes, components, typography, faq-testim
 
 The tagline is no longer part of the header design. Put the Text module (CSS class `gdi-header-tagline`) in the Home hero. The rotation script in `functions.php` still finds it on any page. Any copy left in the header layout is hidden by CSS (`.et-l--header .gdi-header-tagline`) so it cannot affect header height.
 
+## Header navigation
+
+At 981px and wider, the Divi Menu module's dropdown is themed in `04-shell.css` and scoped to
+`.et-l--header .et_pb_menu`. It keeps Divi's show/hide animation and 240px width, but long child
+labels wrap. Hover and `:focus-within` both open it; child links have visible `:focus-visible`
+rings. The current child uses the primary fill, and the Services parent uses the same current pill
+as other top-level items when WordPress supplies `current-menu-item`, `current_page_item`,
+`current-menu-parent`, `current-menu-ancestor`, `current-page-ancestor`, or
+`current_page_ancestor`. The rules rely on Divi's `.nav` and nested `ul` structure and do not
+target generated positional classes.
+
+At 980px and below, PHP renders the `primary-menu` location to depth 2 as `#gdi-mm-menu` with
+`.gdi-mm-list`, WordPress's default `.menu-item-has-children` / `.sub-menu` structure, current-item
+classes, and `aria-current`. JavaScript adds one `.gdi-mm-submenu-toggle` button beside each parent
+link, gives its submenu a unique ID, and connects them with `aria-controls` and `aria-expanded`.
+The parent remains a normal navigable link. The current branch starts expanded; other branches
+start collapsed with `hidden`. Without JavaScript, no `hidden` attribute is added, so child links
+remain visible. Toggle buttons work with native button keyboard activation, Tab skips collapsed
+children, and Escape closes the whole drawer and returns focus to its opener. Submenu state is
+preserved when the drawer closes and reopens during the same page view.
+
 ## Shortcodes (place each in a Divi Code module; the existing render filter runs them)
 
 - `[gdi_breadcrumbs]`: Home, page ancestors, current page. Empty on the front page.
@@ -54,11 +79,9 @@ The tagline is no longer part of the header design. Put the Text module (CSS cla
 
 ## Child-page layout
 
-Start with the page heading, a one-line intro, and a centred `[gdi_breadcrumbs]` Code module.
-Below the breadcrumb, use a two-column row with the main content on the left. Add `gdi-sidenav`
-to the right-hand Divi column and place `[gdi_subnav]` in a Code module inside it. The sibling
-links stack vertically, the current page has a filled highlight, and long titles wrap. On phones,
-the column follows the main content and the links fill the column.
+The `.gdi-sidenav` stacked sibling-list treatment from the previous round is currently unused but
+kept in `04-shell.css`. If it is reinstated, add `gdi-sidenav` to a Divi column containing a
+`[gdi_subnav]` Code module; its sibling links stack, wrap long titles, and fill the column on phones.
 
 The breadcrumb used the page container token inside the Code module, subtracting gutters a second
 time. Its flex list wrapped the whole item, including the slash at the front. The trail now uses

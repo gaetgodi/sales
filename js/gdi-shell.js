@@ -137,6 +137,66 @@
 		openBtn.hidden = false;
 
 		var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+		var menu = document.getElementById('gdi-mm-menu');
+
+		if (menu) {
+			var submenuIndex = 0;
+			menu.querySelectorAll('li.menu-item-has-children').forEach(function (item) {
+				var parentLink = null;
+				var submenu = null;
+				Array.prototype.forEach.call(item.children, function (child) {
+					if (!parentLink && child.tagName === 'A') {
+						parentLink = child;
+					} else if (!submenu && child.tagName === 'UL' && child.classList.contains('sub-menu')) {
+						submenu = child;
+					}
+				});
+				if (!parentLink || !submenu) {
+					return;
+				}
+
+				submenuIndex += 1;
+				var submenuId = 'gdi-mm-submenu-' + submenuIndex;
+				while (document.getElementById(submenuId)) {
+					submenuIndex += 1;
+					submenuId = 'gdi-mm-submenu-' + submenuIndex;
+				}
+				submenu.id = submenuId;
+
+				var expanded = [
+					'current-menu-item',
+					'current-menu-parent',
+					'current-menu-ancestor',
+					'current-page-ancestor',
+					'current_page_ancestor'
+				].some(function (className) {
+					return item.classList.contains(className);
+				});
+
+				var toggle = document.createElement('button');
+				toggle.type = 'button';
+				toggle.className = 'gdi-mm-submenu-toggle';
+				toggle.setAttribute('aria-controls', submenuId);
+				toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+				toggle.setAttribute('aria-label', parentLink.textContent.trim() + ' submenu');
+				submenu.hidden = !expanded;
+				item.insertBefore(toggle, submenu);
+			});
+
+			menu.addEventListener('click', function (e) {
+				var toggle = e.target.closest ? e.target.closest('.gdi-mm-submenu-toggle') : null;
+				if (!toggle || !menu.contains(toggle)) {
+					return;
+				}
+				var submenu = document.getElementById(toggle.getAttribute('aria-controls'));
+				if (!submenu) {
+					return;
+				}
+				var expanded = toggle.getAttribute('aria-expanded') === 'true';
+				toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+				submenu.hidden = expanded;
+			});
+		}
 
 		function isOpen() {
 			return document.body.classList.contains('gdi-mm-open');
@@ -176,6 +236,9 @@
 		overlay.addEventListener('click', function () { closeMenu(true); });
 
 		panel.addEventListener('click', function (e) {
+			if (e.target.closest && e.target.closest('.gdi-mm-submenu-toggle')) {
+				return;
+			}
 			var link = e.target.closest ? e.target.closest('a') : null;
 			if (link) {
 				closeMenu(false);
@@ -193,7 +256,7 @@
 			if (e.key === 'Tab') {
 				// Focus trap: keep Tab inside the open panel (and its close button).
 				var items = Array.prototype.slice.call(panel.querySelectorAll(FOCUSABLE)).filter(function (el) {
-					return el.offsetParent !== null || el === document.activeElement;
+					return !el.closest('[hidden]') && (el.offsetParent !== null || el === document.activeElement);
 				});
 				if (!items.length) {
 					return;

@@ -198,10 +198,61 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
 /* Current page: filled pill. Divi sets white !important on it; on-primary is white in every theme. */
 .et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-item > a,
 .et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current_page_item > a,
-.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-ancestor > a {
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-parent > a,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-menu-ancestor > a,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current-page-ancestor > a,
+.et-l--header .et_pb_menu .et_pb_menu__menu > nav > ul > li.current_page_ancestor > a {
   background-color: var(--gdi-color-primary);
   color: var(--gdi-color-on-primary);
   font-weight: 700;
+}
+
+@media (min-width: 981px) {
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul {
+    box-sizing: border-box;
+    width: 240px;
+    min-width: 240px;
+    padding: var(--gdi-space-xs) 0;
+    background-color: var(--gdi-color-surface);
+    border: 1px solid var(--gdi-color-border);
+    border-top-width: 3px;
+    border-radius: var(--gdi-radius-md);
+    box-shadow: var(--gdi-shadow-md);
+  }
+
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li:focus-within > ul {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul > li > a {
+    box-sizing: border-box;
+    width: auto;
+    min-height: var(--gdi-touch);
+    padding: var(--gdi-space-xs) var(--gdi-space-sm);
+    color: var(--gdi-color-text);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    opacity: 1;
+  }
+
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul > li > a:is(:hover, :focus-visible) {
+    color: var(--gdi-color-primary-text);
+    background-color: var(--gdi-color-surface-alt);
+    opacity: 1;
+  }
+
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul > li > a:focus-visible {
+    outline: 3px solid var(--gdi-color-focus);
+    outline-offset: 2px;
+  }
+
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul > li.current-menu-item > a,
+  .et-l--header .et_pb_menu .et_pb_menu__menu .nav > li > ul > li.current_page_item > a {
+    color: var(--gdi-color-on-primary);
+    background-color: var(--gdi-color-primary);
+    font-weight: 700;
+  }
 }
 
 /* Divi's own hamburger stays retired below 981px (see 01-components.css); the drawer replaces it. */
@@ -454,6 +505,93 @@ html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
   background: var(--gdi-color-primary);
   color: var(--gdi-color-on-primary);
   font-weight: 700;
+}
+
+.gdi-mm-list li.menu-item-has-children {
+  position: relative;
+}
+
+.gdi-mm-list li.menu-item-has-children > a {
+  padding-inline-end: calc(var(--gdi-touch) + var(--gdi-space-xs));
+}
+
+.gdi-mm-submenu-toggle {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--gdi-touch);
+  min-width: var(--gdi-touch);
+  height: var(--gdi-touch);
+  min-height: var(--gdi-touch);
+  padding: 0;
+  color: var(--gdi-color-primary-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--gdi-radius-md);
+  cursor: pointer;
+}
+
+.gdi-mm-submenu-toggle::before {
+  content: "";
+  width: var(--gdi-space-xs);
+  height: var(--gdi-space-xs);
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease-in-out;
+}
+
+.gdi-mm-submenu-toggle[aria-expanded="true"]::before {
+  transform: rotate(45deg);
+}
+
+.gdi-mm-list .sub-menu {
+  list-style: none;
+  margin: var(--gdi-space-2xs) 0 var(--gdi-space-xs);
+  padding: 0;
+  padding-inline-start: var(--gdi-space-sm);
+  border-inline-start: 1px solid var(--gdi-color-border);
+}
+
+.gdi-mm-list .sub-menu[hidden] {
+  display: none;
+}
+
+.gdi-mm-list .sub-menu a {
+  min-height: var(--gdi-touch);
+  font-size: var(--gdi-text-sm);
+}
+
+.gdi-mm-list > li.menu-item-has-children:is(
+  .current-menu-item,
+  .current-menu-parent,
+  .current-menu-ancestor,
+  .current-page-ancestor,
+  .current_page_ancestor
+) > a {
+  color: var(--gdi-color-primary-text);
+  background: var(--gdi-color-surface-alt);
+}
+
+.gdi-mm-list .sub-menu li.current-menu-item > a,
+.gdi-mm-list .sub-menu li.current_page_item > a {
+  color: var(--gdi-color-on-primary);
+  background: var(--gdi-color-primary);
+}
+
+.gdi-mm-list a:focus-visible,
+.gdi-mm-submenu-toggle:focus-visible {
+  outline: 3px solid var(--gdi-color-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gdi-mm-submenu-toggle::before {
+    transition: none;
+  }
 }
 
 .gdi-mm-panel-appearance {

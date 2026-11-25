@@ -134,7 +134,7 @@ function gdi_shell_render_drawer() {
 			'container'      => false,
 			'menu_class'     => 'gdi-mm-list',
 			'menu_id'        => 'gdi-mm-menu',
-			'depth'          => 1,
+			'depth'          => 2,
 			'fallback_cb'    => false,
 			'echo'           => false,
 		)
