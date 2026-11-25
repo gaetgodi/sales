@@ -49,6 +49,10 @@ Enqueue order: parent, fonts, tokens, themes, components, typography, faq-testim
 
 The tagline is no longer part of the header design. Put the Text module (CSS class `gdi-header-tagline`) in the Home hero. The rotation script in `functions.php` still finds it on any page. Any copy left in the header layout is hidden by CSS (`.et-l--header .gdi-header-tagline`) so it cannot affect header height.
 
+For a fixed tagline on a hub page such as Services, use `gdi-tagline` in place of
+`gdi-header-tagline`. Both classes share the same theme styling. `gdi-tagline` displays the text
+entered in the Divi Text module, while `gdi-header-tagline` enables the rotating Home hero tagline.
+
 ## Header navigation
 
 At 981px and wider, the Divi Menu module's dropdown is themed in `04-shell.css` and scoped to

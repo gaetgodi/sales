@@ -303,6 +303,8 @@ html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
 }
 
 .et_pb_module.gdi-header-tagline,
+.et_pb_module.gdi-tagline,
+.gdi-tagline .et_pb_text_inner p,
 .gdi-header-tagline .et_pb_text_inner p {
   font-family: var(--gdi-font-accent);
   font-size: var(--gdi-text-xl);
