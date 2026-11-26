@@ -341,12 +341,12 @@ add_action( 'wp_footer', 'divi_sales_child_contact_form_referrer' );
 // means a shortcode placed there renders as literal bracket text unless
 // something else processes it. This is that something else: a plain
 // shortcode replacement over that one module's rendered output, limited to
-// an explicit allow-list: fluentform and the four gdi_ shortcodes
-// (gdi_breadcrumbs, gdi_subnav, gdi_footer_sitemap, gdi_theme_picker). It
+// an explicit allow-list: fluentform and the five gdi_ shortcodes
+// (gdi_year, gdi_breadcrumbs, gdi_subnav, gdi_footer_sitemap, gdi_theme_picker). It
 // uses get_shortcode_regex() with only those tags and do_shortcode_tag() as
 // the callback, so any other shortcode in a Code module stays as plain text
 // (most Code modules hold raw HTML/SVG that has no business being
-// shortcode-parsed), and modules with none of the five are returned as-is.
+// shortcode-parsed), and modules with none of the six are returned as-is.
 //
 // (Two alternatives were tried and rejected first: the core WordPress
 // "Shortcode" block works correctly on the front end, but Divi 5's Builder
@@ -363,7 +363,7 @@ function divi_sales_child_run_shortcodes_in_code_module( $block_content, $block 
 	// shell shortcodes (includes/gdi-shell.php). A Code module holds raw HTML/script, so running
 	// do_shortcode() on all of it would also execute any other registered shortcode found in it.
 	// Anything outside the list is left as plain text.
-	$allowed = array( 'fluentform', 'gdi_breadcrumbs', 'gdi_subnav', 'gdi_footer_sitemap', 'gdi_theme_picker' );
+	$allowed = array( 'fluentform', 'gdi_year', 'gdi_breadcrumbs', 'gdi_subnav', 'gdi_footer_sitemap', 'gdi_theme_picker' );
 	$present = false;
 	foreach ( $allowed as $tag ) {
 		if ( has_shortcode( $block_content, $tag ) ) {

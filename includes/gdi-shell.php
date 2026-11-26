@@ -6,7 +6,7 @@
  * - Footer sitemap menu location.
  * - Mobile drawer markup, rendered from the primary WordPress menu on EVERY page
  *   (so Home gets a phone menu even though its header has no Menu module).
- * - Theme picker markup, skip link, and the [gdi_breadcrumbs], [gdi_subnav],
+ * - Theme picker markup, skip link, and the [gdi_year], [gdi_breadcrumbs], [gdi_subnav],
  *   [gdi_footer_sitemap] and [gdi_theme_picker] shortcodes.
  *
  * Behaviour (drawer, picker) lives in js/gdi-shell.js; styling in 04-shell.css.
@@ -161,6 +161,14 @@ function gdi_shell_render_drawer() {
 	<?php
 }
 add_action( 'wp_footer', 'gdi_shell_render_drawer', 5 );
+
+/**
+ * [gdi_year] — current year in the site's configured timezone.
+ */
+function gdi_shell_year_shortcode() {
+	return wp_date( 'Y' );
+}
+add_shortcode( 'gdi_year', 'gdi_shell_year_shortcode' );
 
 /**
  * [gdi_theme_picker] — the picker control, for the footer or header layout.

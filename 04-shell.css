@@ -737,6 +737,10 @@ html body .et-l--footer .et_pb_section {
   color: var(--gdi-color-footer-text);
 }
 
+.et-l--footer {
+  background-color: var(--gdi-color-footer-bg);
+}
+
 /* Footer focus rings must contrast with the footer background, not the page. */
 .et-l--footer {
   --gdi-color-focus: var(--gdi-color-footer-focus);
@@ -746,13 +750,16 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   color: var(--gdi-color-footer-text);
 }
 
-/* The footer heading is an H1 in the Divi footer layout (post 13); that must be changed to a
-   lower level in Divi. Until then it is styled by container, not by tag, and sized like a heading. */
-.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4) {
+/* Every footer heading uses the footer token, including headings in Text modules. The ID and
+   !important are needed to beat Divi's per-module heading colours, which are also !important. */
+html body #page-container .et-l--footer :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--gdi-color-footer-text) !important;
+}
+
+.et-l--footer .et_pb_heading .et_pb_heading_container :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--gdi-font-heading);
   font-weight: var(--gdi-weight-heading) !important;
   font-size: var(--gdi-text-lg) !important;
-  color: var(--gdi-color-footer-text) !important;
 }
 
 /* Body Heading modules follow the theme heading colour. !important is needed because Divi stores the colour
@@ -778,6 +785,10 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
 }
 
 .gdi-footer-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--gdi-space-xs);
   font-family: var(--gdi-font-body);
   font-size: var(--gdi-text-base);
 }
@@ -788,7 +799,9 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   text-decoration: underline;
 }
 
-.gdi-footer-link:hover {
+.gdi-footer-link:is(:hover, :focus-visible),
+.gdi-footer-link[aria-current="page"] {
+  color: var(--gdi-color-footer-link) !important;
   text-decoration-thickness: 2px;
 }
 
@@ -798,6 +811,19 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
 
 .gdi-footer-form-heading {
   font-size: var(--gdi-text-lg);
+}
+
+/* Stable class supplied in Divi: the three-column top row. */
+html body .et-l--footer .gdi-footer-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: var(--gdi-gap-grid);
+}
+
+html body .et-l--footer .gdi-footer-cols > .et_pb_column {
+  width: auto;
+  margin: 0;
 }
 
 /* ---- Sitemap columns ---- */
@@ -823,22 +849,59 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   padding: 0;
 }
 
+.gdi-sitemap li {
+  margin: 0;
+  line-height: 1.35;
+}
+
 .gdi-sitemap a {
   display: inline-flex;
   align-items: center;
-  min-height: var(--gdi-touch);
+  min-height: 2rem;
   font-size: var(--gdi-text-base);
   color: var(--gdi-color-footer-link) !important;
   text-decoration: none;
 }
 
-.gdi-sitemap a:hover {
+.gdi-sitemap a:is(:hover, :focus-visible) {
+  color: var(--gdi-color-footer-link) !important;
   text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 .gdi-sitemap a[aria-current="page"] {
+  color: var(--gdi-color-footer-link) !important;
   font-weight: 700;
   text-decoration: underline;
+}
+
+@media (max-width: 980px) {
+  html body .et-l--footer .gdi-footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html body .et-l--footer .gdi-footer-cols > .et_pb_column:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  html body .et-l--footer .gdi-footer-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html body .et-l--footer .gdi-footer-cols > .et_pb_column:last-child {
+    grid-column: auto;
+  }
+
+  .gdi-sitemap a {
+    min-height: var(--gdi-touch);
+  }
+
+  .gdi-footer-links {
+    display: flex;
+    margin-top: var(--gdi-space-2xs);
+  }
 }
 
 /* =====================================================
@@ -1018,23 +1081,56 @@ html body .et-l--footer :is(p, li, span, .et_pb_text_inner) {
   font-weight: 600;
 }
 
-/* Inside the footer the generic footer-text rule would turn the option labels footer-coloured
-   on a surface-coloured tile; keep them readable on the tile. */
-html body .et-l--footer .gdi-theme-option .gdi-theme-label {
-  color: var(--gdi-color-text);
-}
-
-/* Footer placement: sits on the footer background, so use the footer colours. */
+/* Footer placement: one compact row on the footer background and at the footer content width. */
 .gdi-theme-picker-wrap {
   width: var(--gdi-container);
   margin: 0 auto;
-  padding: var(--gdi-space-sm) 0 var(--gdi-gap-section);
+  padding: var(--gdi-space-sm) 0;
   color: var(--gdi-color-footer-text);
-  background: var(--gdi-color-footer-bg);
 }
 
 .et-l--footer .gdi-theme-picker {
-  max-width: 480px;
+  display: grid;
+  grid-template-columns: max-content repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--gdi-space-xs);
+  max-width: none;
+}
+
+.et-l--footer .gdi-theme-picker legend {
+  margin: 0 var(--gdi-space-xs) 0 0;
+}
+
+.et-l--footer .gdi-theme-options {
+  display: contents;
+}
+
+html body .et-l--footer .gdi-theme-option {
+  min-width: 0;
+  padding: var(--gdi-space-2xs) var(--gdi-space-xs);
+  color: var(--gdi-color-footer-text);
+  background: transparent;
+  border-color: var(--gdi-color-footer-muted);
+}
+
+html body .et-l--footer .gdi-theme-option .gdi-theme-label {
+  color: var(--gdi-color-footer-text);
+}
+
+.et-l--footer .gdi-theme-option:has(input:checked) {
+  border-color: var(--gdi-color-footer-link);
+  box-shadow: inset 0 0 0 2px var(--gdi-color-footer-link);
+}
+
+@media (max-width: 767px) {
+  .et-l--footer .gdi-theme-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .et-l--footer .gdi-theme-picker legend {
+    grid-column: 1 / -1;
+    margin-right: 0;
+  }
 }
 
 /* Skip link */

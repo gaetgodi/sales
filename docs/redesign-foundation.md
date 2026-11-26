@@ -17,7 +17,7 @@ Everything below is in this repo; the Divi-database steps are listed at the end.
 | `03-faq-testimonials.css` | Retokened; FAQ answers and author text now 16px; no shadows; visible focus. |
 | `04-shell.css` | Flat page, interim preset flatten, header, logo, tagline, mobile drawer, cards, footer and sitemap, breadcrumbs, subnav, theme picker, skip link. |
 | `05-a11y.css` | Global `:focus-visible`, 44px targets, reduced motion. Loaded last. |
-| `includes/gdi-shell.php` | Head script, menu location, drawer markup, picker markup, skip link, four shortcodes. |
+| `includes/gdi-shell.php` | Head script, menu location, drawer markup, picker markup, skip link, five shortcodes. |
 | `js/gdi-shell.js` | Drawer and submenu behaviour (focus trap, Escape, `aria-expanded`, `hidden`) and picker behaviour. |
 | `functions.php` | Requires the shell, new enqueue order, old JS-built drawer removed, shortcode filter extended. The tagline rotation (`divi_sales_child_rotate_tagline`) is untouched. |
 | `style.css` | Version 1.0.3 to 1.1.0 (the enqueue uses it for cache busting). |
@@ -37,7 +37,7 @@ Enqueue order: parent, fonts, tokens, themes, components, typography, faq-testim
 
 - Browser storage: `localStorage` key `gdi-theme`, values `brand | parchment | slate | system`. Anything else, missing or blocked storage means Brand.
 - The inline script in `wp_head` (priority 1, before the stylesheets) sets the two attributes before first paint. It reads only the visitor's own storage, so cached page HTML is identical for everyone; no cookie, no server-side state. It is skipped in the Divi Visual Builder (`et_fb`).
-- Placement: always in the drawer; `[gdi_theme_picker]` in a Code module places it in the footer or header; if no footer picker exists the script copies the drawer's into the footer. With JavaScript off the picker stays hidden and the site is Brand.
+- Placement: always in the drawer; `[gdi_theme_picker]` in a Code module places it in the footer or header; if no footer picker exists the script copies the drawer's into the footer. In the footer it is a compact row at the shared content width on the footer background, with two columns of choices on phones. With JavaScript off the picker stays hidden and the site is Brand.
 
 ## Logo (hooks for the files you will supply)
 
@@ -76,10 +76,18 @@ preserved when the drawer closes and reopens during the same page view.
 
 ## Shortcodes (place each in a Divi Code module; the existing render filter runs them)
 
+- `[gdi_year]`: the current year from `wp_date('Y')`, using the site's configured timezone. A page cache can keep the previous year in cached HTML until that cache is cleared.
 - `[gdi_breadcrumbs]`: Home, page ancestors, current page. Empty on the front page.
 - `[gdi_subnav]`: sibling pages of the current page (or its children on a parent page). Reuses `.gdi-services-nav`.
 - `[gdi_footer_sitemap]`: columns from the WordPress menu location "Footer sitemap". Top-level items with children become columns; items without children collect under "Explore". With no menu assigned it shows the primary menu as one column.
 - `[gdi_theme_picker]`: the appearance control.
+
+## Footer layout
+
+- Every `h1` through `h6` inside `.et-l--footer` uses `--gdi-color-footer-text`, including headings inside Divi Text modules.
+- The `[gdi_footer_sitemap]` list is compact on larger screens, restores the full `--gdi-touch` link height on phones, and keeps hover, keyboard-focus and current-page styling on the footer tokens.
+- Add `gdi-footer-cols` to the top footer Row (the row containing the company, sitemap and contact-form columns). It aligns the three columns at the top, changes to two columns on tablets with the contact form spanning both, and stacks all three on phones.
+- The Appearance picker remains after the Divi footer sections when supplied by the JavaScript fallback, but now shares the footer background and content width instead of appearing as a separate band. No Divi picker module is required.
 
 ## Child-page layout
 
