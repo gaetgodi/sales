@@ -258,40 +258,37 @@ html body #main-content .et_pb_text_inner a:not([class]):hover {
 /* Divi's own hamburger stays retired below 981px (see 01-components.css); the drawer replaces it. */
 
 /* ---- Logo -------------------------------------------------------------------------
-   Height is driven by --gdi-logo-h (48 / 44 / 40px). Replacing the logo FILE needs no code change.
-   LIGHT LOGO HOOK: to show a light logo in the Slate theme, add a second Image module next to
-   the normal logo in the header layout, set its CSS Class to "gdi-logo-light" (and the original's
-   to "gdi-logo-dark"). It is hidden except in Slate, where it replaces the dark one.
-   TEMPORARY (until a light logo exists): in Slate the existing logo sits on a light chip
-   (--gdi-color-logo-bg, transparent in the other themes). */
+   Height is driven by --gdi-logo-h (56px desktop, 48px tablet/phone). The light-theme logo
+   (navy text) uses gdi-logo-light; the dark-theme logo (pale text) uses gdi-logo-dark.
+   The selectors cover Divi placing the custom class on either the module wrapper or the img. */
 .et-l--header .et_pb_image_wrap img {
   height: var(--gdi-logo-h) !important;
   width: auto;
-}
-
-.et-l--header .et_pb_image:not(.gdi-logo-light) .et_pb_image_wrap img {
-  background-color: var(--gdi-color-logo-bg);
-  border-radius: var(--gdi-radius-md);
-  padding: var(--gdi-space-2xs) var(--gdi-space-xs);
-  box-sizing: content-box;
-}
-
-.et-l--header .gdi-logo-light {
-  display: none !important;
-}
-
-html[data-gdi-theme="slate"] .et-l--header .gdi-logo-light {
-  display: block !important;
-}
-
-html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark {
-  display: none !important;
-}
-
-/* A light logo exists: the chip is not needed. */
-.et-l--header:has(.gdi-logo-light) .et_pb_image .et_pb_image_wrap img {
   background-color: transparent;
+  border-radius: 0;
   padding: 0;
+}
+
+.et-l--header .et_pb_image:is(.gdi-logo-light, .gdi-logo-dark) a,
+.et-l--header .et_pb_image:has(img.gdi-logo-light, img.gdi-logo-dark) a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--gdi-touch);
+}
+
+.et-l--header .gdi-logo-dark,
+.et-l--header .et_pb_image:has(img.gdi-logo-dark) {
+  display: none !important;
+}
+
+html[data-gdi-theme="slate"] .et-l--header .gdi-logo-light,
+html[data-gdi-theme="slate"] .et-l--header .et_pb_image:has(img.gdi-logo-light) {
+  display: none !important;
+}
+
+html[data-gdi-theme="slate"] .et-l--header .gdi-logo-dark,
+html[data-gdi-theme="slate"] .et-l--header .et_pb_image:has(img.gdi-logo-dark) {
+  display: block !important;
 }
 
 /* ---- Tagline ----------------------------------------------------------------------

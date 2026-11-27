@@ -27,11 +27,11 @@ Enqueue order: parent, fonts, tokens, themes, components, typography, faq-testim
 
 ## Tokens and themes
 
-- Core tokens (themes override these): `--gdi-color-page, -surface, -surface-alt, -text, -text-secondary, -text-muted, -border, -control-border, -primary, -on-primary, -primary-text, -accent, -on-accent, -accent-light, -accent-text, -link, -link-hover, -focus, -header-bg, -header-text, -header-border, -logo-bg, -footer-bg, -footer-text, -footer-link, -footer-muted, -footer-focus, -success, -error, -overlay`, and `--gdi-shadow-color`.
+- Core tokens (themes override these): `--gdi-color-page, -surface, -surface-alt, -text, -text-secondary, -text-muted, -border, -control-border, -primary, -on-primary, -primary-text, -accent, -on-accent, -accent-light, -accent-text, -link, -link-hover, -focus, -header-bg, -header-text, -header-border, -footer-bg, -footer-text, -footer-link, -footer-muted, -footer-focus, -success, -error, -overlay`, and `--gdi-shadow-color`.
 - Legacy aliases (`--gdi-color-bg`, `-bg-alt`, `-page-bg`, `-boxed-bg`, `-content-bg`, `-content-frame`, `-card-border`, `-accent-hover`) follow the core tokens.
 - Use `-primary` as a background (button text is `-on-primary`) and `-primary-text` for primary-coloured text, icons and borders on a surface (they differ in Slate). Use `-accent-text`, not `-accent`, when amber is text.
 - `html[data-gdi-choice]` is the saved pick (`brand|parchment|slate|system`); `html[data-gdi-theme]` is the effective theme (`brand|parchment|slate`). `system` resolves to `slate` on a dark device, otherwise `brand`, in the head script, so the Slate values exist once.
-- Spacing tokens (desktop / 980px / 767px): `--gdi-pad-card` 24/20/16, `--gdi-gap-grid` and `--gdi-gap-stack` 24/20/16, `--gdi-gap-section` 48/40/32, `--gdi-gutter` 24/20/16, `--gdi-header-h` 80/72/64, `--gdi-logo-h` 48/44/40, `--gdi-touch` 44, `--gdi-measure` 720, `--gdi-container` = `min(100% - 2 * gutter, 1200px)`. The old `--gdi-space-*` scale is unchanged.
+- Spacing tokens (desktop / 980px / 767px): `--gdi-pad-card` 24/20/16, `--gdi-gap-grid` and `--gdi-gap-stack` 24/20/16, `--gdi-gap-section` 48/40/32, `--gdi-gutter` 24/20/16, `--gdi-header-h` 80/72/64, `--gdi-logo-h` 56/48/48, `--gdi-touch` 44, `--gdi-measure` 720, `--gdi-container` = `min(100% - 2 * gutter, 1200px)`. The old `--gdi-space-*` scale is unchanged.
 
 ## Theme picker
 
@@ -39,11 +39,11 @@ Enqueue order: parent, fonts, tokens, themes, components, typography, faq-testim
 - The inline script in `wp_head` (priority 1, before the stylesheets) sets the two attributes before first paint. It reads only the visitor's own storage, so cached page HTML is identical for everyone; no cookie, no server-side state. It is skipped in the Divi Visual Builder (`et_fb`).
 - Placement: always in the drawer; `[gdi_theme_picker]` in a Code module places it in the footer or header; if no footer picker exists the script copies the drawer's into the footer. In the footer it is a compact row at the shared content width on the footer background, with two columns of choices on phones. With JavaScript off the picker stays hidden and the site is Brand.
 
-## Logo (hooks for the files you will supply)
+## Logo
 
-- Height: `--gdi-logo-h` (48 / 44 / 40px). A trimmed logo drops in by replacing the image in the Divi header layout.
-- Light logo for Slate: add a second Image module in the header layout with CSS class `gdi-logo-light` holding the light file, and give the normal logo module the class `gdi-logo-dark`. In Slate only the light one shows; in every other theme only the normal one shows.
-- TEMPORARY (until a light logo exists): in Slate the existing logo sits on a light chip (`--gdi-color-logo-bg`, `#f4f6f6` in Slate, transparent elsewhere). The chip switches itself off when a `gdi-logo-light` module exists in the header. Remove this note and the token value once the light logo is live.
+- The light-theme logo (navy text) uses `gdi-logo-light` and shows in Brand and Warm Parchment; the dark-theme logo (pale text) uses `gdi-logo-dark` and shows in Dark Slate. System follows its effective Brand or Slate theme.
+- The logos sit directly on the header with no background tile or tile padding.
+- Height is controlled by `--gdi-logo-h`: 56px from 981px upward and 48px at tablet and phone widths. Width stays automatic to preserve the artwork's aspect ratio.
 
 ## Tagline
 

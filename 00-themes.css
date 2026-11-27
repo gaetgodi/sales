@@ -43,7 +43,6 @@ html[data-gdi-theme="parchment"] {
   --gdi-color-header-bg:      #fbf1dd;
   --gdi-color-header-text:    #3d2b1f;
   --gdi-color-header-border:  #cbb595;
-  --gdi-color-logo-bg:        transparent;
   --gdi-color-footer-bg:      #493326;
   --gdi-color-footer-text:    #fff8e9;
   --gdi-color-footer-link:    #f1bd86;
@@ -82,9 +81,6 @@ html[data-gdi-theme="slate"] {
   --gdi-color-header-bg:      #101419;
   --gdi-color-header-text:    #edf2f6;
   --gdi-color-header-border:  #46525e;
-  /* TEMPORARY: the current logo artwork is dark navy and unreadable on a dark header.
-     It sits on a light chip until a light logo file exists (see 04-shell.css, "Logo"). */
-  --gdi-color-logo-bg:        #f4f6f6;
   --gdi-color-footer-bg:      #101419;
   --gdi-color-footer-text:    #f3f7fa;
   --gdi-color-footer-link:    #7ecfd4;
